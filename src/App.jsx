@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
+import Setting from "./pages/Setting";
 
 import { UserProvider } from "./context/UserContext";
 import PrivateRoute from "./components/PrivateRoute";
@@ -27,6 +28,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/setting"
+              element={
+                <PrivateRoute>
+                  <Setting />
                 </PrivateRoute>
               }
             />

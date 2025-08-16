@@ -240,8 +240,12 @@
   }
 
   /* Helpers */
-  .itemBackground { background-color: var(--componentsBG); }
-  .bg-primary    { background-color: var(--primaryColor) !important; }
+  .bg-component{ 
+    background-color: var(--componentsBG); }
+  .bg-primary    {
+   background-color: var(--primaryColor) !important; 
+  }
+  
 
   /* Paleta helper (por compatibilidad) */
   .bg-orange { background-color: #f15b2a; }

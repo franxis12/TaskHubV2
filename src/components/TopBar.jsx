@@ -93,9 +93,9 @@ function TopBar() {
     ].join(" ");
 
   return (
-    <header className="sticky top-0 bg-white/80 ">
+    <header className="sticky top-0">
       {/* Top row */}
-      <div className="mx-auto max-w-7xl px-4 md:px-6 bg-primary">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 bg-component">
         <div className="flex h-14 items-center justify-between gap-3 ">
           {/* Brand (logo + app) */}
           <div
@@ -125,7 +125,7 @@ function TopBar() {
             <NavLink to="/dashboard" className={navLinkClasses}>
               Dashboard
             </NavLink>
-            <NavLink to="/settings" className={navLinkClasses}>
+            <NavLink to="/setting" className={navLinkClasses}>
               Settings
             </NavLink>
             <NavLink to="/messages" className={navLinkClasses}>
