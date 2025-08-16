@@ -22,7 +22,6 @@ function TaskEditor({
   const save = async () => {
     try {
       if (isMissed) {
-        // Seguridad extra en UI por si acaso
         alert('Las tareas "missed" no se pueden editar.');
         return;
       }
@@ -42,21 +41,34 @@ function TaskEditor({
     }
   };
 
+  const inputBase =
+    "flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 " +
+    "placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40";
+
+  const btnBase =
+    "inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors";
+  const btnDanger =
+    btnBase +
+    " bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 disabled:opacity-50";
+  const btnPrimary =
+    btnBase +
+    " bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-800/90";
+  const btnSecondary =
+    btnBase +
+    " border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100";
+
   if (isMissed) {
     return (
-      <div
-        className="editTask p-3 w-100 d-flex"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="w-100 text-center">
-          <p className="text-danger mb-3">
+      <div className="w-full p-3 flex" onClick={(e) => e.stopPropagation()}>
+        <div className="w-full text-center">
+          <p className="text-rose-600 mb-3">
             Esta tarea está marcada como <b>Missed</b> y no se puede modificar.
           </p>
-          <div className="d-flex gap-2 justify-content-center">
-            <button className="btn btn-danger" onClick={() => onDelete?.(task)}>
+          <div className="flex gap-2 justify-center">
+            <button className={btnDanger} onClick={() => onDelete?.(task)}>
               Delete task
             </button>
-            <button className="btn btn-secondary" onClick={onClose}>
+            <button className={btnSecondary} onClick={onClose}>
               Cancelar
             </button>
           </div>
@@ -67,37 +79,38 @@ function TaskEditor({
 
   return (
     <div
-      className="editTask p-3 w-100 d-flex"
+      className="w-full p-3 flex flex-col md:flex-row gap-4"
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="w-100">
-        <div className="input-group mb-2 w-75">
-          <span className="input-group-text bg-white">
-            <img src={titleIcon} alt="title" className="statusIcon" />
+      {/* Columna izquierda */}
+      <div className="flex-1 space-y-3">
+        <div className="flex items-center gap-2">
+          <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+            <img src={titleIcon} alt="title" className="h-5 w-5" />
           </span>
           <input
             type="text"
-            className="form-control"
+            className={inputBase}
             placeholder="Editar nombre de la tarea"
             defaultValue={task.taskName}
             onChange={(e) => (task.taskName = e.target.value)}
           />
         </div>
 
-        <div className="input-group mb-2 w-75">
-          <span className="input-group-text bg-white">
-            <img src={calendarIcon} alt="date" className="statusIcon" />
+        <div className="flex items-center gap-2">
+          <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+            <img src={calendarIcon} alt="date" className="h-5 w-5" />
           </span>
           <input
             type="date"
-            className="form-control"
+            className={inputBase}
             defaultValue={task.completeBy}
             onChange={(e) => (task.completeBy = e.target.value)}
           />
         </div>
 
         <button
-          className="btn btn-danger"
+          className={btnDanger}
           disabled={task.status === "progress"}
           title={
             task.status === "progress"
@@ -110,19 +123,19 @@ function TaskEditor({
         </button>
       </div>
 
-      <div className="w-100">
-        <div className="d-flex align-items-center gap-3 mb-2">
-          <div className="input-group w-50">
-            <span className="input-group-text bg-white">
+      {/* Columna derecha */}
+      <div className="flex-1 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 w-1/2">
+            <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
               <img
                 src={userMap[task.assignedTo]?.photo || samplePhoto}
                 alt="assigned"
-                className="taskPicAssi rounded-5 border border-2 border-primary"
-                style={{ width: 40, height: 40 }}
+                className="h-10 w-10 rounded-full border-2 border-blue-500 object-cover"
               />
             </span>
             <select
-              className="form-control"
+              className={inputBase}
               defaultValue={task.assignedTo || ""}
               onChange={(e) => (task.assignedTo = e.target.value)}
               disabled={task.type === "personal" || !isAdmin}
@@ -138,12 +151,16 @@ function TaskEditor({
           </div>
         </div>
 
-        <div className="input-group mb-2 w-75">
-          <span className="input-group-text bg-white">
-            <img src={priorityIcons[task.priority]} alt="priority" />
+        <div className="flex items-center gap-2">
+          <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+            <img
+              src={priorityIcons[task.priority]}
+              alt="priority"
+              className="h-5 w-5"
+            />
           </span>
           <select
-            className="form-control"
+            className={inputBase}
             defaultValue={task.priority}
             onChange={(e) => (task.priority = e.target.value)}
           >
@@ -153,16 +170,16 @@ function TaskEditor({
           </select>
         </div>
 
-        <div className="input-group mb-2 w-75">
-          <span className="input-group-text bg-white">
+        <div className="flex items-center gap-2">
+          <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
             <img
               src={statusIcon[task.status] || statusIconImg}
               alt="status"
-              className="statusIcon"
+              className="h-5 w-5"
             />
           </span>
           <select
-            className="form-control"
+            className={inputBase}
             defaultValue={task.status}
             onChange={(e) => (task.status = e.target.value)}
           >
@@ -174,24 +191,25 @@ function TaskEditor({
         </div>
       </div>
 
-      <div className="w-100 d-flex flex-column align-items-end">
-        <div className="input-group mb-2 w-100">
-          <span className="input-group-text bg-white">
-            <img src={note} alt="notes" className="statusIcon" />
+      {/* Notas y acciones */}
+      <div className="flex-1 flex flex-col items-end space-y-3">
+        <div className="flex items-start gap-2 w-full">
+          <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+            <img src={note} alt="notes" className="h-5 w-5" />
           </span>
           <textarea
-            className="form-control"
+            className={inputBase + " min-h-[80px]"}
             placeholder="Notas"
             defaultValue={task.notes}
             onChange={(e) => (task.notes = e.target.value)}
           />
         </div>
 
-        <div className="d-flex gap-2">
-          <button className="btn btn-danger" onClick={onClose}>
+        <div className="flex gap-2">
+          <button className={btnDanger} onClick={onClose}>
             Cancelar
           </button>
-          <button className="btn btn-primary" onClick={save}>
+          <button className={btnPrimary} onClick={save}>
             Guardar cambios
           </button>
         </div>
