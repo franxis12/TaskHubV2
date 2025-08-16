@@ -58,20 +58,26 @@ function TaskFilters({
 
   const reset = () => setFilters({ ...defaultFilters });
 
+  // estilos base para inputs/selects
+  const inputBase =
+    "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 " +
+    "placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400";
+
   return (
-    <div
-      className="filterMenu p-3 mb-3 rounded-4 w-100"
-      style={{ background: "var(--componentsBG)" }}
-    >
-      <div className="row g-2 align-items-start d-flex flex-column w-100">
-        <div className="col-12 col-md-3 w-100">
-          <label htmlFor="taskSearch" className="form-label">
+    <div className="w-full mb-3 rounded-xl bg-[var(--componentsBG)] p-4 ring-1 ring-slate-200">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
+        {/* Search */}
+        <div className="md:col-span-3">
+          <label
+            htmlFor="taskSearch"
+            className="mb-1 block text-xs font-medium text-slate-600"
+          >
             Search
           </label>
           <input
             id="taskSearch"
             type="text"
-            className="form-control"
+            className={inputBase}
             placeholder="Task name or notes..."
             defaultValue={filters.search}
             onChange={handleSearchChange}
@@ -79,48 +85,58 @@ function TaskFilters({
           />
         </div>
 
-        <div className="d-flex gap-3 w-100">
-          <div className="w-50">
-            <label htmlFor="typeSel" className="form-label">
-              Type
-            </label>
-            <select
-              id="typeSel"
-              className="form-control"
-              value={filters.type}
-              onChange={handleChange("type")}
-            >
-              <option value="all">All</option>
-              <option value="public">Public</option>
-              <option value="personal">Personal</option>
-            </select>
-          </div>
-
-          <div className="w-50">
-            <label htmlFor="prioritySel" className="form-label">
-              Priority
-            </label>
-            <select
-              id="prioritySel"
-              className="form-control"
-              value={filters.priority}
-              onChange={handleChange("priority")}
-            >
-              <option value="all">All</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
-          </div>
+        {/* Type */}
+        <div className="md:col-span-3">
+          <label
+            htmlFor="typeSel"
+            className="mb-1 block text-xs font-medium text-slate-600"
+          >
+            Type
+          </label>
+          <select
+            id="typeSel"
+            className={inputBase}
+            value={filters.type}
+            onChange={handleChange("type")}
+          >
+            <option value="all">All</option>
+            <option value="public">Public</option>
+            <option value="personal">Personal</option>
+          </select>
         </div>
 
-        <div className="w-100">
-          <label htmlFor="statusSel" className="form-label">
+        {/* Priority */}
+        <div className="md:col-span-3">
+          <label
+            htmlFor="prioritySel"
+            className="mb-1 block text-xs font-medium text-slate-600"
+          >
+            Priority
+          </label>
+          <select
+            id="prioritySel"
+            className={inputBase}
+            value={filters.priority}
+            onChange={handleChange("priority")}
+          >
+            <option value="all">All</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+
+        {/* Status */}
+        <div className="md:col-span-3">
+          <label
+            htmlFor="statusSel"
+            className="mb-1 block text-xs font-medium text-slate-600"
+          >
             Status
           </label>
           <select
             id="statusSel"
-            className="form-control"
+            className={inputBase}
             value={filters.status}
             onChange={handleChange("status")}
           >
@@ -132,13 +148,17 @@ function TaskFilters({
           </select>
         </div>
 
-        <div className="w-100">
-          <label htmlFor="assignedSel" className="form-label">
+        {/* Assigned to */}
+        <div className="md:col-span-4">
+          <label
+            htmlFor="assignedSel"
+            className="mb-1 block text-xs font-medium text-slate-600"
+          >
             Assigned to
           </label>
           <select
             id="assignedSel"
-            className="form-control"
+            className={inputBase}
             value={filters.assignedTo}
             onChange={handleChange("assignedTo")}
           >
@@ -153,50 +173,57 @@ function TaskFilters({
           </select>
         </div>
 
-        <div className="d-flex w-100 gap-3">
-          <div className="w-50">
-            <label htmlFor="dueFrom" className="form-label">
-              Due from
-            </label>
-            <input
-              id="dueFrom"
-              type="date"
-              className="form-control"
-              value={filters.dueFrom}
-              onChange={handleChange("dueFrom")}
-            />
-          </div>
-
-          <div className="w-50">
-            <label htmlFor="dueTo" className="form-label">
-              Due to
-            </label>
-            <input
-              id="dueTo"
-              type="date"
-              className="form-control"
-              value={filters.dueTo}
-              onChange={handleChange("dueTo")}
-            />
-          </div>
+        {/* Due from */}
+        <div className="md:col-span-4">
+          <label
+            htmlFor="dueFrom"
+            className="mb-1 block text-xs font-medium text-slate-600"
+          >
+            Due from
+          </label>
+          <input
+            id="dueFrom"
+            type="date"
+            className={inputBase}
+            value={filters.dueFrom}
+            onChange={handleChange("dueFrom")}
+          />
         </div>
 
-        <div className="form-check mt-2">
+        {/* Due to */}
+        <div className="md:col-span-4">
+          <label
+            htmlFor="dueTo"
+            className="mb-1 block text-xs font-medium text-slate-600"
+          >
+            Due to
+          </label>
           <input
-            className="form-check-input"
+            id="dueTo"
+            type="date"
+            className={inputBase}
+            value={filters.dueTo}
+            onChange={handleChange("dueTo")}
+          />
+        </div>
+
+        {/* Overdue + Clear */}
+        <div className="md:col-span-6 flex items-center gap-2">
+          <input
+            className="h-4 w-4 rounded border-slate-300 text-slate-700 focus:ring-slate-400/40 accent-slate-700"
             type="checkbox"
             id="overdueOnly"
             checked={!!filters.overdueOnly}
             onChange={handleChange("overdueOnly")}
           />
-          <label className="form-check-label" htmlFor="overdueOnly">
+          <label className="text-sm text-slate-700" htmlFor="overdueOnly">
             Overdue only
           </label>
         </div>
 
-        <div className="col-12 col-md-2 w-100">
+        <div className="md:col-span-6">
           <button
-            className="btn btn-outline-secondary w-100 mt-2 mt-md-0"
+            className="inline-flex w-full justify-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isDefault}
             onClick={reset}
           >
