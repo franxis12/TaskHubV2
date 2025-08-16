@@ -74,10 +74,10 @@ function TopBar() {
     const base =
       "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium";
     const palette = {
-      admin: "bg-red-100 text-red-700 border-red-200",
-      manager: "bg-amber-100 text-amber-700 border-amber-200",
-      member: "bg-blue-100 text-blue-700 border-blue-200",
-      guest: "bg-slate-100 text-slate-600 border-slate-200",
+      admin: "bg-slate-500 text-slate-700 border-slate-200",
+      manager: "bg-amber-500 text-amber-700 border-amber-200",
+      member: "bg-blue-500 text-blue-700 border-blue-200",
+      guest: "bg-red-500 text-red-600 border-red-200",
     };
     return `${base} ${
       palette[r] || "bg-slate-100 text-slate-700 border-slate-200"
@@ -86,16 +86,16 @@ function TopBar() {
 
   const navLinkClasses = ({ isActive }) =>
     [
-      "transition-colors rounded-md px-3 py-2 text-sm font-medium",
+      "transition-colors text-white rounded-md px-3 py-2 text-sm font-medium btn border-opacity-0",
       isActive
-        ? "text-slate-900 bg-slate-100"
-        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
+        ? "text-slate-900 text-white btn-primary"
+        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 ",
     ].join(" ");
 
   return (
     <header className="sticky top-0">
       {/* Top row */}
-      <div className="mx-auto max-w-7xl px-4 md:px-6 bg-component">
+      <div className="mx-auto max-w-9xl px-4 md:px-6 bg-component">
         <div className="flex h-14 items-center justify-between gap-3 ">
           {/* Brand (logo + app) */}
           <div
@@ -106,16 +106,17 @@ function TopBar() {
             onKeyDown={(e) => e.key === "Enter" && navigate("/dashboard")}
           >
             <img
-              className="h-9 w-9 rounded-lg object-contain bg-white ring-1 ring-black/5"
+              className="h-9 w-auto p-1 rounded-lg object-contain bg-white ring-1 ring-black/5"
               src={logoUrl || logoFallback}
               alt="Company"
             />
             <div className="leading-tight">
-              <strong className="block text-sm font-semibold tracking-tight text-slate-900">
-                Task-Hub
+              <strong className="block text-base tx-color font-semibold tracking-tight text-slate-900">
+                TaskHub
               </strong>
               <span className="block text-xs text-slate-500">
-                {user?.companyId || "—"}
+                {user?.companyId ||
+                  "No companyId assigned please contact suppport"}
               </span>
             </div>
           </div>
@@ -136,7 +137,7 @@ function TopBar() {
           {/* User block */}
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex flex-col items-end leading-tight">
-              <span className="text-sm font-medium text-slate-900">
+              <span className="text-sm font-medium text-slate-900 tx-color">
                 {userName}
               </span>
               {user?.role && (
