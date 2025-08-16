@@ -1,6 +1,6 @@
 // src/components/miniComponents/TaskEstadistic.jsx
 import React, { useContext, useMemo } from "react";
-import { StatsContext } from "../../context/StatsContext";
+import { StatsContext } from "../context/StatsContext";
 
 function StatCard({ label, value, colorVar, icon }) {
   return (

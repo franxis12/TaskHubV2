@@ -1,6 +1,6 @@
 // src/components/TopBar.jsx
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import TaskEstadistic from "./miniComponents/TaskEstadistic";
+import TaskEstadistic from "./TaskEstadistic";
 import { UserContext } from "../context/UserContext";
 import { useNavigate, NavLink } from "react-router-dom";
 import { doc, onSnapshot } from "firebase/firestore";
