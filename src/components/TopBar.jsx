@@ -199,7 +199,7 @@ function TopBar() {
       )}
 
       {/* Stats row */}
-      <div className="border-t bg-pages">
+      <div className="border-t bg-pages ">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-3">
           <TaskEstadistic />
         </div>
