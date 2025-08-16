@@ -152,7 +152,7 @@ function TopBar() {
 
             {/* Logout (desktop) */}
             <button
-              className="btn btn-primary hidden md:inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+              className="btn tx-color hidden md:inline-flex items-center   px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
               onClick={handleLogout}
             >
               Logout
@@ -199,7 +199,7 @@ function TopBar() {
       )}
 
       {/* Stats row */}
-      <div className="border-t bg-white">
+      <div className="border-t bg-pages">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-3">
           <TaskEstadistic />
         </div>

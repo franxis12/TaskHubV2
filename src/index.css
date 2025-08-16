@@ -240,14 +240,10 @@
   }
 
   /* Helpers */
-  .bg-component{ 
-    background-color: var(--componentsBG); }
-  .bg-primary    {
-   background-color: var(--primaryColor) !important; 
-  }
-  .tx-color{
-    color: var(--textColor) !important;
-  }
+  .bg-component{ background-color: var(--componentsBG); }
+  .bg-primary {background-color: var(--primaryColor) !important; }
+  .bg-pages { background-color: var(--pagesBackground);}
+  .tx-color{ color: var(--textColor) !important;}
 
   
 
