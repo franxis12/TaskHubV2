@@ -100,7 +100,18 @@
 @layer components {
   /* Botón neutro (antes .btn) */
   .btn {
-    @apply relative inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition-property: color, background-color, border-color;
+    transition-duration: 150ms;
     border-radius: 14px;                     /* 1:1 con tu diseño */
     background-color: var(--neutroColor);
     border: 1px solid var(--neutroColorBorder);
@@ -132,7 +143,18 @@
 
   /* Botón primario (antes .btn-primary) */
   .btn-primary {
-    @apply relative inline-flex items-center justify-center px-4 py-2 text-sm font-semibold transition-colors;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-duration: 150ms;
     border-radius: 14px;
     background-color: var(--primaryColor);
     border: 1px solid var(--primaryColorBorder);
@@ -170,7 +192,7 @@
 
   /* Stats strip */
   .stats-strip {
-    @apply rounded-xl;
+    border-radius: 0.75rem; /* rounded-xl */
     background-color: var(--bg-infoColor);
     box-shadow: 0 8px 20px rgba(0,0,0,0.04);
   }
