@@ -93,10 +93,10 @@ function TopBar() {
     ].join(" ");
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur supports-[backdrop-filter]:backdrop-blur border-b">
+    <header className="sticky top-0 bg-white/80 ">
       {/* Top row */}
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="flex h-14 items-center justify-between gap-3">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 bg-primary">
+        <div className="flex h-14 items-center justify-between gap-3 ">
           {/* Brand (logo + app) */}
           <div
             className="flex items-center gap-3 cursor-pointer select-none"
@@ -151,7 +151,7 @@ function TopBar() {
 
             {/* Logout (desktop) */}
             <button
-              className="hidden md:inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+              className="btn btn-primary hidden md:inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
               onClick={handleLogout}
             >
               Logout
@@ -159,7 +159,7 @@ function TopBar() {
 
             {/* Mobile menu toggle */}
             <button
-              className="md:hidden inline-flex flex-col gap-1.5 p-2 rounded-md hover:bg-slate-100"
+              className="md:hidden inline-flex flex-col gap-1.5 btn-primary p-2 rounded-md hover:bg-slate-100"
               aria-label="Open menu"
               onClick={() => setMenuOpen((v) => !v)}
             >
