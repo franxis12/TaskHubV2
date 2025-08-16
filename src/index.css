@@ -1,1 +1,237 @@
+/* src/styles/tailwind-overrides.css */
 @import "tailwindcss";
+
+/* === Fuentes: las dejo igual === */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Da&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Da+2&display=swap');
+
+/* === Variables (dark / light) sin cambios === */
+:root {
+  --primaryBlue: #35a7ff;
+  --primaryBlueTransparent: #35a7ff24;
+
+  --secondaryBlue: #38618c;
+  --componentsBG: #333;
+  --dangerActionsRed: #ff5964;
+  --dangerActionsRedTransparent: #ff59642a;
+
+  --warningActionsYellow: #ffe74c;
+  --warningActionsYellowTransparent: #ffe74c22;
+  --borderYellow: #ffd46fac;
+  --borderBlue: #0c4b7bc8;
+  --borderRed: #741118bb;
+  --availableColor: #b6ff82;
+  --oflineColor: #545454;
+  --busyColor: #333;
+  --boderComponents: #414141;
+  --shadowComponents: 0 4px 4px #ffffff33;
+
+  /* New Complete Style */
+  --font-primary: 'Baloo Da', cursive;
+  --font-secondary: 'Baloo Da 2', cursive;
+  --textColor: #fff;
+  --pagesBackground: #1a1a1a;
+
+  --neutroColor: #ffffff00;
+  --neutroColorBorder: #ffffff7a;
+  --neutroColorHover: #6d6d6d;
+
+  --bg-infoColor: #121212;
+
+  --primaryColor: #EF6438;
+  --primaryColorBorder: #c3502d;
+  --primaryColorHover: hsl(14, 100%, 54%);
+  --PrimaryTextColor: #fff;
+}
+
+@media (prefers-color-scheme: light) {
+  :root{
+    --primaryBlue: #35a7ff;
+    --secondaryBlue: #38618c;
+    --componentsBG: #fff;
+    --dangerActionsRed: #ff5964;
+    --warnignActionsYellow: #ffdd00;
+    --borderYellow: #ffd46f79;
+    --borderBlue: #1b5f9481;
+    --borderRed: #8b74767d;
+    --availableColor: #b6ff82;
+    --oflineColor: #545454;
+    --busyColor: #333;
+    --boderComponents: #40404033;
+    --shadowComponents: 0 2px 2px #2c6881a7;
+
+    /* New Complete Style */
+    --font-primary: 'Baloo Da', cursive;
+    --font-secondary: 'Baloo Da 2', cursive;
+    --textColor: #4D4D4D;
+
+    --pagesBackground: #f1f1f1;
+
+    --neutroColor: #ffffff00;
+    --neutroColorBorder: #3333337a;
+    --neutroColorHover: #dddddd;
+
+    --bg-infoColor: #FEE1B4;
+
+    --primaryColor: #EF6438;
+    --primaryColorBorder: #c3502d; 
+    --primaryColorHover: hsl(14, 100%, 54%);
+    --PrimaryTextColor: #fff;
+  }
+}
+
+/* === Base === */
+@layer base {
+  body{
+    background-color: var(--pagesBackground);
+    color: var(--textColor);
+    font-family: var(--font-secondary);
+  }
+
+  h1{
+    font-size: clamp(28px, 5vw, 44px);
+    margin: 0;
+    line-height: 1.1;
+    font-family: var(--font-primary);
+  }
+}
+
+/* === Componentes: equivalentes Tailwind a clases Bootstrap === */
+@layer components {
+  /* Botón neutro (antes .btn) */
+  .btn {
+    @apply relative inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors;
+    border-radius: 14px;                     /* 1:1 con tu diseño */
+    background-color: var(--neutroColor);
+    border: 1px solid var(--neutroColorBorder);
+    color: var(--textColor);
+  }
+  .btn:hover {
+    background-color: var(--neutroColorHover);
+    border-color: var(--neutroColorBorder);
+    color: var(--textColor);
+  }
+  .btn::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 12px;
+    background-color: var(--textColor);
+    border-radius: 5px;
+    border: 1px solid var(--neutroColorBorder);
+    opacity: 0;
+    transition: width 0.3s ease, opacity 0.3s ease;
+  }
+  .btn:hover::after {
+    width: 60%;
+    opacity: 1;
+  }
+
+  /* Botón primario (antes .btn-primary) */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center px-4 py-2 text-sm font-semibold transition-colors;
+    border-radius: 14px;
+    background-color: var(--primaryColor);
+    border: 1px solid var(--primaryColorBorder);
+    color: var(--PrimaryTextColor);
+  }
+  .btn-primary:hover {
+    background-color: var(--primaryColorHover);
+    border: 1px solid var(--primaryColorBorder);
+    color: var(--PrimaryTextColor);
+  }
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 12px;
+    background-color: var(--PrimaryTextColor);
+    border-radius: 5px;
+    border: 1px solid var(--primaryColorBorder);
+    opacity: 0;
+    transition: width 0.3s ease, opacity 0.3s ease;
+  }
+  .btn-primary:hover::after { width: 60%; opacity: 1; }
+
+  /* Marcar botón seleccionado (mismo efecto decorativo visible) */
+  .btn-selected::after { width: 60%; opacity: 1; }
+
+  /* Íconos bootstrap (.bi) → solo padding-inline start */
+  .bi { padding-inline-start: 5px; }
+
+  /* Texto primario */
+  .text-primary { color: var(--primaryColor) !important; }
+
+  /* Stats strip */
+  .stats-strip {
+    @apply rounded-xl;
+    background-color: var(--bg-infoColor);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  }
+  .strip-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+  }
+  .kpi {
+    font-size: 1.8rem;
+    color: var(--primaryColor);
+    font-family: var(--font-primary);
+  }
+  .kpi-label {
+    font-size: 0.95rem;
+    color: var(--textColor);
+  }
+  .strip-divider {
+    width: 1px;
+    height: 40px;
+    background-color: var(--neutroColorBorder);
+  }
+
+  /* Navbar y títulos (puedes usar utilities en JSX, dejo alias por compatibilidad) */
+  .navbar { background-color: var(--componentsBG); }
+  .title { font-family: var(--font-primary); }
+
+  /* Cards / Features */
+  .feature-card {
+    background-color: var(--componentsBG);
+    border: 1px solid var(--boderComponents);
+    border-radius: 16px;
+    text-align: left;
+    box-shadow: var(--shadowComponents);
+  }
+  .feature-number .number-box {
+    transform: rotate(13deg);
+    padding: 1rem 2rem;
+    font-size: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: var(--font-primary);
+  }
+  .feature-underline {
+    width: 40px;
+    height: 6px;
+    border-radius: 10px;
+    background-color: var(--primaryColor);
+  }
+
+  /* Helpers */
+  .itemBackground { background-color: var(--componentsBG); }
+  .bg-primary    { background-color: var(--primaryColor) !important; }
+
+  /* Paleta helper (por compatibilidad) */
+  .bg-orange { background-color: #f15b2a; }
+  .bg-teal   { background-color: #247881; }
+  .bg-yellow { background-color: #f9a825; }
+
+  .text-orange { color: #f15b2a; }
+  .text-teal   { color: #247881; }
+  .text-yellow { color: #f9a825; }
+}

@@ -1,5 +1,5 @@
+// src/components/TaskList.jsx
 import React, { useState, useEffect, useContext, useMemo } from "react";
-//import "../styles/taskList.css";
 import { UserContext } from "../context/UserContext";
 import {
   doc,
@@ -248,13 +248,33 @@ function TaskList() {
     return `${minutes}m`;
   }
 
+  // helpers UI
+  const btnGhost =
+    "inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 active:bg-slate-200";
+  const btnOutline =
+    "inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100";
+  const btnPrimary =
+    "inline-flex items-center gap-2 rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 active:bg-slate-800/90";
+  const badgeByStatus = (s) => {
+    const base =
+      "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border";
+    const map = {
+      pending: "bg-amber-50 text-amber-700 border-amber-200",
+      progress: "bg-blue-50 text-blue-700 border-blue-200",
+      completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      missed: "bg-rose-50 text-rose-700 border-rose-200",
+    };
+    return `${base} ${map[s] || "bg-slate-50 text-slate-600 border-slate-200"}`;
+  };
+
   return (
-    <div className="taskListMain p-4">
+    <div className="p-4 md:p-6">
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
 
-      <div className="filterMenu" onClick={() => setEditTask(false)}>
+      {/* Filtros */}
+      <div className="mb-4" onClick={() => setEditTask(false)}>
         <TaskFilters
           filters={filters}
           setFilters={setFilters}
@@ -263,13 +283,14 @@ function TaskList() {
         />
       </div>
 
-      <div className="taskList">
-        <div className="taskMenu toolbar">
-          {/* Acciones primarias de la barra */}
-          <div className="toolbar-row">
+      <div className="space-y-3">
+        {/* Toolbar */}
+        <div className="rounded-xl border border-slate-200 bg-[var(--componentsBG)] p-3">
+          {/* Acciones primarias */}
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              className="tbtn tbtn-ghost"
+              className={btnGhost}
               onMouseEnter={() => setHoveredIcon("addPersonal")}
               onMouseLeave={() => setHoveredIcon("")}
               onClick={() => setShowPersonalForm((s) => !s)}
@@ -279,7 +300,7 @@ function TaskList() {
                 src={
                   hoveredIcon === "addPersonal" ? addPersonalHover : addPersonal
                 }
-                className="tbtn-icon"
+                className="h-5 w-5"
                 alt="Add Personal Task"
               />
               <span>Personal</span>
@@ -287,7 +308,7 @@ function TaskList() {
 
             <button
               type="button"
-              className="tbtn tbtn-ghost"
+              className={btnGhost}
               onMouseEnter={() => setHoveredIcon("addPublic")}
               onMouseLeave={() => setHoveredIcon("")}
               onClick={() => setShowPublicForm((s) => !s)}
@@ -295,7 +316,7 @@ function TaskList() {
             >
               <img
                 src={hoveredIcon === "addPublic" ? addPublicHover : addPublic}
-                className="tbtn-icon"
+                className="h-5 w-5"
                 alt="Add Public Task"
               />
               <span>Public</span>
@@ -304,23 +325,25 @@ function TaskList() {
 
           {/* Form personal */}
           {showPersonalForm && (
-            <PersonalTaskForm
-              onClose={() => setShowPersonalForm(false)}
-              onCreated={() => {}}
-            />
+            <div className="mt-3">
+              <PersonalTaskForm
+                onClose={() => setShowPersonalForm(false)}
+                onCreated={() => {}}
+              />
+            </div>
           )}
 
           {/* Acciones de la tarea seleccionada */}
           {actionTaskId === curretTask.id && (
             <div
-              className="taskActions toolbar-actions"
+              className="mt-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="toolbar-status">
-                <span className={`status-badge status-${curretTask.status}`}>
+              <div className="mb-2 flex items-center justify-between">
+                <span className={badgeByStatus(curretTask.status)}>
                   {curretTask.status}
                 </span>
-                <h3 className="toolbar-title">
+                <h3 className="text-sm font-medium text-slate-800">
                   {curretTask.status === "progress"
                     ? "This task is in progress"
                     : curretTask.status === "completed"
@@ -331,10 +354,10 @@ function TaskList() {
                 </h3>
               </div>
 
-              <div className="toolbar-row">
+              <div className="flex flex-wrap items-center gap-2">
                 {canChangeStatus(curretTask) ? (
                   curretTask.status === "missed" ? (
-                    <span className="toolbar-note danger">
+                    <span className="text-sm font-medium text-rose-700">
                       Esta tarea ya no se puede cambiar de estado.
                     </span>
                   ) : (
@@ -342,7 +365,7 @@ function TaskList() {
                       {curretTask.status === "pending" && (
                         <button
                           type="button"
-                          className="tbtn tbtn-outline"
+                          className={btnOutline}
                           onClick={() =>
                             updateTaskStatus(curretTask, "progress")
                           }
@@ -355,7 +378,7 @@ function TaskList() {
                         curretTask.status === "progress") && (
                         <button
                           type="button"
-                          className="tbtn tbtn-primary"
+                          className={btnPrimary}
                           onClick={() =>
                             updateTaskStatus(curretTask, "completed")
                           }
@@ -367,7 +390,7 @@ function TaskList() {
                       {curretTask.status !== "pending" && (
                         <button
                           type="button"
-                          className="tbtn tbtn-outline"
+                          className={btnOutline}
                           onClick={() =>
                             updateTaskStatus(curretTask, "pending")
                           }
@@ -378,7 +401,7 @@ function TaskList() {
                     </>
                   )
                 ) : (
-                  <span className="toolbar-note">
+                  <span className="text-sm text-slate-700">
                     No puedes cambiar el estado. Solo el asignado o un admin.
                   </span>
                 )}
@@ -388,7 +411,7 @@ function TaskList() {
                     curretTask.type === "personal")) && (
                   <button
                     type="button"
-                    className="tbtn tbtn-ghost"
+                    className={btnGhost}
                     onClick={() => {
                       if (editTask === curretTask.id) setEditTask("");
                       else {
@@ -403,7 +426,7 @@ function TaskList() {
 
                 <button
                   type="button"
-                  className="tbtn tbtn-ghost"
+                  className={btnGhost}
                   onClick={() => setActionTaskId("")}
                 >
                   Cancel
@@ -413,150 +436,203 @@ function TaskList() {
           )}
         </div>
 
-        <div className="w-100 rounded-4 d-flex justify-content-between align-items-center">
-          <div className="fw-bold fs-6">Task Name</div>
-          <div className="d-flex gap-5 align-items-center justify-content-center">
-            <span className="fw-bold fs-6 gross text-center">Complete by</span>
-            <span className="fw-bold fs-6 gross text-center">
-              Time Left to complete
-            </span>
-            <span className="fw-bold fs-6 gross text-center">Assigned to</span>
-            <span className="fw-bold fs-6 gross text-center">Priority</span>
-            <span className="fw-bold fs-6 gross text-center">Status</span>
+        {/* Encabezado de columnas */}
+        <div className="flex w-full items-center justify-between rounded-xl bg-white px-3 py-2 ring-1 ring-slate-200">
+          <div className="text-base font-semibold text-slate-800">
+            Task Name
+          </div>
+          <div className="flex items-center justify-center gap-8 text-slate-600">
+            <span className="text-sm font-semibold">Complete by</span>
+            <span className="text-sm font-semibold">Time Left to complete</span>
+            <span className="text-sm font-semibold">Assigned to</span>
+            <span className="text-sm font-semibold">Priority</span>
+            <span className="text-sm font-semibold">Status</span>
           </div>
         </div>
 
+        {/* Estados vacíos / aprobación */}
         {user.pendingApproval ? (
-          <div className="text-center my-5 w-100">
-            <h4 className="w-100 componentBackground p-3 rounded-4 border">
+          <div className="my-6 w-full text-center">
+            <h4 className="w-full rounded-xl border bg-[var(--componentsBG)] p-3">
               You will be able to view your tasks once your account has been
               approved.
             </h4>
           </div>
         ) : filteredTasks.length === 0 ? (
-          <div className="divPlaceholder border w-100 rounded-4 h-25 d-flex align-items-center justify-content-center">
-            <h3>No tienes tareas aún.</h3>
+          <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
+            <h3 className="text-lg font-medium text-slate-700">
+              No tienes tareas aún.
+            </h3>
           </div>
         ) : (
-          filteredTasks.map((task) => (
-            <div
-              key={task.id}
-              onClick={() => {
-                if (editTask) return;
-                setActionTaskId(task.id);
-                setCurrentTask(task);
-              }}
-              className={`${editTask === task.id && "editing"} ${
-                actionTaskId === task.id && "selected"
-              } w-100 componentBackground my-2 rounded-4 d-flex flex-column justify-content-between align-items-center`}
-            >
-              <div className="w-100 my-2 rounded-4 d-flex justify-content-between align-items-center">
-                <div className="fw-bold fs-4 px-2">
-                  <img
-                    src={task.type === "public" ? Public : Personal}
-                    className="iconTask"
-                    alt="Task type"
-                  />
-                  {task.taskName}
-                  {task.notes && (
+          filteredTasks.map((task) => {
+            const isSelected = actionTaskId === task.id;
+            const isEditing = editTask === task.id;
+            return (
+              <div
+                key={task.id}
+                onClick={() => {
+                  if (editTask) return;
+                  setActionTaskId(task.id);
+                  setCurrentTask(task);
+                }}
+                className={[
+                  "my-1 w-full rounded-xl bg-[var(--componentsBG)]",
+                  "flex flex-col items-center justify-between",
+                  "ring-1 ring-slate-200 transition-shadow",
+                  isEditing
+                    ? "ring-2 ring-slate-400 shadow-sm"
+                    : isSelected
+                    ? "ring-2 ring-blue-400 shadow-sm"
+                    : "",
+                ].join(" ")}
+              >
+                <div className="my-2 flex w-full items-center justify-between rounded-xl px-2">
+                  {/* Nombre y tipo */}
+                  <div className="px-2 text-lg font-semibold text-slate-800">
                     <img
-                      src={hoveredIcon === `note-${task.id}` ? noteHover : note}
-                      onMouseEnter={() => setHoveredIcon(`note-${task.id}`)}
-                      onMouseLeave={() => setHoveredIcon("")}
-                      className="iconTask"
-                      alt="Note"
+                      src={task.type === "public" ? Public : Personal}
+                      className="mr-2 inline-block h-5 w-5 align-[-2px]"
+                      alt="Task type"
                     />
-                  )}
+                    {task.taskName}
+                    {task.notes && (
+                      <img
+                        src={
+                          hoveredIcon === `note-${task.id}` ? noteHover : note
+                        }
+                        onMouseEnter={() => setHoveredIcon(`note-${task.id}`)}
+                        onMouseLeave={() => setHoveredIcon("")}
+                        className="ml-2 inline-block h-5 w-5 align-[-2px]"
+                        alt="Note"
+                      />
+                    )}
+                  </div>
+
+                  {/* Metadatos derecha */}
+                  <div className="flex items-center gap-8">
+                    {/* completeBy */}
+                    <div className="flex flex-col items-center">
+                      <span className="text-sm font-semibold text-slate-700">
+                        {task.completeBy}
+                      </span>
+                    </div>
+
+                    {/* time left */}
+                    <div className="flex flex-col items-center">
+                      <span className="text-lg font-semibold text-emerald-600">
+                        {getTimeLeft(task.completeBy)}
+                      </span>
+                    </div>
+
+                    {/* assignedTo */}
+                    <div className="flex flex-col items-center">
+                      <img
+                        src={userMap[task.assignedTo]?.photo || samplePhoto}
+                        className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
+                        alt="Assignee"
+                      />
+                      <span className="text-sm font-semibold text-slate-700">
+                        {userMap[task.assignedTo]?.name || "Unassigned"}
+                      </span>
+                    </div>
+
+                    {/* priority */}
+                    <div className="flex flex-col items-center">
+                      <img
+                        src={priorityIcons[task.priority] || ""}
+                        className="h-5 w-5"
+                        alt="Priority"
+                      />
+                      <span className="text-sm font-semibold text-slate-700 capitalize">
+                        {task.priority}
+                      </span>
+                    </div>
+
+                    {/* status */}
+                    <div className="flex flex-col items-center">
+                      <img
+                        src={statusIcon[task.status] || ""}
+                        className="h-5 w-5"
+                        alt="Status"
+                      />
+                      <span className="text-sm font-semibold text-slate-700 capitalize">
+                        {task.status}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="d-flex gap-5 align-items-center">
-                  <div className="d-flex flex-column align-items-center gross">
-                    <span className="fw-bold fs-6">{task.completeBy}</span>
+                {/* Confirm delete */}
+                {deleteTaskId === task.id && (
+                  <div className="mx-2 mb-3 w-[calc(100%-1rem)] rounded-lg border border-slate-200 bg-white p-3 text-slate-800 shadow-sm">
+                    <h3 className="mb-2 text-sm font-medium">
+                      Seguro que quieren eliminar la tarea
+                    </h3>
+                    <div className="flex gap-2">
+                      <button
+                        className={btnPrimary}
+                        onClick={async () => {
+                          try {
+                            if (task.status === "progress") {
+                              alert(
+                                "No puedes eliminar una tarea en progreso."
+                              );
+                              setDeleteTaskId(null);
+                              return;
+                            }
+                            const isAdmin = user.role === "admin";
+                            const isMyPersonal =
+                              task.type === "personal" &&
+                              task.createdBy === user.uid;
+                            if (!isAdmin && !isMyPersonal) {
+                              alert(
+                                "No tienes permiso para eliminar esta tarea."
+                              );
+                              setDeleteTaskId(null);
+                              return;
+                            }
+                            await deleteDoc(doc(db, "tasks", task.id));
+                            setDeleteTaskId(null);
+                            setEditTask("");
+                          } catch (err) {
+                            console.error("Error al eliminar la tarea:", err);
+                            alert("No se pudo eliminar. Revisa la consola.");
+                          }
+                        }}
+                      >
+                        Delete
+                      </button>
+                      <button
+                        className={btnOutline}
+                        onClick={() => setDeleteTaskId(null)}
+                      >
+                        Keep
+                      </button>
+                    </div>
                   </div>
-                  <div className="d-flex flex-column align-items-center gross">
-                    <span className="fw-bold fs-4 text-success">
-                      {getTimeLeft(task.completeBy)}
-                    </span>
-                  </div>
-                  <div className="d-flex flex-column align-items-center gross">
-                    <img
-                      src={userMap[task.assignedTo]?.photo || samplePhoto}
-                      className="taskPicAssi rounded-5 border border-2 border-primary"
+                )}
+
+                {/* Editor */}
+                {editTask === task.id && (
+                  <div className="w-full px-2 pb-3">
+                    <TaskEditor
+                      task={task}
+                      user={user}
+                      userMap={userMap}
+                      priorityIcons={priorityIcons}
+                      statusIcon={statusIcon}
+                      statusIconImg={statusIconImg}
+                      calendarIcon={calendarIcon}
+                      titleIcon={titleIcon}
+                      onClose={() => setEditTask("")}
+                      onDelete={() => setDeleteTaskId(task.id)}
                     />
-                    <span className="fw-bold fs-6">
-                      {userMap[task.assignedTo]?.name || "Unassigned"}
-                    </span>
                   </div>
-                  <div className="d-flex flex-column align-items-center gross">
-                    <img
-                      src={priorityIcons[task.priority] || ""}
-                      className="priorityIcon"
-                    />
-                    <span className="fw-bold fs-6">{task.priority}</span>
-                  </div>
-                  <div className="d-flex flex-column align-items-center gross">
-                    <img
-                      src={statusIcon[task.status] || ""}
-                      className="statusIcon"
-                    />
-                    <span className="fw-bold fs-6">{task.status}</span>
-                  </div>
-                </div>
+                )}
               </div>
-
-              {/* Confirm delete */}
-              {deleteTaskId === task.id && (
-                <div className="deleteTaskConfim">
-                  <h3>Seguro que quieren eliminar la tarea</h3>
-                  <button
-                    onClick={async () => {
-                      try {
-                        if (task.status === "progress") {
-                          alert("No puedes eliminar una tarea en progreso.");
-                          setDeleteTaskId(null);
-                          return;
-                        }
-                        const isAdmin = user.role === "admin";
-                        const isMyPersonal =
-                          task.type === "personal" &&
-                          task.createdBy === user.uid;
-                        if (!isAdmin && !isMyPersonal) {
-                          alert("No tienes permiso para eliminar esta tarea.");
-                          setDeleteTaskId(null);
-                          return;
-                        }
-                        await deleteDoc(doc(db, "tasks", task.id));
-                        setDeleteTaskId(null);
-                        setEditTask("");
-                      } catch (err) {
-                        console.error("Error al eliminar la tarea:", err);
-                        alert("No se pudo eliminar. Revisa la consola.");
-                      }
-                    }}
-                  >
-                    Delete
-                  </button>
-                  <button onClick={() => setDeleteTaskId(null)}>Keep</button>
-                </div>
-              )}
-
-              {/* Editor */}
-              {editTask === task.id && (
-                <TaskEditor
-                  task={task}
-                  user={user}
-                  userMap={userMap}
-                  priorityIcons={priorityIcons}
-                  statusIcon={statusIcon}
-                  statusIconImg={statusIconImg}
-                  calendarIcon={calendarIcon}
-                  titleIcon={titleIcon}
-                  onClose={() => setEditTask("")}
-                  onDelete={() => setDeleteTaskId(task.id)}
-                />
-              )}
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
