@@ -1,6 +1,5 @@
 // src/components/TopBar.jsx
 import React, { useContext, useEffect, useMemo, useState } from "react";
-//import "../styles/topBar.css";
 import TaskEstadistic from "./miniComponents/TaskEstadistic";
 import { UserContext } from "../context/UserContext";
 import { useNavigate, NavLink } from "react-router-dom";
@@ -52,16 +51,14 @@ function TopBar() {
     return () => unsub();
   }, [user?.companyId]);
 
-  // 3) When we have a valid logoUrl, persist it to localStorage IF MISSING
+  // 3) Persist logo to localStorage IF MISSING
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!logoUrl || logoUrl === logoFallback) return;
 
-    // Save generic key
     if (!localStorage.getItem(baseLogoKey)) {
       localStorage.setItem(baseLogoKey, logoUrl);
     }
-    // Save namespaced key (per company) if available
     if (scopedLogoKey && !localStorage.getItem(scopedLogoKey)) {
       localStorage.setItem(scopedLogoKey, logoUrl);
     }
@@ -72,90 +69,139 @@ function TopBar() {
     navigate("/");
   }
 
+  const roleBadgeClasses = useMemo(() => {
+    const r = (user?.role || "").toLowerCase();
+    const base =
+      "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium";
+    const palette = {
+      admin: "bg-red-100 text-red-700 border-red-200",
+      manager: "bg-amber-100 text-amber-700 border-amber-200",
+      member: "bg-blue-100 text-blue-700 border-blue-200",
+      guest: "bg-slate-100 text-slate-600 border-slate-200",
+    };
+    return `${base} ${
+      palette[r] || "bg-slate-100 text-slate-700 border-slate-200"
+    }`;
+  }, [user?.role]);
+
+  const navLinkClasses = ({ isActive }) =>
+    [
+      "transition-colors rounded-md px-3 py-2 text-sm font-medium",
+      isActive
+        ? "text-slate-900 bg-slate-100"
+        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
+    ].join(" ");
+
   return (
-    <header className="tb-wrapper">
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur supports-[backdrop-filter]:backdrop-blur border-b">
       {/* Top row */}
-      <div className="tb-bar">
-        {/* Brand (logo + app) */}
-        <div
-          className="tb-brand"
-          onClick={() => navigate("/dashboard")}
-          role="button"
-          tabIndex={0}
-        >
-          <img
-            className="tb-logo"
-            src={logoUrl || logoFallback}
-            alt="Company"
-          />
-          <div className="tb-brand-text">
-            <strong>Task-Hub</strong>
-            <span className="tb-company">{user?.companyId || "—"}</span>
-          </div>
-        </div>
-
-        {/* Center nav (desktop) */}
-        <nav className="tb-nav">
-          <NavLink to="/dashboard" className="tb-link">
-            Dashboard
-          </NavLink>
-          <NavLink to="/settings" className="tb-link">
-            Settings
-          </NavLink>
-          <NavLink to="/messages" className="tb-link">
-            Messages
-          </NavLink>
-        </nav>
-
-        {/* User block */}
-        <div className="tb-user">
-          <div className="tb-user-info">
-            <span className="tb-user-name">{userName}</span>
-            {user?.role && (
-              <span className={`tb-role tb-role--${user.role}`}>
-                {user.role}
-              </span>
-            )}
-          </div>
-          <img className="tb-avatar" src={userPhoto} alt="Avatar" />
-          <button className="tb-logout" onClick={handleLogout}>
-            Logout
-          </button>
-
-          {/* Mobile menu toggle */}
-          <button
-            className="tb-burger"
-            aria-label="Open menu"
-            onClick={() => setMenuOpen((v) => !v)}
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="flex h-14 items-center justify-between gap-3">
+          {/* Brand (logo + app) */}
+          <div
+            className="flex items-center gap-3 cursor-pointer select-none"
+            onClick={() => navigate("/dashboard")}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && navigate("/dashboard")}
           >
-            <span />
-            <span />
-            <span />
-          </button>
+            <img
+              className="h-9 w-9 rounded-lg object-contain bg-white ring-1 ring-black/5"
+              src={logoUrl || logoFallback}
+              alt="Company"
+            />
+            <div className="leading-tight">
+              <strong className="block text-sm font-semibold tracking-tight text-slate-900">
+                Task-Hub
+              </strong>
+              <span className="block text-xs text-slate-500">
+                {user?.companyId || "—"}
+              </span>
+            </div>
+          </div>
+
+          {/* Center nav (desktop) */}
+          <nav className="hidden md:flex items-center gap-1">
+            <NavLink to="/dashboard" className={navLinkClasses}>
+              Dashboard
+            </NavLink>
+            <NavLink to="/settings" className={navLinkClasses}>
+              Settings
+            </NavLink>
+            <NavLink to="/messages" className={navLinkClasses}>
+              Messages
+            </NavLink>
+          </nav>
+
+          {/* User block */}
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex flex-col items-end leading-tight">
+              <span className="text-sm font-medium text-slate-900">
+                {userName}
+              </span>
+              {user?.role && (
+                <span className={roleBadgeClasses}>{user.role}</span>
+              )}
+            </div>
+            <img
+              className="h-9 w-9 rounded-full object-cover ring-1 ring-slate-200"
+              src={userPhoto}
+              alt="Avatar"
+            />
+
+            {/* Logout (desktop) */}
+            <button
+              className="hidden md:inline-flex items-center rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+
+            {/* Mobile menu toggle */}
+            <button
+              className="md:hidden inline-flex flex-col gap-1.5 p-2 rounded-md hover:bg-slate-100"
+              aria-label="Open menu"
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              <span className="h-0.5 w-5 bg-slate-700 rounded" />
+              <span className="h-0.5 w-5 bg-slate-700 rounded" />
+              <span className="h-0.5 w-5 bg-slate-700 rounded" />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Mobile nav */}
       {menuOpen && (
-        <nav className="tb-nav-mobile" onClick={() => setMenuOpen(false)}>
-          <NavLink to="/dashboard" className="tb-link">
-            Dashboard
-          </NavLink>
-          <NavLink to="/settings" className="tb-link">
-            Settings
-          </NavLink>
-          <NavLink to="/messages" className="tb-link">
-            Messages
-          </NavLink>
-          <button className="tb-logout w-100" onClick={handleLogout}>
-            Logout
-          </button>
+        <nav
+          className="md:hidden border-t bg-white shadow-sm"
+          onClick={() => setMenuOpen(false)}
+        >
+          <div className="mx-auto max-w-7xl px-3 py-2 flex flex-col gap-1">
+            <NavLink to="/dashboard" className={navLinkClasses}>
+              Dashboard
+            </NavLink>
+            <NavLink to="/settings" className={navLinkClasses}>
+              Settings
+            </NavLink>
+            <NavLink to="/messages" className={navLinkClasses}>
+              Messages
+            </NavLink>
+            <button
+              className="mt-1 inline-flex w-full justify-center rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
         </nav>
       )}
 
       {/* Stats row */}
-      <div className="tb-stats">
-        <TaskEstadistic />
+      <div className="border-t bg-white">
+        <div className="mx-auto max-w-7xl px-4 md:px-6 py-3">
+          <TaskEstadistic />
+        </div>
       </div>
     </header>
   );
