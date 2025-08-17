@@ -16,7 +16,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="dashboard">
+    <div className="bg-pages w-screen h-screen">
       <TopBar />
       <TaskList />
     </div>
