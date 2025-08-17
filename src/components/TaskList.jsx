@@ -273,7 +273,7 @@ function TaskList() {
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
 
-      {/* Filtros */}
+      {/* Filtros*/}
       <div className="mb-4" onClick={() => setEditTask(false)}>
         <TaskFilters
           filters={filters}
