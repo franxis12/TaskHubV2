@@ -93,11 +93,25 @@ function TopBar() {
     ].join(" ");
 
   return (
+    <>
+      <div className="grid grid-cols-5 gap-2 bg-white">
+        <div className="bg-amber-200 h-14 w-auto rounded-2xl">
+          <img
+            className="h-9 w-auto p-1 rounded-lg object-contain bg-white ring-1 ring-black/5"
+            src={logoUrl || logoFallback}
+            alt="Company"
+          />
+        </div>
+        <div className="bg-amber-950 h-14 w-auto rounded-2xl col-span-3"></div>
+        <div className="bg-blue-600 h-14 w-auto rounded-2xl"></div>
+      </div>
+
+      {/*
     <header className="sticky top-0">
-      {/* Top row */}
+      {/* Top row *
       <div className="mx-auto max-w-9xl px-4 md:px-6 bg-component">
         <div className="flex h-14 items-center justify-between gap-3 ">
-          {/* Brand (logo + app) */}
+          {/* Brand (logo + app) *
           <div
             className="flex items-center gap-3 cursor-pointer select-none"
             onClick={() => navigate("/dashboard")}
@@ -121,7 +135,7 @@ function TopBar() {
             </div>
           </div>
 
-          {/* Center nav (desktop) */}
+          {/* Center nav (desktop) *
           <nav className="hidden md:flex items-center gap-1">
             <NavLink to="/dashboard" className={navLinkClasses}>
               Dashboard
@@ -134,7 +148,7 @@ function TopBar() {
             </NavLink>
           </nav>
 
-          {/* User block */}
+          {/* User block *
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex flex-col items-end leading-tight">
               <span className="text-sm font-medium text-slate-900 tx-color">
@@ -150,7 +164,7 @@ function TopBar() {
               alt="Avatar"
             />
 
-            {/* Logout (desktop) */}
+            {/* Logout (desktop) *
             <button
               className="btn tx-color hidden md:inline-flex items-center   px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
               onClick={handleLogout}
@@ -158,7 +172,7 @@ function TopBar() {
               Logout
             </button>
 
-            {/* Mobile menu toggle */}
+            {/* Mobile menu toggle *
             <button
               className="md:hidden inline-flex flex-col gap-1.5 btn-primary p-2 rounded-md hover:bg-slate-100"
               aria-label="Open menu"
@@ -172,7 +186,7 @@ function TopBar() {
         </div>
       </div>
 
-      {/* Mobile nav */}
+      {/* Mobile nav *
       {menuOpen && (
         <nav
           className="md:hidden border-t bg-white shadow-sm"
@@ -198,13 +212,14 @@ function TopBar() {
         </nav>
       )}
 
-      {/* Stats row */}
-      <div className="border-t bg-pages ">
+      {/* Stats row *
+      <div className="border-t bg-pages">
         <div className="mx-auto max-w-7xl px-4 md:px-6 py-3">
           <TaskEstadistic />
         </div>
       </div>
-    </header>
+    </header>*/}
+    </>
   );
 }
 
