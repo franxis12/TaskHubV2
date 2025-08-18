@@ -61,7 +61,7 @@
     --font-secondary: 'Baloo Da 2', cursive;
     --textColor: #4D4D4D;
 
-    --pagesBackground: #f1f1f1;
+    --pagesBackground: #ffffff;
 
     --neutroColor: #ffffff00;
     --neutroColorBorder: #3333337a;
@@ -244,13 +244,20 @@
   .bg-primary {background-color: var(--primaryColor) !important; }
   .bg-pages { background-color: var(--pagesBackground);}
   .tx-color{ color: var(--textColor) !important;}
-
+  .bg-color{background-color: var(--pagesBackground);}
   
-
   /* Paleta helper (por compatibilidad) */
   .bg-orange { background-color: #f15b2a; }
   .bg-teal   { background-color: #247881; }
   .bg-yellow { background-color: #f9a825; }
+
+  .bg-orange-trasparent { background-color: #f15c2a7c; }
+  .bg-teal-trasparent   { background-color: #2478817a; }
+  .bg-yellow-trasparent { background-color: #f9a8256d; }
+
+  .border-orange-2{ border: solid 2px  #f15b2a;}
+  .border-teal-2{ border: solid 2px  #247881;}
+  .border-Yellow-2{ border: solid 2px  #f9a825;}
 
   .text-orange { color: #f15b2a; }
   .text-teal   { color: #247881; }

@@ -74,9 +74,9 @@ function TopBar() {
     const base =
       "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium";
     const palette = {
-      admin: "bg-slate-500 text-slate-700 border-slate-200",
+      admin: "bg-orange-trasparent border-orange-2 text-orange",
       manager: "bg-amber-500 text-amber-700 border-amber-200",
-      member: "bg-blue-500 text-blue-700 border-blue-200",
+      member: "bg-teal-trasparent border-teal-2 text-teal",
       guest: "bg-red-500 text-red-600 border-red-200",
     };
     return `${base} ${
@@ -94,16 +94,60 @@ function TopBar() {
 
   return (
     <>
-      <div className="grid grid-cols-5 gap-2 bg-white">
-        <div className="bg-amber-200 h-14 w-auto rounded-2xl">
+      <div className="grid grid-cols-7 gap-2 bg-color">
+        <div className=" h-14 w-auto rounded-2xl flex items-center p-3 col-span-2">
           <img
-            className="h-9 w-auto p-1 rounded-lg object-contain bg-white ring-1 ring-black/5"
+            className="h-9 w-auto p-1 rounded-lg object-contain ring-black/5"
             src={logoUrl || logoFallback}
             alt="Company"
           />
+          <div className="leading-tight">
+            <strong className="block text-base tx-color font-semibold tracking-tight text-slate-900">
+              Taskitin.com
+            </strong>
+            <span className="block text-xs text-slate-500">
+              {user?.companyId ||
+                "No companyId assigned please contact suppport"}
+            </span>
+          </div>
         </div>
-        <div className="bg-amber-950 h-14 w-auto rounded-2xl col-span-3"></div>
-        <div className="bg-blue-600 h-14 w-auto rounded-2xl"></div>
+        <div className="h-14 w-auto rounded-2xl col-span-3">
+          {/* Search Bar*/}
+        </div>
+        <div className="h-14 w-auto  flex items-centers justify-end col-span-2 ">
+          <div className="flex items-center gap-3 p-3">
+            <div className="hidden sm:flex flex-col items-end leading-tight">
+              <span className="text-sm font-medium text-slate-900 tx-color">
+                {userName}
+              </span>
+              {user?.role && (
+                <span className={roleBadgeClasses}>{user.role}</span>
+              )}
+            </div>
+            <img
+              className="h-9 w-9 rounded-full object-cover border-2 ring-1 ring-slate-200"
+              src={userPhoto}
+              alt="Avatar"
+            />
+            /{/* Logout (desktop) */}
+            <button
+              className="btn tx-color hidden md:inline-flex items-center   px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+            {/* Mobile menu toggle */}
+            <button
+              className="md:hidden inline-flex flex-col gap-1.5 btn-primary p-2 rounded-md hover:bg-slate-100"
+              aria-label="Open menu"
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              <span className="h-0.5 w-5 bg-slate-700 rounded" />
+              <span className="h-0.5 w-5 bg-slate-700 rounded" />
+              <span className="h-0.5 w-5 bg-slate-700 rounded" />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/*
