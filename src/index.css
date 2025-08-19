@@ -1,6 +1,10 @@
 /* src/styles/tailwind-overrides.css */
 @import "tailwindcss";
 
+body{
+  overflow: hidden;
+}
+
 /* === Variables (dark / light) sin cambios === */
 :root {
   --primaryBlue: #35a7ff;
@@ -23,8 +27,8 @@
   --shadowComponents: 0 4px 4px #ffffff33;
 
   /* New Complete Style */
-  --font-primary: 'Baloo Da', cursive;
-  --font-secondary: 'Baloo Da 2', cursive;
+  --font-primary: 'Inter', cursive;
+  --font-secondary: 'Inter', cursive;
   --textColor: #fff;
   --pagesBackground: #1a1a1a;
 
@@ -34,9 +38,9 @@
 
   --bg-infoColor: #121212;
 
-  --primaryColor: #EF6438;
-  --primaryColorBorder: #c3502d;
-  --primaryColorHover: hsl(14, 100%, 54%);
+  --primaryColor: #6837F4;
+  --primaryColorBorder: #ffffff;
+  --primaryColorHover: #5029b9;
   --PrimaryTextColor: #fff;
 }
 
@@ -44,7 +48,7 @@
   :root{
     --primaryBlue: #35a7ff;
     --secondaryBlue: #38618c;
-    --componentsBG: #fff;
+    --componentsBG: #C6CAD2;
     --dangerActionsRed: #ff5964;
     --warnignActionsYellow: #ffdd00;
     --borderYellow: #ffd46f79;
@@ -57,9 +61,9 @@
     --shadowComponents: 0 2px 2px #2c6881a7;
 
     /* New Complete Style */
-    --font-primary: 'Baloo Da', cursive;
-    --font-secondary: 'Baloo Da 2', cursive;
-    --textColor: #4D4D4D;
+    --font-primary: 'Inter', cursive;
+    --font-secondary: 'Inter', cursive;
+    --textColor: #000000;
 
     --pagesBackground: #ffffff;
 
@@ -69,9 +73,9 @@
 
     --bg-infoColor: #FEE1B4;
 
-    --primaryColor: #EF6438;
-    --primaryColorBorder: #c3502d; 
-    --primaryColorHover: hsl(14, 100%, 54%);
+    --primaryColor: #000000;
+    --primaryColorBorder: #6837F4; 
+    --primaryColorHover: #5029b9;
     --PrimaryTextColor: #fff;
   }
 }
@@ -245,7 +249,7 @@
   .bg-pages { background-color: var(--pagesBackground);}
   .tx-color{ color: var(--textColor) !important;}
   .bg-color{background-color: var(--pagesBackground);}
-  
+
   /* Paleta helper (por compatibilidad) */
   .bg-orange { background-color: #f15b2a; }
   .bg-teal   { background-color: #247881; }
@@ -262,4 +266,10 @@
   .text-orange { color: #f15b2a; }
   .text-teal   { color: #247881; }
   .text-yellow { color: #f9a825; }
+
+  /**/
+  .mainSection{
+   width: 90vw;
+   padding: 10px;
+  }
 }

@@ -64,7 +64,7 @@ function TaskFilters({
     "placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400";
 
   return (
-    <div className="w-full mb-3 rounded-xl bg-[var(--componentsBG)] p-4 ring-1 ring-slate-200">
+    <div className="w-auto mb-3 rounded-xl bg-[var(--componentsBG)] p-4 ring-1 ring-slate-200">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
         {/* Search */}
         <div className="md:col-span-3">

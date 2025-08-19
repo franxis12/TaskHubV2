@@ -268,10 +268,156 @@ function TaskList() {
   };
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-2 w-full bg bg-component rounded-2xl h-auto">
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
+      {/* Toolbar */}
+      <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2">
+        {/* Acciones primarias */}
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onMouseEnter={() => setHoveredIcon("addPersonal")}
+            onMouseLeave={() => setHoveredIcon("")}
+            onClick={() => setShowPersonalForm((s) => !s)}
+            title="Nueva tarea personal"
+          >
+            <img
+              src={
+                hoveredIcon === "addPersonal" ? addPersonalHover : addPersonal
+              }
+              className="h-5 w-5"
+              alt="Add Personal Task"
+            />
+            <span>Personal</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            onMouseEnter={() => setHoveredIcon("addPublic")}
+            onMouseLeave={() => setHoveredIcon("")}
+            onClick={() => setShowPublicForm((s) => !s)}
+            title="Nueva tarea pública"
+          >
+            <img
+              src={hoveredIcon === "addPublic" ? addPublicHover : addPublic}
+              className="h-5 w-5"
+              alt="Add Public Task"
+            />
+            <span>Public</span>
+          </button>
+        </div>
+
+        {/* Form personal */}
+        {showPersonalForm && (
+          <div className="mt-3">
+            <PersonalTaskForm
+              onClose={() => setShowPersonalForm(false)}
+              onCreated={() => {}}
+            />
+          </div>
+        )}
+
+        {/* Acciones de la tarea seleccionada */}
+        {actionTaskId === curretTask.id && (
+          <div
+            className="mt-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-2 flex items-center justify-between">
+              <span className={badgeByStatus(curretTask.status)}>
+                {curretTask.status}
+              </span>
+              <h3 className="text-sm font-medium text-slate-800">
+                {curretTask.status === "progress"
+                  ? "This task is in progress"
+                  : curretTask.status === "completed"
+                  ? "This task is completed"
+                  : curretTask.status === "missed"
+                  ? "This task is missed"
+                  : "This task is pending"}
+              </h3>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {canChangeStatus(curretTask) ? (
+                curretTask.status === "missed" ? (
+                  <span className="text-sm font-medium text-rose-700">
+                    Esta tarea ya no se puede cambiar de estado.
+                  </span>
+                ) : (
+                  <>
+                    {curretTask.status === "pending" && (
+                      <button
+                        type="button"
+                        className={btnOutline}
+                        onClick={() => updateTaskStatus(curretTask, "progress")}
+                      >
+                        Start
+                      </button>
+                    )}
+
+                    {(curretTask.status === "pending" ||
+                      curretTask.status === "progress") && (
+                      <button
+                        type="button"
+                        className={btnPrimary}
+                        onClick={() =>
+                          updateTaskStatus(curretTask, "completed")
+                        }
+                      >
+                        Complete
+                      </button>
+                    )}
+
+                    {curretTask.status !== "pending" && (
+                      <button
+                        type="button"
+                        className={btnOutline}
+                        onClick={() => updateTaskStatus(curretTask, "pending")}
+                      >
+                        Set Pending
+                      </button>
+                    )}
+                  </>
+                )
+              ) : (
+                <span className="text-sm text-slate-700">
+                  No puedes cambiar el estado. Solo el asignado o un admin.
+                </span>
+              )}
+
+              {(user.role === "admin" ||
+                (user.role === "member" && curretTask.type === "personal")) && (
+                <button
+                  type="button"
+                  className={btnGhost}
+                  onClick={() => {
+                    if (editTask === curretTask.id) setEditTask("");
+                    else {
+                      setEditTask(curretTask.id);
+                      setActionTaskId("");
+                    }
+                  }}
+                >
+                  {editTask === curretTask.id ? "Close Editor" : "Edit"}
+                </button>
+              )}
+
+              <button
+                type="button"
+                className={btnGhost}
+                onClick={() => setActionTaskId("")}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Filtros*/}
       <div className="mb-4" onClick={() => setEditTask(false)}>
@@ -284,158 +430,6 @@ function TaskList() {
       </div>
 
       <div className="space-y-3">
-        {/* Toolbar */}
-        <div className="rounded-xl border border-slate-200 bg-[var(--componentsBG)] p-3">
-          {/* Acciones primarias */}
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              className={btnGhost}
-              onMouseEnter={() => setHoveredIcon("addPersonal")}
-              onMouseLeave={() => setHoveredIcon("")}
-              onClick={() => setShowPersonalForm((s) => !s)}
-              title="Nueva tarea personal"
-            >
-              <img
-                src={
-                  hoveredIcon === "addPersonal" ? addPersonalHover : addPersonal
-                }
-                className="h-5 w-5"
-                alt="Add Personal Task"
-              />
-              <span>Personal</span>
-            </button>
-
-            <button
-              type="button"
-              className={btnGhost}
-              onMouseEnter={() => setHoveredIcon("addPublic")}
-              onMouseLeave={() => setHoveredIcon("")}
-              onClick={() => setShowPublicForm((s) => !s)}
-              title="Nueva tarea pública"
-            >
-              <img
-                src={hoveredIcon === "addPublic" ? addPublicHover : addPublic}
-                className="h-5 w-5"
-                alt="Add Public Task"
-              />
-              <span>Public</span>
-            </button>
-          </div>
-
-          {/* Form personal */}
-          {showPersonalForm && (
-            <div className="mt-3">
-              <PersonalTaskForm
-                onClose={() => setShowPersonalForm(false)}
-                onCreated={() => {}}
-              />
-            </div>
-          )}
-
-          {/* Acciones de la tarea seleccionada */}
-          {actionTaskId === curretTask.id && (
-            <div
-              className="mt-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="mb-2 flex items-center justify-between">
-                <span className={badgeByStatus(curretTask.status)}>
-                  {curretTask.status}
-                </span>
-                <h3 className="text-sm font-medium text-slate-800">
-                  {curretTask.status === "progress"
-                    ? "This task is in progress"
-                    : curretTask.status === "completed"
-                    ? "This task is completed"
-                    : curretTask.status === "missed"
-                    ? "This task is missed"
-                    : "This task is pending"}
-                </h3>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                {canChangeStatus(curretTask) ? (
-                  curretTask.status === "missed" ? (
-                    <span className="text-sm font-medium text-rose-700">
-                      Esta tarea ya no se puede cambiar de estado.
-                    </span>
-                  ) : (
-                    <>
-                      {curretTask.status === "pending" && (
-                        <button
-                          type="button"
-                          className={btnOutline}
-                          onClick={() =>
-                            updateTaskStatus(curretTask, "progress")
-                          }
-                        >
-                          Start
-                        </button>
-                      )}
-
-                      {(curretTask.status === "pending" ||
-                        curretTask.status === "progress") && (
-                        <button
-                          type="button"
-                          className={btnPrimary}
-                          onClick={() =>
-                            updateTaskStatus(curretTask, "completed")
-                          }
-                        >
-                          Complete
-                        </button>
-                      )}
-
-                      {curretTask.status !== "pending" && (
-                        <button
-                          type="button"
-                          className={btnOutline}
-                          onClick={() =>
-                            updateTaskStatus(curretTask, "pending")
-                          }
-                        >
-                          Set Pending
-                        </button>
-                      )}
-                    </>
-                  )
-                ) : (
-                  <span className="text-sm text-slate-700">
-                    No puedes cambiar el estado. Solo el asignado o un admin.
-                  </span>
-                )}
-
-                {(user.role === "admin" ||
-                  (user.role === "member" &&
-                    curretTask.type === "personal")) && (
-                  <button
-                    type="button"
-                    className={btnGhost}
-                    onClick={() => {
-                      if (editTask === curretTask.id) setEditTask("");
-                      else {
-                        setEditTask(curretTask.id);
-                        setActionTaskId("");
-                      }
-                    }}
-                  >
-                    {editTask === curretTask.id ? "Close Editor" : "Edit"}
-                  </button>
-                )}
-
-                <button
-                  type="button"
-                  className={btnGhost}
-                  onClick={() => setActionTaskId("")}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Encabezado de columnas */}
         <div className="flex w-full items-center justify-between rounded-xl bg-white px-3 py-2 ring-1 ring-slate-200">
           <div className="text-base font-semibold text-slate-800">

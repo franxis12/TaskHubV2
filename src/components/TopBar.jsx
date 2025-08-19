@@ -15,28 +15,13 @@ function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const userPhoto = user?.photo || samplePhoto;
+
   const userName = useMemo(() => {
     const full = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
     return full || (user?.email ?? "User");
   }, [user]);
 
-  // Keys for localStorage
-  const baseLogoKey = "companyLogo";
-  const scopedLogoKey = useMemo(
-    () => (user?.companyId ? `companyLogo:${user.companyId}` : null),
-    [user?.companyId]
-  );
-
-  // 1) Seed from localStorage immediately if present (prevents flicker)
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const stored =
-      localStorage.getItem(baseLogoKey) ||
-      (scopedLogoKey ? localStorage.getItem(scopedLogoKey) : null);
-    if (stored) setLogoUrl(stored);
-  }, [scopedLogoKey]);
-
-  // 2) Subscribe to company doc to get live logo updates
+  // Suscripción en vivo al logo de la compañía (solo DB)
   useEffect(() => {
     if (!user?.companyId) {
       setLogoUrl(logoFallback);
@@ -50,19 +35,6 @@ function TopBar() {
     );
     return () => unsub();
   }, [user?.companyId]);
-
-  // 3) Persist logo to localStorage IF MISSING
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!logoUrl || logoUrl === logoFallback) return;
-
-    if (!localStorage.getItem(baseLogoKey)) {
-      localStorage.setItem(baseLogoKey, logoUrl);
-    }
-    if (scopedLogoKey && !localStorage.getItem(scopedLogoKey)) {
-      localStorage.setItem(scopedLogoKey, logoUrl);
-    }
-  }, [logoUrl, scopedLogoKey]);
 
   function handleLogout() {
     logout();
@@ -94,27 +66,9 @@ function TopBar() {
 
   return (
     <>
-      <div className="grid grid-cols-7 gap-2 bg-color">
-        <div className=" h-14 w-auto rounded-2xl flex items-center p-3 col-span-2">
-          <img
-            className="h-9 w-auto p-1 rounded-lg object-contain ring-black/5"
-            src={logoUrl || logoFallback}
-            alt="Company"
-          />
-          <div className="leading-tight">
-            <strong className="block text-base tx-color font-semibold tracking-tight text-slate-900">
-              Taskitin.com
-            </strong>
-            <span className="block text-xs text-slate-500">
-              {user?.companyId ||
-                "No companyId assigned please contact suppport"}
-            </span>
-          </div>
-        </div>
-        <div className="h-14 w-auto rounded-2xl col-span-3">
-          {/* Search Bar*/}
-        </div>
-        <div className="h-14 w-auto  flex items-centers justify-end col-span-2 ">
+      <div className="bg-color flex items-center justify-between ">
+        <div className="">{/* Search Bar*/}</div>
+        <div className="">
           <div className="flex items-center gap-3 p-3">
             <div className="hidden sm:flex flex-col items-end leading-tight">
               <span className="text-sm font-medium text-slate-900 tx-color">
