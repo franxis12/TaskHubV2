@@ -15,6 +15,7 @@ export default defineConfig({
         replaceAttrValues: { "#000": "currentColor", "#000000": "currentColor", black: "currentColor" },
         // 2) Además, agrega fill="currentColor" al <svg>
         svgProps: { fill: "currentColor" },
+        icon: true,
       },})
 
   ],
