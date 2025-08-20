@@ -2,7 +2,11 @@
 @import "tailwindcss";
 
 body{
-  overflow: hidden;
+  overflow-x: hidden;
+ scrollbar-width: none;
+}
+body::-webkit-scrollbar{
+  display: none;
 }
 
 /* === Variables (dark / light) sin cambios === */

@@ -4,6 +4,7 @@ import { UserContext } from "../context/UserContext";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import logoFallback from "../assets/company-logo.png";
+import Button from "../Utils/Button";
 
 function NavMenu() {
   const { user } = useContext(UserContext);
@@ -40,7 +41,7 @@ function NavMenu() {
     setExpanded(!isMobile); // en mobile => false (colapsado), desktop => true
   }, [isMobile]);
 
-  const widthClass = expanded ? "w-56 p-3" : "w-16 p-2";
+  const widthClass = expanded ? "w-45 p-3" : "w-16 p-2";
 
   return (
     <aside
@@ -50,27 +51,27 @@ function NavMenu() {
       aria-expanded={expanded}
     >
       {/* Encabezado: logo + toggle */}
-      <div className="relative">
+      <div className="relative ">
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="absolute -right-3 top-1 btn btn-xs btn-ghost border border-base-300 rounded-full"
+          className="absolute -right-2 top-1 btn btn-xs btn-ghost border border-base-300 rounded-full"
           aria-label={expanded ? "Collapse menu" : "Expand menu"}
           title={expanded ? "Collapse" : "Expand"}
         >
-          {expanded ? "⟨" : "⟩"}
+          {expanded ? "x" : "⟩"}
         </button>
 
         <div
-          className={`flex ${
-            expanded ? "items-center gap-3" : "items-center justify-center"
+          className={`flex flex-col ${
+            expanded ? "items-start gap-3" : "items-center justify-center"
           } mb-4`}
         >
           <img
             src={logoUrl || logoFallback}
             alt="Company logo"
             className={`object-contain ${
-              expanded ? "h-12 w-12" : "h-10 w-10"
+              expanded ? "h-12 w-30" : "h-10 w-10 hidden"
             } rounded-md`}
           />
           {expanded && (
@@ -98,6 +99,7 @@ function NavMenu() {
           <img src="./mmm/png" alt="" className="h-5 w-5" />
           {expanded && "Stats"}
         </button>
+        <Button />
       </nav>
 
       {/* Footer */}
