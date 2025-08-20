@@ -1,6 +1,6 @@
 import React from "react";
-import settingIcon from "../assets/iconsv2/gear-solid-full.svg?react";
-import infoIcon from "../assets/iconsv2/circle-info-solid-full.svg?react";
+import settingIcon from "../assets/iconsV2/gear-solid-full.svg?react";
+import infoIcon from "../assets/iconsV2/circle-info-solid-full.svg?react";
 import homeIcon from "../assets/iconsV2/house-solid-full.svg?react";
 import userIcon from "../assets/iconsV2/user-solid-full.svg?react";
 
