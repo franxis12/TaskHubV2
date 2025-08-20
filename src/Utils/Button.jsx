@@ -1,19 +1,71 @@
 import React from "react";
-const iconsFolder = "";
-import infoIcon from "../assets/iconsv2/circle-info-solid-full.svg";
-import { ReactComponent as Gear } from "../assets/iconsv2/gear-solid-full.svg?react";
+import settingIcon from "../assets/iconsv2/gear-solid-full.svg?react";
+import infoIcon from "../assets/iconsv2/circle-info-solid-full.svg?react";
+import homeIcon from "../assets/iconsV2/house-solid-full.svg?react";
+import userIcon from "../assets/iconsV2/user-solid-full.svg?react";
 
-<Gear className="h-5 w-5 text-emerald-600" />;
-function Button({ onClick, btnName, classNameExtra }) {
+function Button({
+  onClick,
+  btnName,
+  classNameExtra,
+  iconPicked,
+  hasIcon,
+  btnType,
+}) {
+  const iconPick = {
+    setting: settingIcon,
+    info: infoIcon,
+    dashboard: homeIcon,
+    user: userIcon,
+  };
+  const buttonType = {
+    primary: "btn btn-primary",
+    secondary: "secondary", //Pending
+    icon: "icon", //Pending
+    link: "link", //Pending
+  };
+
+  const btnSelected = buttonType[btnType];
+  const IconComponent = iconPick[iconPicked];
+
   return (
     <>
-      <button onClick={onClick} className={`btn btn-primary`}>
-        <Gear />
-        {btnName || "Add btnName"}
-        {/*<img src={infoIcon} />*/}
+      <button onClick={onClick} className={`${btnSelected} ${classNameExtra}`}>
+        {hasIcon && <IconComponent className={`iconColor w-5 h-5 m-1 `} />}{" "}
+        {/*Pending create .iconColor class for dinamyc color changed*/}
+        {btnName}
       </button>
     </>
   );
 }
 
 export default Button;
+/*Este boton necesita las siguientes dependencias para funcionar correctamente
+  1. npm i -D vite-plugin-svgr con esto ahora podras usar los iconos como componentes 
+  2. Edita el vite.config.js y importa vite-plugin-svgr.
+       Ejemplo:    import { defineConfig } from "vite";
+                   import react from "@vitejs/plugin-react";
+                   import svgr from "vite-plugin-svgr";   <-- ***** Esta linea ***** )
+
+                   export default defineConfig({
+                   plugins: [
+                     react(),
+                     svgr({    <-- ***** Deste aqui ***** )
+                       svgrOptions: {
+                         // 1) Si un path trae #000, reemplázalo
+                         replaceAttrValues: { "#000": "currentColor", "#000000": "currentColor", black: "currentColor" },
+                         // 2) Además, agrega fill="currentColor" al <svg>
+                         svgProps: { fill: "currentColor" },
+                       },
+                     }),        <-- ***** Hasta aqui ***** )
+                   ],
+                   });
+   3. En tu css agrega las clases .btn y btn-primary y ajustalas a tu preferencia.
+  
+                   
+                    
+
+
+
+
+*/

@@ -87,19 +87,27 @@ function NavMenu() {
 
       {/* Menú */}
       <nav className="w-full gap-2 flex flex-col">
-        <button className="gap-2 btn btn-primary justify-start w-full">
-          <img src="./mmm/png" alt="" className="h-5 w-5" />
-          {expanded && "Dashboard"}
-        </button>
-        <button className="gap-2 btn justify-start w-full">
-          <img src="./mmm/png" alt="" className="h-5 w-5" />
-          {expanded && "Team"}
-        </button>
-        <button className="gap-2 btn justify-start w-full">
-          <img src="./mmm/png" alt="" className="h-5 w-5" />
-          {expanded && "Stats"}
-        </button>
-        <Button />
+        <Button
+          btnName={expanded && "Dashboard"}
+          hasIcon
+          iconPicked={"dashboard"}
+          classNameExtra={expanded ? "justify-start" : "justify-center"}
+          btnType={"primary"}
+        />
+        <Button
+          btnName={expanded && "Team"}
+          hasIcon
+          iconPicked={"user"}
+          classNameExtra={expanded ? "justify-start" : "justify-center"}
+          btnType={"primary"}
+        />
+        <Button
+          btnName={expanded && "Stats"}
+          hasIcon
+          iconPicked={"info"}
+          classNameExtra={expanded ? "justify-start" : "justify-center"}
+          btnType={"primary"}
+        />
       </nav>
 
       {/* Footer */}

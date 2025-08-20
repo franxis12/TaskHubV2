@@ -1,14 +1,6 @@
 /* src/styles/tailwind-overrides.css */
 @import "tailwindcss";
 
-body{
-  overflow-x: hidden;
- scrollbar-width: none;
-}
-body::-webkit-scrollbar{
-  display: none;
-}
-
 /* === Variables (dark / light) sin cambios === */
 :root {
   --primaryBlue: #35a7ff;
@@ -91,6 +83,16 @@ body::-webkit-scrollbar{
     font-family: var(--font-secondary);
   }
 
+
+body{
+  overflow-x: hidden;
+ scrollbar-width: none;
+}
+body::-webkit-scrollbar{
+  display: none;
+}
+
+
   h1{
     font-size: clamp(28px, 5vw, 44px);
     margin: 0;
@@ -107,10 +109,6 @@ body::-webkit-scrollbar{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
     font-size: 0.875rem;
     font-weight: 500;
     transition-property: color, background-color, border-color;
@@ -125,7 +123,7 @@ body::-webkit-scrollbar{
     border-color: var(--neutroColorBorder);
     color: var(--textColor);
   }
-  .btn::after {
+  /*.btn::after {
     content: "";
     position: absolute;
     bottom: -6px;
@@ -142,7 +140,7 @@ body::-webkit-scrollbar{
   .btn:hover::after {
     width: 60%;
     opacity: 1;
-  }
+  }*/
 
   /* Botón primario (antes .btn-primary) */
   .btn-primary {
@@ -150,10 +148,7 @@ body::-webkit-scrollbar{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    
     font-size: 0.875rem;
     font-weight: 600;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
@@ -162,13 +157,14 @@ body::-webkit-scrollbar{
     background-color: var(--primaryColor);
     border: 1px solid var(--primaryColorBorder);
     color: var(--PrimaryTextColor);
+    height: 40px;
   }
   .btn-primary:hover {
     background-color: var(--primaryColorHover);
     border: 1px solid var(--primaryColorBorder);
     color: var(--PrimaryTextColor);
   }
-  .btn-primary::after {
+  /*.btn-primary::after {
     content: "";
     position: absolute;
     bottom: -6px;
@@ -182,10 +178,10 @@ body::-webkit-scrollbar{
     opacity: 0;
     transition: width 0.3s ease, opacity 0.3s ease;
   }
-  .btn-primary:hover::after { width: 60%; opacity: 1; }
+  /*.btn-primary:hover::after { width: 60%; opacity: 1; }
 
-  /* Marcar botón seleccionado (mismo efecto decorativo visible) */
-  .btn-selected::after { width: 60%; opacity: 1; }
+  /* Marcar botón seleccionado (mismo efecto decorativo visible) *
+  .btn-selected::after { width: 60%; opacity: 1; } */
 
   /* Íconos bootstrap (.bi) → solo padding-inline start */
   .bi { padding-inline-start: 5px; }
