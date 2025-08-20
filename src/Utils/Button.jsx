@@ -21,7 +21,7 @@ function Button({
   const buttonType = {
     primary: "btn btn-primary",
     secondary: "secondary", //Pending
-    icon: "icon", //Pending
+    icon: "icon", //Pendin
     link: "link", //Pending
   };
 
