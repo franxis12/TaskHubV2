@@ -81,8 +81,8 @@ function NavMenu({ expanded, setExpanded }) {
   }, [setExpanded]);
 
   // Clases de tamaño
-  const MOBILE_WIDTH = "w-44 p-2"; // más angosto en mobile (11rem)
-  const DESKTOP_EXPANDED = "w-64 p-3"; // respeta tu ancho desktop
+  const MOBILE_WIDTH = "w-56 p-2"; // más angosto en mobile (11rem)
+  const DESKTOP_EXPANDED = "w-40 p-3"; // respeta tu ancho desktop
   const DESKTOP_COLLAPSED = "w-16 p-2";
 
   const baseAside = `
@@ -132,64 +132,66 @@ function NavMenu({ expanded, setExpanded }) {
       )}
 
       <aside
-        className={`${baseAside} ${positionClass} ${widthClass}`}
+        className={`${baseAside} ${positionClass} ${widthClass} `}
         aria-expanded={expanded}
       >
         {/* Encabezado: logo + cerrar en mobile */}
-        <div className="relative">
-          {isMobile && expanded && (
-            <button
-              type="button"
-              onClick={() => setExpanded(false)}
-              className="absolute -right-3 top-3 btn btn-xs btn-ghost border border-base-300 rounded-full z-50"
-              aria-label="Cerrar menú"
-              title="Cerrar"
-            >
-              ×
-            </button>
-          )}
+        <div className="flex flex-col gap-4">
+          <div className="relative border-b-1">
+            {isMobile && expanded && (
+              <button
+                type="button"
+                onClick={() => setExpanded(false)}
+                className="absolute -right-3 top-3 btn btn-xs btn-ghost border border-base-300 rounded-full z-50"
+                aria-label="Cerrar menú"
+                title="Cerrar"
+              >
+                ×
+              </button>
+            )}
 
-          <div className="flex flex-col h-11 items-start gap-3 mb-2 ">
-            {expanded ? (
-              <LogoExpand className="object-contain h-12 w-32" />
-            ) : (
-              <Logo className="object-contain h-10 w-8" />
-            )}
-            {!expanded && (
-              <span className="sr-only">
-                {user?.companyId || "No companyId assigned"}
-              </span>
-            )}
+            <div className="flex flex-col h-11 items-start gap-3 mb-2  ">
+              {expanded ? (
+                <LogoExpand className="object-contain h-12 w-32" />
+              ) : (
+                <Logo className="object-contain h-10 w-8" />
+              )}
+              {!expanded && (
+                <span className="sr-only">
+                  {user?.companyId || "No companyId assigned"}
+                </span>
+              )}
+            </div>
           </div>
+
+          {/* Menú */}
+          <nav className="w-full  flex flex-col ">
+            <Button
+              btnName={expanded && "Dashboard"}
+              hasIcon
+              iconPicked={"dashboard"}
+              classNameExtra={expanded ? "justify-start" : "justify-center"}
+              btnType={"primary"}
+            />
+            <Button
+              btnName={expanded && "Team"}
+              hasIcon
+              iconPicked={"user"}
+              classNameExtra={expanded ? "justify-start" : "justify-center"}
+              btnType={"primary"}
+            />
+            <Button
+              btnName={expanded && "Stats"}
+              hasIcon
+              iconPicked={"info"}
+              classNameExtra={expanded ? "justify-start" : "justify-center"}
+              btnType={"primary"}
+            />
+          </nav>
         </div>
 
-        {/* Menú */}
-        <nav className="w-full gap-2 flex flex-col">
-          <Button
-            btnName={expanded && "Dashboard"}
-            hasIcon
-            iconPicked={"dashboard"}
-            classNameExtra={expanded ? "justify-start" : "justify-center"}
-            btnType={"primary"}
-          />
-          <Button
-            btnName={expanded && "Team"}
-            hasIcon
-            iconPicked={"user"}
-            classNameExtra={expanded ? "justify-start" : "justify-center"}
-            btnType={"primary"}
-          />
-          <Button
-            btnName={expanded && "Stats"}
-            hasIcon
-            iconPicked={"info"}
-            classNameExtra={expanded ? "justify-start" : "justify-center"}
-            btnType={"primary"}
-          />
-        </nav>
-
         {/* Footer */}
-        <div className="w-full">
+        <div className="w-full ">
           <Button
             btnName={expanded && "Logout"}
             hasIcon

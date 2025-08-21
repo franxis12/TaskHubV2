@@ -73,6 +73,7 @@
     --primaryColorBorder: #6837F4; 
     --primaryColorHover: #5029b9;
     --PrimaryTextColor: #fff;
+    
   }
 }
 /* === Base === */
@@ -103,6 +104,8 @@ body::-webkit-scrollbar{
 
 /* === Componentes: equivalentes Tailwind a clases Bootstrap === */
 @layer components {
+
+  
   /* Botón neutro (antes .btn) */
   .btn {
     position: relative;

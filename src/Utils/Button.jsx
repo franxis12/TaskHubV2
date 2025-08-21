@@ -3,6 +3,7 @@ import settingIcon from "../assets/iconsv2/gear-solid-full.svg?react";
 import infoIcon from "../assets/iconsv2/circle-info-solid-full.svg?react";
 import homeIcon from "../assets/iconsV2/house-solid-full.svg?react";
 import userIcon from "../assets/iconsV2/user-solid-full.svg?react";
+import "../styles/button.css";
 
 function Button({
   onClick,
@@ -19,7 +20,7 @@ function Button({
     user: userIcon,
   };
   const buttonType = {
-    primary: "btn btn-primary",
+    primary: "btn-prima ",
     secondary: "secondary", //Pending
     icon: "icon", //Pending
     link: "link", //Pending
@@ -30,8 +31,8 @@ function Button({
 
   return (
     <>
-      <button onClick={onClick} className={`${btnSelected} ${classNameExtra}`}>
-        {hasIcon && <IconComponent className={`iconColor w-5 h-5 m-1 `} />}{" "}
+      <button onClick={onClick} className={`${btnSelected} ${classNameExtra} `}>
+        {hasIcon && <IconComponent className={`iconColor w-5 h-5 m-1  `} />}{" "}
         {/*Pending create .iconColor class for dinamyc color changed*/}
         {btnName}
       </button>
