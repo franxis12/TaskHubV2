@@ -19,6 +19,8 @@ import TaskFilters, { defaultFilters } from "./TaskFilters";
 import PersonalTaskForm from "../components/PersonalTaskForm";
 import TaskEditor from "../components/TaskEditor";
 
+import Container from "../Utils/Container";
+
 import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
 import lowImportantIcon from "../assets/icons/LImportant.png";
@@ -268,7 +270,7 @@ function TaskList() {
   };
 
   return (
-    <div className="p-2 w-full bg bg-component rounded-2xl h-auto">
+    <div className="p-2  w-full bg bg-component rounded-2xl h-auto">
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
@@ -418,6 +420,7 @@ function TaskList() {
           </div>
         )}
       </div>
+      <Container />
 
       {/* Filtros*/}
       <div className="mb-4" onClick={() => setEditTask(false)}>
