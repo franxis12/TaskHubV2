@@ -28,11 +28,8 @@ function Select({
 
   console.log(optionsMap);
   return (
-    <div className={`md:col-span-${cols} flex   `}>
-      <label
-        htmlFor={id}
-        className="mb-1 block text-xs font-medium text-slate-600"
-      >
+    <div className={`flex flex-wrap w-fit gap-2 h-fit`}>
+      <label htmlFor={id} className=" text-xs font-medium text-slate-600">
         {labelName}
       </label>
       <select

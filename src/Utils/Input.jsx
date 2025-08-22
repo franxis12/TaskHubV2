@@ -28,7 +28,7 @@ function Input({
   const inputBase = `bg-white block flex p-2 gap-2 rounded-xl items-center  
   ${
     isExpanded
-      ? `w-30 h-9 items-center justify-center shadow-lg border ${(cols = 1)}`
+      ? `w-auto h-9 items-center justify-center shadow-lg border ${(cols = 1)}`
       : "w-10 h-9 items-center "
   } `;
 
@@ -40,11 +40,8 @@ function Input({
   const IconPicked = iconsArr[iconPick];
 
   return (
-    <div className={`md:col-span-${cols} flex items-center`}>
-      <label
-        htmlFor={id}
-        className="mb-1 block text-xs font-medium text-slate-600"
-      >
+    <div className={`w-auto flex items-center justify-center`}>
+      <label htmlFor={id} className="block text-xs font-medium text-slate-600">
         {labelName}
       </label>
       <div className={inputBase}>
