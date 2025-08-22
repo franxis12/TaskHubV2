@@ -255,20 +255,20 @@ body::-webkit-scrollbar{
   .bg-color{background-color: var(--pagesBackground);}
 
   /* Paleta helper (por compatibilidad) */
-  .bg-orange { background-color: #f15b2a; }
+  .bg-orange { background-color: #EF6438; }
   .bg-teal   { background-color: #247881; }
   .bg-yellow { background-color: #f9a825; }
 
-  .bg-orange-trasparent { background-color: #f15c2a7c; }
+  .bg-orange-trasparent { background-color: rgba(241, 92, 42, 0.496)}
   .bg-teal-trasparent   { background-color: #2478817a; }
   .bg-yellow-trasparent { background-color: #f9a8256d; }
 
-  .border-orange-2{ border: solid 2px  #f15b2a;}
+  .border-orange-2{ border: solid 2px  #EF6438;}
   .border-teal-2{ border: solid 2px  #247881;}
   .border-Yellow-2{ border: solid 2px  #f9a825;}
 
-  .text-orange { color: #f15b2a; }
-  .text-teal   { color: #247881; }
+  .text-orange { color: #EF6438; }
+  .text-teal   { color: #247881; } 
   .text-yellow { color: #f9a825; }
 
   /**/
