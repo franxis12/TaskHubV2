@@ -3,6 +3,9 @@ import settingIcon from "../assets/iconsV2/gear-solid-full.svg?react";
 import infoIcon from "../assets/iconsV2/circle-info-solid-full.svg?react";
 import homeIcon from "../assets/iconsV2/house-solid-full.svg?react";
 import userIcon from "../assets/iconsV2/user-solid-full.svg?react";
+import addPersonal from "../assets/iconsV2/addPersonal-icon.svg?react"; //**//
+import addPublic from "../assets/iconsV2/addPublic-Icon.svg?react"; //**//
+
 import "../styles/button.css";
 
 function Button({
@@ -18,10 +21,12 @@ function Button({
     info: infoIcon,
     dashboard: homeIcon,
     user: userIcon,
+    addPersonal: addPersonal,
+    addPublic: addPublic,
   };
   const buttonType = {
-    primary: "btn-prima ",
-    secondary: "secondary", //Pending
+    primary: "btn-prima border",
+    secondary: "btn-second", //Pending
     icon: "icon", //Pending
     link: "link", //Pending
   };

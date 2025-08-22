@@ -170,7 +170,9 @@ function NavMenu({ expanded, setExpanded }) {
               btnName={expanded && "Dashboard"}
               hasIcon
               iconPicked={"dashboard"}
-              classNameExtra={expanded ? "justify-start" : "justify-center"}
+              classNameExtra={
+                expanded ? "justify-start selected" : "justify-center selected"
+              } //Selected class for selected pages
               btnType={"primary"}
             />
             <Button

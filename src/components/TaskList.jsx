@@ -20,6 +20,7 @@ import PersonalTaskForm from "../components/PersonalTaskForm";
 import TaskEditor from "../components/TaskEditor";
 
 import Container from "../Utils/Container";
+import Button from "../Utils/Button";
 
 import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
@@ -278,39 +279,22 @@ function TaskList() {
       <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2">
         {/* Acciones primarias */}
         <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onMouseEnter={() => setHoveredIcon("addPersonal")}
-            onMouseLeave={() => setHoveredIcon("")}
-            onClick={() => setShowPersonalForm((s) => !s)}
-            title="Nueva tarea personal"
-          >
-            <img
-              src={
-                hoveredIcon === "addPersonal" ? addPersonalHover : addPersonal
-              }
-              className="h-5 w-5"
-              alt="Add Personal Task"
-            />
-            <span>Personal</span>
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-primary"
-            onMouseEnter={() => setHoveredIcon("addPublic")}
-            onMouseLeave={() => setHoveredIcon("")}
+          <Button
+            btnName={"Public task"}
+            hasIcon
+            iconPicked={"addPublic"}
+            classNameExtra={"justify-start border"}
+            btnType={"secondary"}
             onClick={() => setShowPublicForm((s) => !s)}
-            title="Nueva tarea pública"
-          >
-            <img
-              src={hoveredIcon === "addPublic" ? addPublicHover : addPublic}
-              className="h-5 w-5"
-              alt="Add Public Task"
-            />
-            <span>Public</span>
-          </button>
+          />
+          <Button
+            btnName={"Personal task"}
+            hasIcon
+            iconPicked={"addPersonal"}
+            classNameExtra={"justify-start border"}
+            btnType={"secondary"}
+            onClick={() => setShowPersonalForm((s) => !s)}
+          />
         </div>
 
         {/* Form personal */}

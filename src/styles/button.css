@@ -1,41 +1,56 @@
 .btn-prima{
-    height: 40px;
+    height: 35px;
     display: flex;
     font-size: 12px;
     align-items: center;
     gap: 7px;
     width: auto;
     position: relative;
+        padding-inline: 10px;
+        border-radius: 15px;
+        margin-bottom: 2px;
+        
+
     
 }
 .btn-prima:hover{
     color: var(--primaryColorBorder);
+    background-color: rgb(255, 255, 255);
+    border-radius: 15px;
 }
+.selected{
+    color: var(--primaryColorBorder);
+    color: white;
+    background-color: black;
+}
+
 
 
 /* Subrayado deslizándose hacia abajo */
-.btn-prima::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 100%;                   /* anclado justo debajo del botón */
-  transform: translate(-50%, -30px); /* inicia 8px "arriba" de su posición final */
-  width: 100%;                 /* o 100px si prefieres fija */
-  height: 4px;
-  background-color: var(--primaryColorBorder);
-  border: 1px solid var(--primaryColorBorder);
-  border-radius: 9999px;
-  opacity: 0;
-  box-shadow: 0 -8px 10px var(--primaryColorBorder);
-  pointer-events: none;        /* evita capturar el hover */
-  will-change: transform, opacity;
-  transition: transform 0.3s ease, opacity 0.25s ease; /* define aquí, no en :hover */
-}
 
-.btn-prima:hover::after {
-  transform: translate(-50%, -10px); /* se desliza hacia abajo 8px */
-  opacity: 1;
-  box-shadow: 0 0 0 var(--primaryColorBorder); /* opcional: quita glow al final */
-  color: var(--primaryColorHover);
-  
+
+
+
+.btn-second{
+    height: 35px;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    gap: 7px;
+    width: auto;
+    position: relative;
+    font-weight: 700;
+    color: white;
+    background-color: black;
+    padding-inline-end: 10px;
+    border-radius: 15px;
+    
+    
+    
+}
+.btn-second:hover{
+    color: var(--primaryColorBorder);
+    background-color: white;
+    
+
 }
