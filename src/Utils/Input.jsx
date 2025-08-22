@@ -28,7 +28,7 @@ function Input({
   const inputBase = `bg-white block flex p-2 gap-2 rounded-xl items-center  
   ${
     isExpanded
-      ? `w-50 h-9 items-center justify-center shadow-lg border ${(cols = 3)}`
+      ? `w-30 h-9 items-center justify-center shadow-lg border ${(cols = 1)}`
       : "w-10 h-9 items-center "
   } `;
 
@@ -63,6 +63,7 @@ function Input({
             defaultValue={defaultValue}
             onChange={onChange}
             aria-label="Search tasks"
+            value={value}
           />
         )}
       </div>

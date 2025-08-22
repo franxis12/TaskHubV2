@@ -3,6 +3,7 @@ import React, { useMemo, useRef, useEffect, useState } from "react";
 import Input from "../Utils/Input";
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
+import Select from "../Utils/Select";
 
 export const defaultFilters = {
   search: "",
@@ -68,8 +69,8 @@ function TaskFilters({
     "placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400";
 
   return (
-    <div className=" mb-3 rounded-xl bg-pages p-4 ring-1 w-full">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start w-full">
+    <div className=" bg-pages  w-full">
+      <div className="grid grid-cols-1 md:grid-cols-10  items-start w-full">
         {/* Search */}
 
         <Input
@@ -88,7 +89,7 @@ function TaskFilters({
         />
 
         {/* Type */}
-        <div className="md:col-span-3">
+        {/*<div className="md:col-span-3">
           <label
             htmlFor="typeSel"
             className="mb-1 block text-xs font-medium text-slate-600"
@@ -105,10 +106,22 @@ function TaskFilters({
             <option value="public">Public</option>
             <option value="personal">Personal</option>
           </select>
-        </div>
+        </div>*/}
+        <Select
+          cols="1"
+          labelName={"Type :"}
+          id="typeSel"
+          value={filters.type}
+          onChange={handleChange("type")}
+          options={[
+            { optionsVal: "all", nameOpt: "All" },
+            { optionsVal: "public", nameOpt: "Public" },
+            { optionsVal: "personal", nameOpt: "Personal" },
+          ]}
+        />
 
         {/* Priority */}
-        <div className="md:col-span-3">
+        {/*<div className="md:col-span-3">
           <label
             htmlFor="prioritySel"
             className="mb-1 block text-xs font-medium text-slate-600"
@@ -126,10 +139,23 @@ function TaskFilters({
             <option value="medium">Medium</option>
             <option value="low">Low</option>
           </select>
-        </div>
+        </div>*/}
+        <Select
+          cols="1"
+          labelName={"Priority"}
+          id="prioritySel"
+          value={filters.priority}
+          onChange={handleChange("priority")}
+          options={[
+            { optionsVal: "all", nameOpt: "All" },
+            { optionsVal: "high", nameOpt: "High" },
+            { optionsVal: "medium", nameOpt: "Medium" },
+            { optionsVal: "low", nameOpt: "Low" },
+          ]}
+        />
 
         {/* Status */}
-        <div className="md:col-span-3">
+        {/*} <div className="md:col-span-3">
           <label
             htmlFor="statusSel"
             className="mb-1 block text-xs font-medium text-slate-600"
@@ -148,10 +174,24 @@ function TaskFilters({
             <option value="completed">Completed</option>
             <option value="missed">Missed</option>
           </select>
-        </div>
+        </div>*/}
+        <Select
+          cols="1"
+          labelName={"Status"}
+          id="statusSel"
+          value={filters.status}
+          onChange={handleChange("status")}
+          options={[
+            { optionsVal: "all", nameOpt: "All" },
+            { optionsVal: "pending", nameOpt: "Pending" },
+            { optionsVal: "progress", nameOpt: "In progress" },
+            { optionsVal: "completed", nameOpt: "Completed" },
+            { optionsVal: "missed", nameOpt: "Missed" },
+          ]}
+        />
 
         {/* Assigned to */}
-        <div className="md:col-span-4">
+        {/*<div className="md:col-span-4">
           <label
             htmlFor="assignedSel"
             className="mb-1 block text-xs font-medium text-slate-600"
@@ -173,7 +213,20 @@ function TaskFilters({
               </option>
             ))}
           </select>
-        </div>
+        </div>*/}
+        <Select
+          cols={"1"}
+          labelName={"Assigned to"}
+          id="assignedSel"
+          value={filters.assignedTo}
+          onChange={handleChange("assignedTo")}
+          options={[
+            { optionsVal: "all", nameOpt: "Anyone" },
+            { optionsVal: "unassigned", nameOpt: "Unassigned" },
+            { optionsVal: currentUserId, nameOpt: "Me" },
+          ]}
+          optionsMap={assignees}
+        />
 
         {/* Due from */}
         <Input
@@ -210,7 +263,7 @@ function TaskFilters({
         />
 
         {/* Overdue + Clear */}
-        <div className="md:col-span-6 flex items-center gap-2">
+        <div className="md:col-span-1 flex items-center gap-2">
           <input
             className="h-4 w-4 rounded border-slate-300 text-slate-700 focus:ring-slate-400/40 accent-slate-700"
             type="checkbox"
@@ -223,7 +276,7 @@ function TaskFilters({
           </label>
         </div>
 
-        <div className="md:col-span-6">
+        <div className="md:col-span-1">
           <button
             className="inline-flex w-full justify-center rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isDefault}
