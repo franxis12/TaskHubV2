@@ -278,24 +278,26 @@ function TaskList() {
       {/* Toolbar */}
       <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2">
         {/* Acciones primarias */}
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            btnName={"Public task"}
-            hasIcon
-            iconPicked={"addPublic"}
-            classNameExtra={"justify-start border"}
-            btnType={"secondary"}
-            onClick={() => setShowPublicForm((s) => !s)}
-          />
-          <Button
-            btnName={"Personal task"}
-            hasIcon
-            iconPicked={"addPersonal"}
-            classNameExtra={"justify-start border"}
-            btnType={"secondary"}
-            onClick={() => setShowPersonalForm((s) => !s)}
-          />
-          <div className="mb-4" onClick={() => setEditTask(false)}>
+        <div className="flex flex-wrap items-center gap-2 ">
+          <div className="flex gap-1 border-r-1 pr-2">
+            <Button
+              btnName={"Public task"}
+              hasIcon
+              iconPicked={"addPublic"}
+              classNameExtra={"justify-start border"}
+              btnType={"secondary"}
+              onClick={() => setShowPublicForm((s) => !s)}
+            />
+            <Button
+              btnName={"Personal task"}
+              hasIcon
+              iconPicked={"addPersonal"}
+              classNameExtra={"justify-start border"}
+              btnType={"secondary"}
+              onClick={() => setShowPersonalForm((s) => !s)}
+            />
+          </div>
+          <div className="mb-4 w-full" onClick={() => setEditTask(false)}>
             <TaskFilters
               filters={filters}
               setFilters={setFilters}
@@ -412,7 +414,6 @@ function TaskList() {
           </div>
         )}
       </div>
-      <Container />
 
       {/* Filtros*/}
 

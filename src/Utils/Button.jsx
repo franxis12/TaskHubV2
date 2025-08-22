@@ -26,7 +26,7 @@ function Button({
   };
   const buttonType = {
     primary: "btn-prima border",
-    secondary: "btn-second", //Pending
+    secondary: "btn-second",
     icon: "icon", //Pending
     link: "link", //Pending
   };
