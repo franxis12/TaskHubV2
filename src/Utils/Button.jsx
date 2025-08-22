@@ -15,6 +15,7 @@ function Button({
   iconPicked,
   hasIcon,
   btnType,
+  disabled,
 }) {
   const iconPick = {
     setting: settingIcon,
@@ -27,6 +28,7 @@ function Button({
   const buttonType = {
     primary: "btn-prima border",
     secondary: "btn-second",
+    danger: "btn-danger",
     icon: "icon", //Pending
     link: "link", //Pending
   };
@@ -36,7 +38,11 @@ function Button({
 
   return (
     <>
-      <button onClick={onClick} className={`${btnSelected} ${classNameExtra} `}>
+      <button
+        onClick={onClick}
+        disabled={disabled}
+        className={`${btnSelected} ${classNameExtra} `}
+      >
         {hasIcon && <IconComponent className={`iconColor w-5 h-5 m-1  `} />}{" "}
         {/*Pending create .iconColor class for dinamyc color changed*/}
         {btnName}

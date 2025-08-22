@@ -9,6 +9,7 @@
     padding-inline: 10px;
     border-radius: 15px;
     margin-bottom: 2px;
+    
         
 
     
@@ -18,10 +19,34 @@
     background-color: rgb(255, 255, 255);
     border-radius: 15px;
 }
+
+.btn-danger{
+    height: 35px;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    gap: 7px;
+    width: auto;
+    position: relative;
+    padding-inline: 10px;
+    border-radius: 15px;
+    margin-bottom: 2px;
+    color: var(--dangerActionsRed);
+    border: solid 1px var(--dangerActionsRed);
+        
+}
+.btn-danger:hover{
+    color: #fff;
+    background-color: rgb(255, 255, 255);
+    border-radius: 15px;
+        background-color: var(--dangerActionsRed);
+
+}
 .selected{
     color: var(--primaryColorBorder);
     color: white;
     background-color: black;
+    
 }
 
 
@@ -44,6 +69,8 @@
     background-color: black;
     padding-inline-end: 10px;
     border-radius: 15px;
+    flex-direction: row;
+   font-size: 0.5rem;
     
     
     

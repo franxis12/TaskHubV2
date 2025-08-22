@@ -271,14 +271,14 @@ function TaskList() {
   };
 
   return (
-    <div className="p-2  w-full bg bg-component rounded-2xl h-auto">
+    <div className="p-2  w-full bg bg-component rounded-2xl h-auto shadow-inner drop-shadow-md">
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
       {/* Toolbar */}
-      <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2">
+      <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2 shadow-md">
         {/* Acciones primarias */}
-        <div className="flex flex-wrap items-center gap-2 ">
+        <div className="flex  items-center gap-2 ">
           <div className="flex gap-1 border-r-1 pr-2">
             <Button
               btnName={"Public task"}
@@ -418,20 +418,6 @@ function TaskList() {
       {/* Filtros*/}
 
       <div className="space-y-3">
-        {/* Encabezado de columnas */}
-        <div className="flex w-full items-center justify-between rounded-xl bg-white px-3 py-2 ring-1 ring-slate-200">
-          <div className="text-base font-semibold text-slate-800">
-            Task Name
-          </div>
-          <div className="flex items-center justify-center gap-8 text-slate-600">
-            <span className="text-sm font-semibold">Complete by</span>
-            <span className="text-sm font-semibold">Time Left to complete</span>
-            <span className="text-sm font-semibold">Assigned to</span>
-            <span className="text-sm font-semibold">Priority</span>
-            <span className="text-sm font-semibold">Status</span>
-          </div>
-        </div>
-
         {/* Estados vacíos / aprobación */}
         {user.pendingApproval ? (
           <div className="my-6 w-full text-center">
