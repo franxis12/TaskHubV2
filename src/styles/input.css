@@ -1,0 +1,8 @@
+.icons{
+    color: var(--primaryColor);
+}
+.icons:hover{
+    color: var(--primaryColorHover);
+    transform: scale(1.2);
+    
+}

@@ -1,0 +1,56 @@
+.btn-prima{
+    height: 35px;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    gap: 7px;
+    width: auto;
+    position: relative;
+    padding-inline: 10px;
+    border-radius: 15px;
+    margin-bottom: 2px;
+        
+
+    
+}
+.btn-prima:hover{
+    color: var(--primaryColorBorder);
+    background-color: rgb(255, 255, 255);
+    border-radius: 15px;
+}
+.selected{
+    color: var(--primaryColorBorder);
+    color: white;
+    background-color: black;
+}
+
+
+
+/* Subrayado deslizándose hacia abajo */
+
+
+
+
+.btn-second{
+    height: 35px;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    gap: 7px;
+    width: auto;
+    position: relative;
+    font-weight: 700;
+    color: white;
+    background-color: black;
+    padding-inline-end: 10px;
+    border-radius: 15px;
+    
+    
+    
+}
+.btn-second:hover{
+    color: var(--primaryColorBorder);
+    background-color: white;
+    
+
+}

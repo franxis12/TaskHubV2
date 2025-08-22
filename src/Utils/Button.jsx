@@ -3,6 +3,10 @@ import settingIcon from "../assets/iconsV2/gear-solid-full.svg?react";
 import infoIcon from "../assets/iconsV2/circle-info-solid-full.svg?react";
 import homeIcon from "../assets/iconsV2/house-solid-full.svg?react";
 import userIcon from "../assets/iconsV2/user-solid-full.svg?react";
+import addPersonal from "../assets/iconsV2/AddPersonal-icon.svg?react"; //**//
+import addPublic from "../assets/iconsV2/addPublic-Icon.svg?react"; //**//
+
+import "../styles/button.css";
 
 function Button({
   onClick,
@@ -17,11 +21,13 @@ function Button({
     info: infoIcon,
     dashboard: homeIcon,
     user: userIcon,
+    addPersonal: addPersonal,
+    addPublic: addPublic,
   };
   const buttonType = {
-    primary: "btn btn-primary",
-    secondary: "secondary", //Pending
-    icon: "icon", //Pendin
+    primary: "btn-prima border",
+    secondary: "btn-second",
+    icon: "icon", //Pending
     link: "link", //Pending
   };
 
@@ -30,8 +36,8 @@ function Button({
 
   return (
     <>
-      <button onClick={onClick} className={`${btnSelected} ${classNameExtra}`}>
-        {hasIcon && <IconComponent className={`iconColor w-5 h-5 m-1 `} />}{" "}
+      <button onClick={onClick} className={`${btnSelected} ${classNameExtra} `}>
+        {hasIcon && <IconComponent className={`iconColor w-5 h-5 m-1  `} />}{" "}
         {/*Pending create .iconColor class for dinamyc color changed*/}
         {btnName}
       </button>

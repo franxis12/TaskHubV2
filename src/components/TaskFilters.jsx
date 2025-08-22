@@ -1,5 +1,8 @@
 // src/components/TaskFilters.jsx
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
+import Input from "../Utils/Input";
+import Container from "../Utils/Container";
+import Button from "../Utils/Button";
 
 export const defaultFilters = {
   search: "",
@@ -18,6 +21,7 @@ function TaskFilters({
   assignees = [],
   currentUserId, // opcional: para mostrar "Me"
 }) {
+  const [expandedId, setExpandedId] = useState(null);
   // --- debounce para search ---
   const searchTimer = useRef(null);
   const handleSearchChange = (e) => {
@@ -64,26 +68,24 @@ function TaskFilters({
     "placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400";
 
   return (
-    <div className="w-auto mb-3 rounded-xl bg-[var(--componentsBG)] p-4 ring-1 ring-slate-200">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
+    <div className=" mb-3 rounded-xl bg-pages p-4 ring-1 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start w-full">
         {/* Search */}
-        <div className="md:col-span-3">
-          <label
-            htmlFor="taskSearch"
-            className="mb-1 block text-xs font-medium text-slate-600"
-          >
-            Search
-          </label>
-          <input
-            id="taskSearch"
-            type="text"
-            className={inputBase}
-            placeholder="Task name or notes..."
-            defaultValue={filters.search}
-            onChange={handleSearchChange}
-            aria-label="Search tasks"
-          />
-        </div>
+
+        <Input
+          id={"taskSearch"}
+          type={"text"}
+          classNameExtra={""}
+          placeholder="Task name or notes..."
+          defaultValue={filters.search}
+          onChange={handleSearchChange}
+          iconPick={"search"}
+          hasIcon
+          cols={"1"}
+          current={"taskSearch"}
+          expandedId={expandedId}
+          setExpandedId={setExpandedId}
+        />
 
         {/* Type */}
         <div className="md:col-span-3">
@@ -174,38 +176,38 @@ function TaskFilters({
         </div>
 
         {/* Due from */}
-        <div className="md:col-span-4">
-          <label
-            htmlFor="dueFrom"
-            className="mb-1 block text-xs font-medium text-slate-600"
-          >
-            Due from
-          </label>
-          <input
-            id="dueFrom"
-            type="date"
-            className={inputBase}
-            value={filters.dueFrom}
-            onChange={handleChange("dueFrom")}
-          />
-        </div>
+        <Input
+          id={"dueFrom"}
+          type={"date"}
+          classNameExtra={""}
+          defaultValue={filters.search}
+          onChange={handleChange("dueFrom")}
+          iconPick={"date"}
+          hasIcon
+          value={filters.dueTo}
+          labelName={"From :"}
+          cols={"1"}
+          current={"dueFrom"}
+          expandedId={expandedId}
+          setExpandedId={setExpandedId}
+        />
 
         {/* Due to */}
-        <div className="md:col-span-4">
-          <label
-            htmlFor="dueTo"
-            className="mb-1 block text-xs font-medium text-slate-600"
-          >
-            Due to
-          </label>
-          <input
-            id="dueTo"
-            type="date"
-            className={inputBase}
-            value={filters.dueTo}
-            onChange={handleChange("dueTo")}
-          />
-        </div>
+        <Input
+          id={"dueTo"}
+          type={"date"}
+          classNameExtra={""}
+          defaultValue={filters.search}
+          onChange={handleChange("dueTo")}
+          iconPick={"date"}
+          hasIcon
+          value={filters.dueTo}
+          labelName={"To :"}
+          cols={"1"}
+          current={"dueTo"}
+          expandedId={expandedId}
+          setExpandedId={setExpandedId}
+        />
 
         {/* Overdue + Clear */}
         <div className="md:col-span-6 flex items-center gap-2">

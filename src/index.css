@@ -73,6 +73,7 @@
     --primaryColorBorder: #6837F4; 
     --primaryColorHover: #5029b9;
     --PrimaryTextColor: #fff;
+    
   }
 }
 /* === Base === */
@@ -103,6 +104,8 @@ body::-webkit-scrollbar{
 
 /* === Componentes: equivalentes Tailwind a clases Bootstrap === */
 @layer components {
+
+  
   /* Botón neutro (antes .btn) */
   .btn {
     position: relative;
@@ -157,7 +160,8 @@ body::-webkit-scrollbar{
     background-color: var(--primaryColor);
     border: 1px solid var(--primaryColorBorder);
     color: var(--PrimaryTextColor);
-    height: 40px;
+    height: 35px;
+    padding-inline: 10px;
   }
   .btn-primary:hover {
     background-color: var(--primaryColorHover);
@@ -270,6 +274,7 @@ body::-webkit-scrollbar{
   /**/
   .mainSection{
    width: 90vw;
-   padding: 10px;
+   padding-right: 15px;
+   padding-left: 8px;
   }
 }

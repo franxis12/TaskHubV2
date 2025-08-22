@@ -7,21 +7,17 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import logoFallback from "../assets/company-logo.png";
 import samplePhoto from "../assets/sample.png";
+import OpenMenu from "../assets/iconsV2/bars-solid-full.svg?react";
+import CloseMenu from "../assets/iconsV2/ellipsis-vertical-solid-full.svg?react";
 
-function TopBar() {
+// Recibir props correctamente
+function TopBar({ expanded, setExpanded }) {
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
   const [logoUrl, setLogoUrl] = useState(logoFallback);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const userPhoto = user?.photo || samplePhoto;
-
-  const userName = useMemo(() => {
-    const full = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
-    return full || (user?.email ?? "User");
-  }, [user]);
-
-  // Suscripción en vivo al logo de la compañía (solo DB)
+  // (Opcional) Tienes este mismo efecto duplicado; deja solo uno.
   useEffect(() => {
     if (!user?.companyId) {
       setLogoUrl(logoFallback);
@@ -35,6 +31,11 @@ function TopBar() {
     );
     return () => unsub();
   }, [user?.companyId]);
+
+  const userName = useMemo(() => {
+    const full = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
+    return full || (user?.email ?? "User");
+  }, [user]);
 
   function handleLogout() {
     logout();
@@ -60,164 +61,52 @@ function TopBar() {
     [
       "transition-colors text-white rounded-md px-3 py-2 text-sm font-medium btn border-opacity-0",
       isActive
-        ? "text-slate-900 text-white btn-primary"
-        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 ",
+        ? "btn-primary"
+        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
     ].join(" ");
 
   return (
-    <>
-      <div className="bg-color flex items-center justify-between ">
-        <div className="">{/* Search Bar*/}</div>
-        <div className="">
-          <div className="flex items-center gap-3 p-3">
-            <div className="hidden sm:flex flex-col items-end leading-tight">
-              <span className="text-sm font-medium text-slate-900 tx-color">
-                {userName}
-              </span>
-              {user?.role && (
-                <span className={roleBadgeClasses}>{user.role}</span>
-              )}
-            </div>
-            <img
-              className="h-9 w-9 rounded-full object-cover border-2 ring-1 ring-slate-200"
-              src={userPhoto}
-              alt="Avatar"
-            />
-            /{/* Logout (desktop) */}
-            <button
-              className="btn tx-color hidden md:inline-flex items-center   px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-            {/* Mobile menu toggle */}
-            <button
-              className="md:hidden inline-flex flex-col gap-1.5 btn-primary p-2 rounded-md hover:bg-slate-100"
-              aria-label="Open menu"
-              onClick={() => setMenuOpen((v) => !v)}
-            >
-              <span className="h-0.5 w-5 bg-slate-700 rounded" />
-              <span className="h-0.5 w-5 bg-slate-700 rounded" />
-              <span className="h-0.5 w-5 bg-slate-700 rounded" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/*
-    <header className="sticky top-0">
-      {/* Top row *
-      <div className="mx-auto max-w-9xl px-4 md:px-6 bg-component">
-        <div className="flex h-14 items-center justify-between gap-3 ">
-          {/* Brand (logo + app) *
-          <div
-            className="flex items-center gap-3 cursor-pointer select-none"
-            onClick={() => navigate("/dashboard")}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && navigate("/dashboard")}
-          >
-            <img
-              className="h-9 w-auto p-1 rounded-lg object-contain bg-white ring-1 ring-black/5"
-              src={logoUrl || logoFallback}
-              alt="Company"
-            />
-            <div className="leading-tight">
-              <strong className="block text-base tx-color font-semibold tracking-tight text-slate-900">
-                TaskHub
-              </strong>
-              <span className="block text-xs text-slate-500">
-                {user?.companyId ||
-                  "No companyId assigned please contact suppport"}
-              </span>
-            </div>
-          </div>
-
-          {/* Center nav (desktop) *
-          <nav className="hidden md:flex items-center gap-1">
-            <NavLink to="/dashboard" className={navLinkClasses}>
-              Dashboard
-            </NavLink>
-            <NavLink to="/setting" className={navLinkClasses}>
-              Settings
-            </NavLink>
-            <NavLink to="/messages" className={navLinkClasses}>
-              Messages
-            </NavLink>
-          </nav>
-
-          {/* User block *
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex flex-col items-end leading-tight">
-              <span className="text-sm font-medium text-slate-900 tx-color">
-                {userName}
-              </span>
-              {user?.role && (
-                <span className={roleBadgeClasses}>{user.role}</span>
-              )}
-            </div>
-            <img
-              className="h-9 w-9 rounded-full object-cover ring-1 ring-slate-200"
-              src={userPhoto}
-              alt="Avatar"
-            />
-
-            {/* Logout (desktop) *
-            <button
-              className="btn tx-color hidden md:inline-flex items-center   px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-
-            {/* Mobile menu toggle *
-            <button
-              className="md:hidden inline-flex flex-col gap-1.5 btn-primary p-2 rounded-md hover:bg-slate-100"
-              aria-label="Open menu"
-              onClick={() => setMenuOpen((v) => !v)}
-            >
-              <span className="h-0.5 w-5 bg-slate-700 rounded" />
-              <span className="h-0.5 w-5 bg-slate-700 rounded" />
-              <span className="h-0.5 w-5 bg-slate-700 rounded" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile nav *
-      {menuOpen && (
-        <nav
-          className="md:hidden border-t bg-white shadow-sm"
-          onClick={() => setMenuOpen(false)}
+    <div className="bg-color flex items-center justify-between">
+      <div className="flex gap-5">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="w5 h5"
+          aria-label={expanded ? "Collapse menu" : "Expand menu"}
+          title={expanded ? "Collapse" : "Expand"}
         >
-          <div className="mx-auto max-w-7xl px-3 py-2 flex flex-col gap-1">
-            <NavLink to="/dashboard" className={navLinkClasses}>
-              Dashboard
-            </NavLink>
-            <NavLink to="/settings" className={navLinkClasses}>
-              Settings
-            </NavLink>
-            <NavLink to="/messages" className={navLinkClasses}>
-              Messages
-            </NavLink>
-            <button
-              className="mt-1 inline-flex w-full justify-center rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
-          </div>
-        </nav>
-      )}
+          {expanded ? (
+            <CloseMenu className="w-6 h-6" />
+          ) : (
+            <OpenMenu className="w-6 h-6" />
+          )}
+        </button>
 
-      {/* Stats row *
-      <div className="border-t bg-pages">
-        <div className="mx-auto max-w-7xl px-4 md:px-6 py-3">
-          <TaskEstadistic />
+        <div className="flex flex-col h-10 items-end">
+          <img
+            src={logoUrl || logoFallback}
+            alt="Company logo"
+            className="object-contain h-8 w-25 rounded-md"
+          />
+          <span className="block text-xs text-slate-500">
+            {user?.companyId || "No companyId assigned"}
+          </span>
         </div>
       </div>
-    </header>*/}
-    </>
+
+      <div className="flex items-center gap-3 p-3">
+        <div className="flex flex-col items-end leading-tight">
+          <span className="text-sm font-medium tx-color">{userName}</span>
+          {user?.role && <span className={roleBadgeClasses}>{user.role}</span>}
+        </div>
+        <img
+          className="h-9 w-9 rounded-full object-cover border-2 ring-1 ring-slate-200"
+          src={user?.photo || samplePhoto}
+          alt="Avatar"
+        />
+        {/* Logout (desktop) */}
+      </div>
+    </div>
   );
 }
 

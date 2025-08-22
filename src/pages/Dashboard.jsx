@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../components/TopBar";
 //import "../styles/dashboard.css";
@@ -10,6 +10,9 @@ import { UserContext } from "../context/UserContext";
 function Dashboard() {
   const navigate = useNavigate();
   const { user, logout } = useContext(UserContext);
+  // Estado inicial según el viewport actual:
+  const isMobileInit = typeof window !== "undefined" && window.innerWidth < 700;
+  const [expanded, setExpanded] = useState(!isMobileInit);
 
   function handleLogout() {
     logout();
@@ -18,10 +21,9 @@ function Dashboard() {
 
   return (
     <div className="bg-pages w-screen h-screen flex">
-      <NavMenu />
+      <NavMenu expanded={expanded} setExpanded={setExpanded} />
       <div className="w-full mainSection">
-        <TopBar />
-
+        <TopBar expanded={expanded} setExpanded={setExpanded} />
         <TaskList />
       </div>
     </div>

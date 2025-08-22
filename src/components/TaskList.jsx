@@ -19,6 +19,9 @@ import TaskFilters, { defaultFilters } from "./TaskFilters";
 import PersonalTaskForm from "../components/PersonalTaskForm";
 import TaskEditor from "../components/TaskEditor";
 
+import Container from "../Utils/Container";
+import Button from "../Utils/Button";
+
 import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
 import lowImportantIcon from "../assets/icons/LImportant.png";
@@ -268,47 +271,40 @@ function TaskList() {
   };
 
   return (
-    <div className="p-2 w-full bg bg-component rounded-2xl h-auto">
+    <div className="p-2  w-full bg bg-component rounded-2xl h-auto">
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
       {/* Toolbar */}
       <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2">
         {/* Acciones primarias */}
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onMouseEnter={() => setHoveredIcon("addPersonal")}
-            onMouseLeave={() => setHoveredIcon("")}
-            onClick={() => setShowPersonalForm((s) => !s)}
-            title="Nueva tarea personal"
-          >
-            <img
-              src={
-                hoveredIcon === "addPersonal" ? addPersonalHover : addPersonal
-              }
-              className="h-5 w-5"
-              alt="Add Personal Task"
+        <div className="flex flex-wrap items-center gap-2 ">
+          <div className="flex gap-1 border-r-1 pr-2">
+            <Button
+              btnName={"Public task"}
+              hasIcon
+              iconPicked={"addPublic"}
+              classNameExtra={"justify-start border"}
+              btnType={"secondary"}
+              onClick={() => setShowPublicForm((s) => !s)}
             />
-            <span>Personal</span>
-          </button>
-
-          <button
-            type="button"
-            className="btn btn-primary"
-            onMouseEnter={() => setHoveredIcon("addPublic")}
-            onMouseLeave={() => setHoveredIcon("")}
-            onClick={() => setShowPublicForm((s) => !s)}
-            title="Nueva tarea pública"
-          >
-            <img
-              src={hoveredIcon === "addPublic" ? addPublicHover : addPublic}
-              className="h-5 w-5"
-              alt="Add Public Task"
+            <Button
+              btnName={"Personal task"}
+              hasIcon
+              iconPicked={"addPersonal"}
+              classNameExtra={"justify-start border"}
+              btnType={"secondary"}
+              onClick={() => setShowPersonalForm((s) => !s)}
             />
-            <span>Public</span>
-          </button>
+          </div>
+          <div className="mb-4 w-full" onClick={() => setEditTask(false)}>
+            <TaskFilters
+              filters={filters}
+              setFilters={setFilters}
+              assignees={assignees}
+              currentUserId={user?.uid}
+            />
+          </div>
         </div>
 
         {/* Form personal */}
@@ -420,14 +416,6 @@ function TaskList() {
       </div>
 
       {/* Filtros*/}
-      <div className="mb-4" onClick={() => setEditTask(false)}>
-        <TaskFilters
-          filters={filters}
-          setFilters={setFilters}
-          assignees={assignees}
-          currentUserId={user?.uid}
-        />
-      </div>
 
       <div className="space-y-3">
         {/* Encabezado de columnas */}
