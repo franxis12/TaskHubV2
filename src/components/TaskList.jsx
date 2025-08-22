@@ -18,6 +18,7 @@ import AddPublicTask from "./AddPublicTask";
 import TaskFilters, { defaultFilters } from "./TaskFilters";
 import PersonalTaskForm from "../components/PersonalTaskForm";
 import TaskEditor from "../components/TaskEditor";
+import TaskEstadistic from "../components/TaskEstadistic";
 
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
@@ -56,7 +57,7 @@ function TaskList() {
   const [tasks, setTasks] = useState([]);
   const [pubTasks, setPubTasks] = useState([]);
   const [myTasks, setMyTasks] = useState([]);
-  const [curretTask, setCurrentTask] = useState([]);
+  const [currentTask, setCurrentTask] = useState([]);
 
   // UI
   const [hoveredIcon, setHoveredIcon] = useState("");
@@ -93,6 +94,7 @@ function TaskList() {
   };
 
   const canChangeStatus = (t) => {
+    if (!user) return false;
     const isAdmin = user.role === "admin";
     const isOwnerPersonal = t.type === "personal" && t.createdBy === user.uid;
     const isAssignedUser = t.assignedTo === user.uid;
@@ -271,7 +273,7 @@ function TaskList() {
   };
 
   return (
-    <div className="p-2  w-full bg bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
+    <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
@@ -280,7 +282,7 @@ function TaskList() {
         {/* Primary actions and Filters */}
         <div className="flex  items-center gap-2 ">
           {/*Add task buttons*/}
-          <div className="flex gap-1 border-r-1 pr-2">
+          <div className="flex gap-1 border-r pr-2">
             <Button
               btnName={"Public task"}
               hasIcon
@@ -300,7 +302,7 @@ function TaskList() {
           </div>
 
           {/*Task Filters */}
-          <div className="mb-4 w-full" onClick={() => setEditTask(false)}>
+          <div className="mb-4 w-full" onClick={() => setEditTask("")}>
             <TaskFilters
               filters={filters}
               setFilters={setFilters}
@@ -321,62 +323,63 @@ function TaskList() {
         )}
 
         {/* Acciones de la tarea seleccionada */}
-        {actionTaskId === curretTask.id && (
+        {actionTaskId === currentTask.id && (
           <div
             className="mt-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-2 flex items-center justify-between">
-              <span className={badgeByStatus(curretTask.status)}>
-                {curretTask.status}
+              <span className={badgeByStatus(currentTask.status)}>
+                {currentTask.status}
               </span>
               <h3 className="text-sm font-medium text-slate-800">
-                {curretTask.status === "progress"
+                {currentTask.status === "progress"
                   ? "This task is in progress"
-                  : curretTask.status === "completed"
+                  : currentTask.status === "completed"
                   ? "This task is completed"
-                  : curretTask.status === "missed"
+                  : currentTask.status === "missed"
                   ? "This task is missed"
                   : "This task is pending"}
               </h3>
             </div>
-
             <div className="flex flex-wrap items-center gap-2">
-              {canChangeStatus(curretTask) ? (
-                curretTask.status === "missed" ? (
+              {canChangeStatus(currentTask) ? (
+                currentTask.status === "missed" ? (
                   <span className="text-sm font-medium text-rose-700">
                     Esta tarea ya no se puede cambiar de estado.
                   </span>
                 ) : (
                   <>
-                    {curretTask.status === "pending" && (
+                    {currentTask.status === "pending" && (
                       <button
                         type="button"
                         className={btnOutline}
-                        onClick={() => updateTaskStatus(curretTask, "progress")}
+                        onClick={() =>
+                          updateTaskStatus(currentTask, "progress")
+                        }
                       >
                         Start
                       </button>
                     )}
 
-                    {(curretTask.status === "pending" ||
-                      curretTask.status === "progress") && (
+                    {(currentTask.status === "pending" ||
+                      currentTask.status === "progress") && (
                       <button
                         type="button"
                         className={btnPrimary}
                         onClick={() =>
-                          updateTaskStatus(curretTask, "completed")
+                          updateTaskStatus(currentTask, "completed")
                         }
                       >
                         Complete
                       </button>
                     )}
 
-                    {curretTask.status !== "pending" && (
+                    {currentTask.status !== "pending" && (
                       <button
                         type="button"
                         className={btnOutline}
-                        onClick={() => updateTaskStatus(curretTask, "pending")}
+                        onClick={() => updateTaskStatus(currentTask, "pending")}
                       >
                         Set Pending
                       </button>
@@ -389,20 +392,21 @@ function TaskList() {
                 </span>
               )}
 
-              {(user.role === "admin" ||
-                (user.role === "member" && curretTask.type === "personal")) && (
+              {(user?.role === "admin" ||
+                (user?.role === "member" &&
+                  currentTask.type === "personal")) && (
                 <button
                   type="button"
                   className={btnGhost}
                   onClick={() => {
-                    if (editTask === curretTask.id) setEditTask("");
+                    if (editTask === currentTask.id) setEditTask("");
                     else {
-                      setEditTask(curretTask.id);
+                      setEditTask(currentTask.id);
                       setActionTaskId("");
                     }
                   }}
                 >
-                  {editTask === curretTask.id ? "Close Editor" : "Edit"}
+                  {editTask === currentTask.id ? "Close Editor" : "Edit"}
                 </button>
               )}
 
@@ -419,10 +423,14 @@ function TaskList() {
       </div>
 
       <div className="grid md:grid-cols-3 grid-cols-1 grid-rows-2 gap-2 grid-flow-row-dense col-span-2">
-        <Container cols="md:col-span-2 ">
-          <div className="flex items-center justify-between col-span-3 p-2 ">
+        <Container cols="md:col-span-2 max-h-90">
+          {" "}
+          {/*<<<<---- Container for Assigne to me order for priority  */}
+          <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
             <h3 className="font-semibold ">Current Tasks</h3>
-            <div className="flex gap-1">
+            <div className="flex gap-1 ">
+              <Button btnName="Edit" btnType={"edit"} classNameExtra={""} />
+
               <Button btnName="Start" btnType={"yellow"} classNameExtra={""} />
               <Button
                 btnName="Complete"
@@ -434,7 +442,7 @@ function TaskList() {
           </div>
           <div className="space-y-3 col-span-3 p-2">
             {/* Estados vacíos / aprobación */}
-            {user.pendingApproval ? (
+            {user?.pendingApproval ? (
               <div className="my-6 w-full text-center">
                 <h4 className="w-full rounded-xl border bg-[var(--componentsBG)] p-3">
                   You will be able to view your tasks once your account has been
@@ -460,22 +468,27 @@ function TaskList() {
                       setCurrentTask(task);
                     }}
                     className={[
-                      "grid grid-cols-12 ",
+                      " grid grid-cols-12 rounded-xl border-purple-1 ",
                       isEditing
                         ? "ring-2 ring-slate-400 shadow-sm"
                         : isSelected
-                        ? "ring-2 ring-blue-400 shadow-sm"
+                        ? " shadow-xl  scale-101 transition-transform  bg-indigo-100"
                         : "",
                     ].join(" ")}
                   >
-                    <div className="my-2 flex w-full items-center justify-between rounded-xl px-2">
+                    <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
+                      {" "}
+                      {/*TASK Principal Div*/}
                       {/* Nombre y tipo */}
-                      <div className="px-2 text-lg font-semibold text-slate-800">
+                      <div className="px-2 text-lg font-semibold text-slate-800 w-full flex">
                         <img
                           src={task.type === "public" ? Public : Personal}
                           className="mr-2 inline-block h-5 w-5 align-[-2px]"
                           alt="Task type"
                         />
+                        <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
+                          1/4
+                        </div>
                         {task.taskName}
                         {task.notes && (
                           <img
@@ -493,7 +506,6 @@ function TaskList() {
                           />
                         )}
                       </div>
-
                       {/* Metadatos derecha */}
                       <div className="flex items-center gap-8">
                         {/* completeBy */}
@@ -566,7 +578,7 @@ function TaskList() {
                                   setDeleteTaskId(null);
                                   return;
                                 }
-                                const isAdmin = user.role === "admin";
+                                const isAdmin = user?.role === "admin";
                                 const isMyPersonal =
                                   task.type === "personal" &&
                                   task.createdBy === user.uid;
@@ -625,11 +637,21 @@ function TaskList() {
               })
             )}
           </div>
+          <div className="flex items-start justify-between col-span-3 p-2 shadowTopInset divTitle"></div>
         </Container>
-        <Container cols="row-span-2"></Container>
-        <Container cols="col-span-1"></Container>
-        <Container cols="col-span-1"></Container>
-        <Container cols="col-span-1"></Container>
+        <Container cols="row-span-2">
+          {/*<<<<---- Container for Team Member  */}
+        </Container>
+        <Container cols="col-span-1">
+          {/*<<<<---- Container for all Task   */}
+        </Container>
+        <Container cols="col-span-1">
+          {/*<<<<---- Container for Stats  */}
+          <TaskEstadistic />
+        </Container>
+        <Container cols="col-span-1">
+          {/*<<<<---- Container for Personals Task   */}
+        </Container>
       </div>
     </div>
   );

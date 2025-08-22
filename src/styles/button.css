@@ -150,3 +150,29 @@
    transform: scale(1.05);
    transition: 0.3s;
 }
+
+.btn-edit{
+    height: 30px;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    gap: 7px;
+    width: auto;
+    position: relative;
+    padding-inline: 10px;
+    border-radius: 11px;
+    margin-bottom: 2px;
+    transition: 0.3s;
+       border: solid 1px  #f925256d;
+           color: #ff3c3c;
+
+
+}
+.btn-edit:hover{
+    color: #ff0000;
+   background-color: #f925256d; 
+   border: solid 2px  #f92525;
+   box-shadow: 0 2px 0px #33333370;
+   transform: scale(1.05);
+   transition: 0.3s;
+}

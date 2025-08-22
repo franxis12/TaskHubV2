@@ -32,6 +32,13 @@ function AddPublicTask({ accion }) {
   const [members, setMembers] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
+  // NUEVO: estado para sub-tasks con mismos campos que la principal
+  const [stName, setStName] = useState("");
+  const [stPriority, setStPriority] = useState("medium");
+  const [stCompleteBy, setStCompleteBy] = useState("");
+  const [stNotes, setStNotes] = useState("");
+  const [subTasks, setSubTasks] = useState([]); // [{name, priority, completeBy, notes, status}]
+
   const priorityIcons = {
     low: priorityLow,
     medium: priorityMedium,
@@ -70,6 +77,38 @@ function AddPublicTask({ accion }) {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  // Copiar prioridad/fecha desde la principal a los inputs de sub-task
+  const copyFromMain = () => {
+    setStPriority(priority);
+    setStCompleteBy(completeBy);
+  };
+
+  // Agregar/Eliminar sub-tasks (límite 10)
+  const handleAddSubTask = () => {
+    const name = stName.trim();
+    if (!name) return;
+    if (subTasks.length >= 10) return;
+
+    setSubTasks((prev) => [
+      ...prev,
+      {
+        name,
+        priority: stPriority || "medium",
+        completeBy: stCompleteBy || "",
+        notes: stNotes?.trim() || "",
+        status: "pending",
+      },
+    ]);
+
+    // Limpiar nombre/notas; dejo prioridad/fecha por comodidad al agregar varias similares
+    setStName("");
+    setStNotes("");
+  };
+
+  const handleRemoveSubTask = (idx) => {
+    setSubTasks((prev) => prev.filter((_, i) => i !== idx));
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -97,6 +136,9 @@ function AddPublicTask({ accion }) {
         notes,
         createdAt: serverTimestamp(),
         completeBy,
+        // NUEVO: guardar sub-tasks con mismos campos que la principal
+        subTasks, // p.ej. [{name, priority, completeBy, notes, status}, ...]
+        // flags para contadores
         pendingCounted: false,
         completedCounted: false,
         missedCounted: false,
@@ -108,6 +150,11 @@ function AddPublicTask({ accion }) {
       setCompleteBy("");
       setNotes("");
       setAssignedTo("");
+      setSubTasks([]);
+      setStName("");
+      setStPriority("medium");
+      setStCompleteBy("");
+      setStNotes("");
 
       // Cerrar modal/form
       accion?.();
@@ -131,6 +178,9 @@ function AddPublicTask({ accion }) {
     " bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-800/90";
   const btnOutlineDanger =
     btnBase + " border border-rose-300 bg-white text-rose-700 hover:bg-rose-50";
+  const btnOutline =
+    btnBase +
+    " border border-slate-300 bg-white text-slate-700 hover:bg-slate-50";
 
   return (
     <div
@@ -246,6 +296,100 @@ function AddPublicTask({ accion }) {
             onChange={(e) => setNotes(e.target.value)}
             className={inputBase + " min-h-[84px]"}
           />
+        </div>
+
+        {/* NUEVO: Sub-tasks */}
+        <div className="rounded-md border border-slate-200 p-3 bg-white/50">
+          <div className="flex items-center justify-between mb-2">
+            <label className={labelBase + " m-0"}>
+              Sub-tasks{" "}
+              <span className="text-slate-400">({subTasks.length}/10)</span>
+            </label>
+            <button
+              type="button"
+              className="text-xs text-slate-600 hover:text-slate-900 underline"
+              onClick={copyFromMain}
+              title="Copiar prioridad y fecha desde la tarea principal"
+            >
+              Copiar de la principal
+            </button>
+          </div>
+
+          {/* Formulario de sub-task */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-2">
+            <input
+              type="text"
+              value={stName}
+              onChange={(e) => setStName(e.target.value)}
+              className={inputBase}
+              placeholder="Nombre (p. ej. wireframe)"
+              maxLength={100}
+            />
+            <select
+              value={stPriority}
+              onChange={(e) => setStPriority(e.target.value)}
+              className={inputBase}
+            >
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+            </select>
+            <input
+              type="date"
+              value={stCompleteBy}
+              onChange={(e) => setStCompleteBy(e.target.value)}
+              className={inputBase}
+            />
+            <button
+              type="button"
+              onClick={handleAddSubTask}
+              className={btnOutline}
+              disabled={!stName.trim() || subTasks.length >= 10}
+              title="Agregar sub-task"
+            >
+              Agregar
+            </button>
+          </div>
+
+          <textarea
+            value={stNotes}
+            onChange={(e) => setStNotes(e.target.value)}
+            className={inputBase + " mb-2 min-h-[60px]"}
+            placeholder="Notas de la sub-task (opcional)"
+            maxLength={400}
+          />
+
+          {subTasks.length > 0 && (
+            <ul className="space-y-1">
+              {subTasks.map((st, idx) => (
+                <li
+                  key={`${st.name}-${idx}`}
+                  className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium truncate">
+                      {idx + 1}. {st.name}
+                    </div>
+                    <div className="text-xs text-slate-500 flex flex-wrap gap-2">
+                      <span>Prioridad: {st.priority}</span>
+                      {st.completeBy && <span>• Límite: {st.completeBy}</span>}
+                      {st.notes && (
+                        <span className="truncate">• Notas: {st.notes}</span>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveSubTask(idx)}
+                    className="text-xs text-slate-600 hover:text-rose-600"
+                    title="Eliminar"
+                  >
+                    Eliminar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Acciones */}

@@ -258,14 +258,17 @@ body::-webkit-scrollbar{
   .bg-orange { background-color: #EF6438; }
   .bg-teal   { background-color: #247881; }
   .bg-yellow { background-color: #f9a825; }
+  .bg-gry {background-color: #ffffff;}
 
   .bg-orange-trasparent { background-color: rgba(241, 92, 42, 0.496)}
   .bg-teal-trasparent   { background-color: #2478817a; }
   .bg-yellow-trasparent { background-color: #f9a8256d; }
 
+
   .border-orange-2{ border: solid 2px  #EF6438;}
   .border-teal-2{ border: solid 2px  #247881;}
   .border-Yellow-2{ border: solid 2px  #f9a825;}
+  .border-purple-1{ border: solid 1px  #6639F6;}
 
   .text-orange { color: #EF6438; }
   .text-teal   { color: #247881; } 
@@ -277,4 +280,35 @@ body::-webkit-scrollbar{
    padding-right: 15px;
    padding-left: 8px;
   }
+
+  .divTitle{
+    position: sticky;
+    top: 0;
+    background-color: var(--pagesBackground);
+    z-index: 500;
+  }
+
+  .shadowBottom{
+    box-shadow: 0 8px 12px var(--pagesBackground);
+    
+  }
+  .shadowTopInset{
+    box-shadow:  0 -10px 10px var(--pagesBackground);
+    height: 10px;
+    position: sticky;
+    bottom: 0px;
+    background-color: var(--pagesBackground);
+    
+  }
+  /* Hide scrollbar in Chrome, Safari, and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar in IE, Edge, and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 }
