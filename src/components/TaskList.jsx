@@ -295,6 +295,14 @@ function TaskList() {
             btnType={"secondary"}
             onClick={() => setShowPersonalForm((s) => !s)}
           />
+          <div className="mb-4" onClick={() => setEditTask(false)}>
+            <TaskFilters
+              filters={filters}
+              setFilters={setFilters}
+              assignees={assignees}
+              currentUserId={user?.uid}
+            />
+          </div>
         </div>
 
         {/* Form personal */}
@@ -407,14 +415,6 @@ function TaskList() {
       <Container />
 
       {/* Filtros*/}
-      <div className="mb-4" onClick={() => setEditTask(false)}>
-        <TaskFilters
-          filters={filters}
-          setFilters={setFilters}
-          assignees={assignees}
-          currentUserId={user?.uid}
-        />
-      </div>
 
       <div className="space-y-3">
         {/* Encabezado de columnas */}
