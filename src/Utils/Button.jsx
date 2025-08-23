@@ -29,6 +29,12 @@ function Button({
     primary: "btn-prima border",
     secondary: "btn-second",
     danger: "btn-danger",
+    orange:
+      "btn-orange bg-orange text-white min-w-20 items-center justify-center",
+    green: "btn-gree bg-teal  text-white min-w-20 items-center justify-center",
+    yellow:
+      "btn-yellow bg-yellow text-white min-w-20 items-center justify-center",
+    edit: "btn-edit bg-white text-white min-w-20 items-center justify-center",
     icon: "icon", //Pending
     link: "link", //Pending
   };

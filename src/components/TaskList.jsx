@@ -18,6 +18,8 @@ import AddPublicTask from "./AddPublicTask";
 import TaskFilters, { defaultFilters } from "./TaskFilters";
 import PersonalTaskForm from "../components/PersonalTaskForm";
 import TaskEditor from "../components/TaskEditor";
+import TaskEstadistic from "../components/TaskEstadistic";
+import TeamMembers from "../components/TeamMembers";
 
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
@@ -56,7 +58,7 @@ function TaskList() {
   const [tasks, setTasks] = useState([]);
   const [pubTasks, setPubTasks] = useState([]);
   const [myTasks, setMyTasks] = useState([]);
-  const [curretTask, setCurrentTask] = useState([]);
+  const [currentTask, setCurrentTask] = useState([]);
 
   // UI
   const [hoveredIcon, setHoveredIcon] = useState("");
@@ -65,6 +67,9 @@ function TaskList() {
   const [actionTaskId, setActionTaskId] = useState("");
   const [showPublicForm, setShowPublicForm] = useState(false);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
+
+  // NUEVO: control de expandir/cerrar sub-tasks por tarea
+  const [expandedTaskIds, setExpandedTaskIds] = useState(new Set());
 
   const [userMap, setUserMap] = useState({});
   const [filters, setFilters] = useState({
@@ -93,6 +98,7 @@ function TaskList() {
   };
 
   const canChangeStatus = (t) => {
+    if (!user) return false;
     const isAdmin = user.role === "admin";
     const isOwnerPersonal = t.type === "personal" && t.createdBy === user.uid;
     const isAssignedUser = t.assignedTo === user.uid;
@@ -153,6 +159,50 @@ function TaskList() {
       return true;
     });
   }, [tasks, filters]);
+
+  // NUEVO: items asignados a mí (tareas y sub-tareas)
+  const assignedItems = useMemo(() => {
+    if (!user?.uid) return [];
+    const items = [];
+
+    for (const t of tasks) {
+      if (t.assignedTo === user.uid) {
+        items.push({
+          kind: "task",
+          id: t.id,
+          parentId: null,
+          parentName: null,
+          name: t.taskName,
+          priority: t.priority,
+          completeBy: t.completeBy,
+          status: t.status,
+          type: t.type,
+          task: t,
+        });
+      }
+      if (Array.isArray(t.subTasks)) {
+        t.subTasks.forEach((st, idx) => {
+          if (st?.assignedTo === user.uid) {
+            items.push({
+              kind: "subtask",
+              id: `${t.id}::${idx}`,
+              parentId: t.id,
+              parentName: t.taskName,
+              name: st.name,
+              priority: st.priority,
+              completeBy: st.completeBy,
+              status: st.status || "pending",
+              type: t.type,
+              task: t,
+              subtaskIndex: idx,
+              subtask: st,
+            });
+          }
+        });
+      }
+    }
+    return items;
+  }, [tasks, user]);
 
   // Cambiar estado (CFs ajustan contadores/flags)
   const updateTaskStatus = async (task, newStatus) => {
@@ -270,16 +320,27 @@ function TaskList() {
     return `${base} ${map[s] || "bg-slate-50 text-slate-600 border-slate-200"}`;
   };
 
+  // toggle expand/collapse for a task
+  const toggleExpand = (taskId) => {
+    setExpandedTaskIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(taskId)) next.delete(taskId);
+      else next.add(taskId);
+      return next;
+    });
+  };
+
   return (
-    <div className="p-2  w-full bg bg-component rounded-2xl h-auto shadow-inner drop-shadow-md">
+    <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
       {/* Toolbar */}
       <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2 shadow-md">
-        {/* Acciones primarias */}
+        {/* Primary actions and Filters */}
         <div className="flex  items-center gap-2 ">
-          <div className="flex gap-1 border-r-1 pr-2">
+          {/*Add task buttons*/}
+          <div className="flex gap-1 border-r pr-2">
             <Button
               btnName={"Public task"}
               hasIcon
@@ -297,7 +358,9 @@ function TaskList() {
               onClick={() => setShowPersonalForm((s) => !s)}
             />
           </div>
-          <div className="mb-4 w-full" onClick={() => setEditTask(false)}>
+
+          {/*Task Filters */}
+          <div className="mb-4 w-full" onClick={() => setEditTask("")}>
             <TaskFilters
               filters={filters}
               setFilters={setFilters}
@@ -307,7 +370,7 @@ function TaskList() {
           </div>
         </div>
 
-        {/* Form personal */}
+        {/* PersonalTask Form */}
         {showPersonalForm && (
           <div className="mt-3">
             <PersonalTaskForm
@@ -318,290 +381,472 @@ function TaskList() {
         )}
 
         {/* Acciones de la tarea seleccionada */}
-        {actionTaskId === curretTask.id && (
+        {actionTaskId === currentTask.id && (
           <div
             className="mt-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-2 flex items-center justify-between">
-              <span className={badgeByStatus(curretTask.status)}>
-                {curretTask.status}
+              <span className={badgeByStatus(currentTask.status)}>
+                {currentTask.status}
               </span>
               <h3 className="text-sm font-medium text-slate-800">
-                {curretTask.status === "progress"
+                {currentTask.status === "progress"
                   ? "This task is in progress"
-                  : curretTask.status === "completed"
+                  : currentTask.status === "completed"
                   ? "This task is completed"
-                  : curretTask.status === "missed"
+                  : currentTask.status === "missed"
                   ? "This task is missed"
                   : "This task is pending"}
               </h3>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              {canChangeStatus(curretTask) ? (
-                curretTask.status === "missed" ? (
-                  <span className="text-sm font-medium text-rose-700">
-                    Esta tarea ya no se puede cambiar de estado.
-                  </span>
-                ) : (
-                  <>
-                    {curretTask.status === "pending" && (
-                      <button
-                        type="button"
-                        className={btnOutline}
-                        onClick={() => updateTaskStatus(curretTask, "progress")}
-                      >
-                        Start
-                      </button>
-                    )}
-
-                    {(curretTask.status === "pending" ||
-                      curretTask.status === "progress") && (
-                      <button
-                        type="button"
-                        className={btnPrimary}
-                        onClick={() =>
-                          updateTaskStatus(curretTask, "completed")
-                        }
-                      >
-                        Complete
-                      </button>
-                    )}
-
-                    {curretTask.status !== "pending" && (
-                      <button
-                        type="button"
-                        className={btnOutline}
-                        onClick={() => updateTaskStatus(curretTask, "pending")}
-                      >
-                        Set Pending
-                      </button>
-                    )}
-                  </>
-                )
-              ) : (
-                <span className="text-sm text-slate-700">
-                  No puedes cambiar el estado. Solo el asignado o un admin.
-                </span>
-              )}
-
-              {(user.role === "admin" ||
-                (user.role === "member" && curretTask.type === "personal")) && (
-                <button
-                  type="button"
-                  className={btnGhost}
-                  onClick={() => {
-                    if (editTask === curretTask.id) setEditTask("");
-                    else {
-                      setEditTask(curretTask.id);
-                      setActionTaskId("");
-                    }
-                  }}
-                >
-                  {editTask === curretTask.id ? "Close Editor" : "Edit"}
-                </button>
-              )}
-
-              <button
-                type="button"
-                className={btnGhost}
-                onClick={() => setActionTaskId("")}
-              >
-                Cancel
-              </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Filtros*/}
-
-      <div className="space-y-3">
-        {/* Estados vacíos / aprobación */}
-        {user.pendingApproval ? (
-          <div className="my-6 w-full text-center">
-            <h4 className="w-full rounded-xl border bg-[var(--componentsBG)] p-3">
-              You will be able to view your tasks once your account has been
-              approved.
-            </h4>
+      <div className="grid md:grid-cols-3 grid-cols-1 grid-rows-2 gap-2 grid-flow-row-dense col-span-2">
+        <Container cols="col-span-1">
+          {/*<<<<---- Container for task assigned Task   */}
+          <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
+            <h3 className="font-semibold ml-3 mt-2">Assigned to me</h3>
           </div>
-        ) : filteredTasks.length === 0 ? (
-          <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
-            <h3 className="text-lg font-medium text-slate-700">
-              No tienes tareas aún.
-            </h3>
-          </div>
-        ) : (
-          filteredTasks.map((task) => {
-            const isSelected = actionTaskId === task.id;
-            const isEditing = editTask === task.id;
-            return (
-              <div
-                key={task.id}
-                onClick={() => {
-                  if (editTask) return;
-                  setActionTaskId(task.id);
-                  setCurrentTask(task);
-                }}
-                className={[
-                  "my-1 w-full rounded-xl bg-[var(--componentsBG)]",
-                  "flex flex-col items-center justify-between",
-                  "ring-1 ring-slate-200 transition-shadow",
-                  isEditing
-                    ? "ring-2 ring-slate-400 shadow-sm"
-                    : isSelected
-                    ? "ring-2 ring-blue-400 shadow-sm"
-                    : "",
-                ].join(" ")}
-              >
-                <div className="my-2 flex w-full items-center justify-between rounded-xl px-2">
-                  {/* Nombre y tipo */}
-                  <div className="px-2 text-lg font-semibold text-slate-800">
-                    <img
-                      src={task.type === "public" ? Public : Personal}
-                      className="mr-2 inline-block h-5 w-5 align-[-2px]"
-                      alt="Task type"
-                    />
-                    {task.taskName}
-                    {task.notes && (
+          <div className="space-y-3 col-span-3 p-2">
+            {assignedItems.length === 0 ? (
+              <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
+                <h3 className="text-lg font-medium text-slate-700">
+                  No tienes asignaciones.
+                </h3>
+              </div>
+            ) : (
+              assignedItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-12 rounded-xl border-purple-1"
+                  onClick={() => {
+                    const parentTask = item.task;
+                    setActionTaskId(parentTask.id);
+                    setCurrentTask(parentTask);
+                    // si es subtask, aseguro expandir el padre
+                    setExpandedTaskIds((prev) => {
+                      const next = new Set(prev);
+                      next.add(parentTask.id);
+                      return next;
+                    });
+                  }}
+                >
+                  <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
+                    <div className="px-2 text-lg font-semibold text-slate-800 w-full flex">
                       <img
-                        src={
-                          hoveredIcon === `note-${task.id}` ? noteHover : note
-                        }
-                        onMouseEnter={() => setHoveredIcon(`note-${task.id}`)}
-                        onMouseLeave={() => setHoveredIcon("")}
-                        className="ml-2 inline-block h-5 w-5 align-[-2px]"
-                        alt="Note"
+                        src={item.type === "public" ? Public : Personal}
+                        className="mr-2 inline-block h-5 w-5 align-[-2px]"
+                        alt="Task type"
                       />
-                    )}
-                  </div>
-
-                  {/* Metadatos derecha */}
-                  <div className="flex items-center gap-8">
-                    {/* completeBy */}
-                    <div className="flex flex-col items-center">
-                      <span className="text-sm font-semibold text-slate-700">
-                        {task.completeBy}
-                      </span>
+                      <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
+                        {/* marcador simple */}•
+                      </div>
+                      {item.kind === "subtask" ? (
+                        <span className="ml-2">
+                          {item.name}{" "}
+                          <span className="text-slate-500">— de</span>{" "}
+                          <span className="font-medium">{item.parentName}</span>
+                        </span>
+                      ) : (
+                        <span className="ml-2">{item.name}</span>
+                      )}
                     </div>
 
-                    {/* time left */}
-                    <div className="flex flex-col items-center">
-                      <span className="text-lg font-semibold text-emerald-600">
-                        {getTimeLeft(task.completeBy)}
-                      </span>
-                    </div>
+                    <div className="flex items-center gap-8">
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-semibold text-slate-700">
+                          {item.completeBy || ""}
+                        </span>
+                      </div>
 
-                    {/* assignedTo */}
-                    <div className="flex flex-col items-center">
-                      <img
-                        src={userMap[task.assignedTo]?.photo || samplePhoto}
-                        className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
-                        alt="Assignee"
-                      />
-                      <span className="text-sm font-semibold text-slate-700">
-                        {userMap[task.assignedTo]?.name || "Unassigned"}
-                      </span>
-                    </div>
+                      <div className="flex flex-col items-center">
+                        <span className="text-lg font-semibold text-emerald-600">
+                          {getTimeLeft(item.completeBy)}
+                        </span>
+                      </div>
 
-                    {/* priority */}
-                    <div className="flex flex-col items-center">
-                      <img
-                        src={priorityIcons[task.priority] || ""}
-                        className="h-5 w-5"
-                        alt="Priority"
-                      />
-                      <span className="text-sm font-semibold text-slate-700 capitalize">
-                        {task.priority}
-                      </span>
-                    </div>
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={priorityIcons[item.priority] || ""}
+                          className="h-5 w-5"
+                          alt="Priority"
+                        />
+                        <span className="text-sm font-semibold text-slate-700 capitalize">
+                          {item.priority}
+                        </span>
+                      </div>
 
-                    {/* status */}
-                    <div className="flex flex-col items-center">
-                      <img
-                        src={statusIcon[task.status] || ""}
-                        className="h-5 w-5"
-                        alt="Status"
-                      />
-                      <span className="text-sm font-semibold text-slate-700 capitalize">
-                        {task.status}
-                      </span>
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={statusIcon[item.status] || ""}
+                          className="h-5 w-5"
+                          alt="Status"
+                        />
+                        <span className="text-sm font-semibold text-slate-700 capitalize">
+                          {item.status}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
+              ))
+            )}
+          </div>
+        </Container>
 
-                {/* Confirm delete */}
-                {deleteTaskId === task.id && (
-                  <div className="mx-2 mb-3 w-[calc(100%-1rem)] rounded-lg border border-slate-200 bg-white p-3 text-slate-800 shadow-sm">
-                    <h3 className="mb-2 text-sm font-medium">
-                      Seguro que quieren eliminar la tarea
-                    </h3>
-                    <div className="flex gap-2">
-                      <button
-                        className={btnPrimary}
-                        onClick={async () => {
-                          try {
-                            if (task.status === "progress") {
-                              alert(
-                                "No puedes eliminar una tarea en progreso."
-                              );
-                              setDeleteTaskId(null);
-                              return;
-                            }
-                            const isAdmin = user.role === "admin";
-                            const isMyPersonal =
-                              task.type === "personal" &&
-                              task.createdBy === user.uid;
-                            if (!isAdmin && !isMyPersonal) {
-                              alert(
-                                "No tienes permiso para eliminar esta tarea."
-                              );
-                              setDeleteTaskId(null);
-                              return;
-                            }
-                            await deleteDoc(doc(db, "tasks", task.id));
-                            setDeleteTaskId(null);
-                            setEditTask("");
-                          } catch (err) {
-                            console.error("Error al eliminar la tarea:", err);
-                            alert("No se pudo eliminar. Revisa la consola.");
+        <Container cols="col-span-1">
+          {/*<<<<---- Container for Stats  */}
+          <TaskEstadistic />
+        </Container>
+        <Container cols="row-span-2">
+          {/*<<<<---- Container for Team Member  */}
+          <TeamMembers
+            tasks={tasks} // opcional, para mostrar conteos
+            onMemberClick={(uid) => {
+              // opcional: filtra por asignado usando tus filtros existentes
+              setFilters((f) => ({ ...f, assignedTo: uid }));
+            }}
+          />
+        </Container>
+
+        <Container cols="md:col-span-2 max-h-90">
+          {" "}
+          {/*<<<<---- Container for all task */}
+          <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
+            <h3 className="font-semibold ml-3 mt-2">All Tasks</h3>
+            <div className="flex gap-1 ">
+              {/*To transfer*/}
+              <div className="flex flex-wrap items-center gap-2">
+                {canChangeStatus(currentTask) ? (
+                  currentTask.status === "missed" ? (
+                    <span className="text-sm font-medium text-rose-700">
+                      Esta tarea ya no se puede cambiar de estado.
+                    </span>
+                  ) : (
+                    <>
+                      {currentTask.status === "pending" && (
+                        <Button
+                          btnName="Start"
+                          btnType={"yellow"}
+                          classNameExtra={""}
+                          onClick={() =>
+                            updateTaskStatus(currentTask, "progress")
                           }
-                        }}
-                      >
-                        Delete
-                      </button>
-                      <button
-                        className={btnOutline}
-                        onClick={() => setDeleteTaskId(null)}
-                      >
-                        Keep
-                      </button>
-                    </div>
-                  </div>
+                        />
+                      )}
+
+                      {(currentTask.status === "pending" ||
+                        currentTask.status === "progress") && (
+                        <Button
+                          btnName="Complete"
+                          btnType={"green"}
+                          classNameExtra={""}
+                          onClick={() =>
+                            updateTaskStatus(currentTask, "completed")
+                          }
+                        />
+                      )}
+
+                      {currentTask.status !== "pending" && (
+                        <Button
+                          btnName="Set Pending"
+                          btnType={"yellow"}
+                          classNameExtra={""}
+                          onClick={() =>
+                            updateTaskStatus(currentTask, "pending")
+                          }
+                        />
+                      )}
+                    </>
+                  )
+                ) : (
+                  <span className="text-sm text-slate-700">
+                    No puedes cambiar el estado. Solo el asignado o un admin.
+                  </span>
                 )}
 
-                {/* Editor */}
-                {editTask === task.id && (
-                  <div className="w-full px-2 pb-3">
-                    <TaskEditor
-                      task={task}
-                      user={user}
-                      userMap={userMap}
-                      priorityIcons={priorityIcons}
-                      statusIcon={statusIcon}
-                      statusIconImg={statusIconImg}
-                      calendarIcon={calendarIcon}
-                      titleIcon={titleIcon}
-                      onClose={() => setEditTask("")}
-                      onDelete={() => setDeleteTaskId(task.id)}
-                    />
-                  </div>
+                {(user?.role === "admin" ||
+                  (user?.role === "member" &&
+                    currentTask.type === "personal")) && (
+                  <Button
+                    btnName={
+                      editTask === currentTask.id ? "Close Editor" : "Edit"
+                    }
+                    btnType={"orange"}
+                    classNameExtra={""}
+                    type="button"
+                    className={btnGhost}
+                    onClick={() => {
+                      if (editTask === currentTask.id) setEditTask("");
+                      else {
+                        setEditTask(currentTask.id);
+                        setActionTaskId("");
+                      }
+                    }}
+                  />
                 )}
               </div>
-            );
-          })
-        )}
+              {/* To trasnfers*/}
+
+              <Button btnName="Delete" btnType={"edit"} classNameExtra={""} />
+            </div>
+          </div>
+          <div className="space-y-3 col-span-3 p-2">
+            {/* Estados vacíos / aprobación */}
+            {user?.pendingApproval ? (
+              <div className="my-6 w-full text-center">
+                <h4 className="w-full rounded-xl border bg-[var(--componentsBG)] p-3">
+                  You will be able to view your tasks once your account has been
+                  approved.
+                </h4>
+              </div>
+            ) : filteredTasks.length === 0 ? (
+              <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
+                <h3 className="text-lg font-medium text-slate-700">
+                  No tienes tareas aún.
+                </h3>
+              </div>
+            ) : (
+              filteredTasks.map((task) => {
+                const isSelected = actionTaskId === task.id;
+                const isEditing = editTask === task.id;
+                const isExpanded = expandedTaskIds.has(task.id);
+                return (
+                  <div
+                    key={task.id}
+                    onClick={() => {
+                      if (editTask) return;
+                      setActionTaskId(task.id);
+                      setCurrentTask(task);
+                      toggleExpand(task.id);
+                    }}
+                    className={[
+                      " grid grid-cols-12 rounded-xl border-purple-1 ",
+                      isEditing
+                        ? "ring-2 ring-slate-400 shadow-sm"
+                        : isSelected
+                        ? " shadow-xl  scale-101 transition-transform  bg-indigo-100"
+                        : "",
+                    ].join(" ")}
+                  >
+                    <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
+                      {" "}
+                      {/*TASK Principal Div*/}
+                      {/* Nombre y tipo */}
+                      <div className="px-2 text-lg font-semibold text-slate-800 w-full flex">
+                        <img
+                          src={task.type === "public" ? Public : Personal}
+                          className="mr-2 inline-block h-5 w-5 align-[-2px]"
+                          alt="Task type"
+                        />
+                        <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
+                          1/4
+                        </div>
+                        {task.taskName}
+                        {task.notes && (
+                          <img
+                            src={
+                              hoveredIcon === `note-${task.id}`
+                                ? noteHover
+                                : note
+                            }
+                            onMouseEnter={() =>
+                              setHoveredIcon(`note-${task.id}`)
+                            }
+                            onMouseLeave={() => setHoveredIcon("")}
+                            className="ml-2 inline-block h-5 w-5 align-[-2px]"
+                            alt="Note"
+                          />
+                        )}
+                      </div>
+                      {/* Metadatos derecha */}
+                      <div className="flex items-center gap-8">
+                        {/* completeBy */}
+                        <div className="flex flex-col items-center">
+                          <span className="text-sm font-semibold text-slate-700">
+                            {task.completeBy}
+                          </span>
+                        </div>
+
+                        {/* time left */}
+                        <div className="flex flex-col items-center">
+                          <span className="text-lg font-semibold text-emerald-600">
+                            {getTimeLeft(task.completeBy)}
+                          </span>
+                        </div>
+
+                        {/* assignedTo */}
+                        <div className="flex flex-col items-center">
+                          <img
+                            src={userMap[task.assignedTo]?.photo || samplePhoto}
+                            className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
+                            alt="Assignee"
+                          />
+                          <span className="text-sm font-semibold text-slate-700">
+                            {userMap[task.assignedTo]?.name ?? "Unassigned"}
+                          </span>
+                        </div>
+
+                        {/* priority */}
+                        <div className="flex flex-col items-center">
+                          <img
+                            src={priorityIcons[task.priority] || ""}
+                            className="h-5 w-5"
+                            alt="Priority"
+                          />
+                          <span className="text-sm font-semibold text-slate-700 capitalize">
+                            {task.priority}
+                          </span>
+                        </div>
+
+                        {/* status */}
+                        <div className="flex flex-col items-center">
+                          <img
+                            src={statusIcon[task.status] || ""}
+                            className="h-5 w-5"
+                            alt="Status"
+                          />
+                          <span className="text-sm font-semibold text-slate-700 capitalize">
+                            {task.status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* NUEVO: Subtasks expandibles */}
+                    {isExpanded &&
+                      Array.isArray(task.subTasks) &&
+                      task.subTasks.length > 0 && (
+                        <div className="w-full px-2 pb-3 col-span-12">
+                          <ul className="space-y-1">
+                            {task.subTasks.map((st, idx) => (
+                              <li
+                                key={`${task.id}-${idx}`}
+                                className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                              >
+                                <div className="min-w-0 flex-1">
+                                  <div className="font-medium truncate">
+                                    {idx + 1}. {st.name}
+                                  </div>
+                                  <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
+                                    <span>Prioridad: {st.priority}</span>
+                                    {st.completeBy && (
+                                      <span>• Límite: {st.completeBy}</span>
+                                    )}
+                                    {st.notes && (
+                                      <span>• Notas: {st.notes}</span>
+                                    )}
+                                    {st.assignedTo && (
+                                      <>
+                                        <span>• Asignado:</span>
+                                        <span className="inline-flex items-center gap-1">
+                                          <img
+                                            src={
+                                              userMap[st.assignedTo]?.photo ||
+                                              samplePhoto
+                                            }
+                                            alt="assignee"
+                                            className="h-4 w-4 rounded-full border"
+                                          />
+                                          {userMap[st.assignedTo]?.name || "?"}
+                                        </span>
+                                      </>
+                                    )}
+                                    {st.status && (
+                                      <span className="capitalize">
+                                        • Estado: {st.status}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                    {/* Confirm delete */}
+                    {deleteTaskId === task.id && (
+                      <div className="mx-2 mb-3 w-[calc(100%-1rem)] rounded-lg border border-slate-200 bg-white p-3 text-slate-800 shadow-sm">
+                        <h3 className="mb-2 text-sm font-medium">
+                          Seguro que quieren eliminar la tarea
+                        </h3>
+                        <div className="flex gap-2">
+                          <button
+                            className={btnPrimary}
+                            onClick={async () => {
+                              try {
+                                if (task.status === "progress") {
+                                  alert(
+                                    "No puedes eliminar una tarea en progreso."
+                                  );
+                                  setDeleteTaskId(null);
+                                  return;
+                                }
+                                const isAdmin = user?.role === "admin";
+                                const isMyPersonal =
+                                  task.type === "personal" &&
+                                  task.createdBy === user.uid;
+                                if (!isAdmin && !isMyPersonal) {
+                                  alert(
+                                    "No tienes permiso para eliminar esta tarea."
+                                  );
+                                  setDeleteTaskId(null);
+                                  return;
+                                }
+                                await deleteDoc(doc(db, "tasks", task.id));
+                                setDeleteTaskId(null);
+                                setEditTask("");
+                              } catch (err) {
+                                console.error(
+                                  "Error al eliminar la tarea:",
+                                  err
+                                );
+                                alert(
+                                  "No se pudo eliminar. Revisa la consola."
+                                );
+                              }
+                            }}
+                          >
+                            Delete
+                          </button>
+                          <button
+                            className={btnOutline}
+                            onClick={() => setDeleteTaskId(null)}
+                          >
+                            Keep
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Editor */}
+                    {editTask === task.id && (
+                      <div className="w-full px-2 pb-3">
+                        <TaskEditor
+                          task={task}
+                          user={user}
+                          userMap={userMap}
+                          priorityIcons={priorityIcons}
+                          statusIcon={statusIcon}
+                          statusIconImg={statusIconImg}
+                          calendarIcon={calendarIcon}
+                          titleIcon={titleIcon}
+                          onClose={() => setEditTask("")}
+                          onDelete={() => setDeleteTaskId(task.id)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+          <div className="flex items-start justify-between col-span-3 p-2 shadowTopInset divTitle"></div>
+        </Container>
       </div>
     </div>
   );

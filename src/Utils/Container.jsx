@@ -1,11 +1,11 @@
 import React from "react";
 
-function Container() {
+function Container({ cols, rows, children }) {
   return (
-    <div className="min-w-20 min-h-20 bg-pages rounded-xl grid grid-cols-3 gap-2">
-      <div className="col-span-1 bg-amber-300 rounded-xl"></div>
-      <div className="col-span-1 bg-amber-300 rounded-xl"></div>
-      <div className="col-span-1 bg-amber-300 rounded-xl grid-flow-row"></div>
+    <div
+      className={` min-w-20 min-h-70  w-full bg-pages rounded-xl overflow-y-scroll scroll-smooth no-scrollbar grid grid-cols-3  ${cols}  ${rows} gap-2 shadow-2xl`}
+    >
+      {children}
     </div>
   );
 }

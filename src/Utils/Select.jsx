@@ -26,7 +26,6 @@ function Select({
 
   const selectBase = `bg-white block  p-2 gap-2 rounded-xl items-center`;
 
-  console.log(optionsMap);
   return (
     <div className={`flex flex-wrap w-fit gap-2 h-fit`}>
       <label htmlFor={id} className=" text-xs font-medium text-slate-600">
