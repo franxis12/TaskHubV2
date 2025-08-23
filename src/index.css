@@ -258,7 +258,6 @@ body::-webkit-scrollbar{
   .bg-orange { background-color: #EF6438; }
   .bg-teal   { background-color: #247881; }
   .bg-yellow { background-color: #f9a825; }
-  .bg-gry {background-color: #ffffff;}
 
   .bg-orange-trasparent { background-color: rgba(241, 92, 42, 0.496)}
   .bg-teal-trasparent   { background-color: #2478817a; }

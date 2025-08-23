@@ -405,7 +405,7 @@ function TaskList() {
       </div>
 
       <div className="grid md:grid-cols-3 grid-cols-1 grid-rows-2 gap-2 grid-flow-row-dense col-span-2">
-        <Container cols="col-span-1">
+        <Container cols="md:col-span-1 max-h-90">
           {/*<<<<---- Container for task assigned Task   */}
           <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
             <h3 className="font-semibold ml-3 mt-2">Assigned to me</h3>
@@ -497,11 +497,11 @@ function TaskList() {
           </div>
         </Container>
 
-        <Container cols="col-span-1">
+        <Container cols="md:col-span-1 max-h-90">
           {/*<<<<---- Container for Stats  */}
           <TaskEstadistic />
         </Container>
-        <Container cols="row-span-2">
+        <Container cols="row-span-2 ">
           {/*<<<<---- Container for Team Member  */}
           <TeamMembers
             tasks={tasks} // opcional, para mostrar conteos
