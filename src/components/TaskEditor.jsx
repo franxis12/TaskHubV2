@@ -19,6 +19,7 @@ function TaskEditor({
 }) {
   const isAdmin = user?.role === "admin";
   const isMissed = task.status === "missed";
+  const MAX_SUBS = 10;
 
   // --- estado local controlado (evita mutar props) ---
   const [form, setForm] = useState({
@@ -28,6 +29,16 @@ function TaskEditor({
     assignedTo: task.assignedTo || "",
     status: task.status || "pending",
     notes: task.notes || "",
+    subTasks: Array.isArray(task.subTasks)
+      ? task.subTasks.map((s) => ({
+          name: s?.name || "",
+          priority: s?.priority || "medium",
+          completeBy: s?.completeBy || "",
+          notes: s?.notes || "",
+          assignedTo: s?.assignedTo || "",
+          status: s?.status || "pending",
+        }))
+      : [],
   });
   const [saving, setSaving] = useState(false);
 
@@ -39,11 +50,25 @@ function TaskEditor({
       assignedTo: task.assignedTo || "",
       status: task.status || "pending",
       notes: task.notes || "",
+      subTasks: Array.isArray(task.subTasks) ? task.subTasks : [],
     }),
     [task]
   );
   const dirty = useMemo(
-    () => JSON.stringify(form) !== JSON.stringify(initial),
+    () =>
+      JSON.stringify(form) !==
+      JSON.stringify({
+        ...initial,
+        // normalizamos initial.subTasks para comparar contra el shape del form
+        subTasks: (initial.subTasks || []).map((s) => ({
+          name: s?.name || "",
+          priority: s?.priority || "medium",
+          completeBy: s?.completeBy || "",
+          notes: s?.notes || "",
+          assignedTo: s?.assignedTo || "",
+          status: s?.status || "pending",
+        })),
+      }),
     [form, initial]
   );
 
@@ -51,6 +76,52 @@ function TaskEditor({
     const val = e?.target ? e.target.value : e;
     setForm((f) => ({ ...f, [key]: val }));
   };
+
+  const onSubChange = (idx, key) => (e) => {
+    const val = e?.target ? e.target.value : e;
+    setForm((f) => {
+      const copy = [...f.subTasks];
+      copy[idx] = { ...copy[idx], [key]: val };
+      return { ...f, subTasks: copy };
+    });
+  };
+
+  const addSub = () => {
+    if (form.subTasks.length >= MAX_SUBS) return;
+    setForm((f) => ({
+      ...f,
+      subTasks: [
+        ...f.subTasks,
+        {
+          name: "",
+          priority: f.priority || "medium", // por comodidad, hereda
+          completeBy: f.completeBy || "",
+          notes: "",
+          assignedTo: "",
+          status: "pending",
+        },
+      ],
+    }));
+  };
+
+  const removeSub = (idx) => {
+    setForm((f) => {
+      const copy = f.subTasks.filter((_, i) => i !== idx);
+      return { ...f, subTasks: copy };
+    });
+  };
+
+  const sanitizeSubTasks = (arr) =>
+    (arr || [])
+      .map((s) => ({
+        name: (s?.name || "").trim(),
+        priority: s?.priority || "medium",
+        completeBy: s?.completeBy || "",
+        notes: (s?.notes || "").trim(),
+        assignedTo: s?.assignedTo || "",
+        status: s?.status || "pending",
+      }))
+      .filter((s) => s.name); // descarta las vacías
 
   const save = async () => {
     try {
@@ -67,6 +138,7 @@ function TaskEditor({
         assignedTo: form.assignedTo || null,
         status: form.status,
         notes: form.notes || "",
+        subTasks: sanitizeSubTasks(form.subTasks).slice(0, MAX_SUBS),
       });
       onClose?.();
     } catch (err) {
@@ -90,6 +162,9 @@ function TaskEditor({
     btnBase +
     " bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-800/90";
   const btnSecondary =
+    btnBase +
+    " border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100";
+  const btnOutline =
     btnBase +
     " border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100";
 
@@ -120,14 +195,14 @@ function TaskEditor({
           <p className="text-rose-600 mb-3">
             Esta tarea está marcada como <b>Missed</b> y no se puede modificar.
           </p>
-          <div className="flex gap-2 justify-center">
-            <button className={btnDanger} onClick={() => onDelete?.(task)}>
-              Delete task
-            </button>
-            <button className={btnSecondary} onClick={onClose}>
-              Cancelar
-            </button>
-          </div>
+        </div>
+        <div className="flex gap-2 justify-center">
+          <button className={btnDanger} onClick={() => onDelete?.(task)}>
+            Delete task
+          </button>
+          <button className={btnSecondary} onClick={onClose}>
+            Cancelar
+          </button>
         </div>
       </div>
     );
@@ -136,10 +211,13 @@ function TaskEditor({
   const assignee = userMap?.[form.assignedTo];
 
   return (
-    <div className="flex w-full " onClick={(e) => e.stopPropagation()}>
+    <div
+      className="w-full rounded-xl border border-slate-200 bg-[var(--componentsBG)] p-4 shadow-sm"
+      onClick={(e) => e.stopPropagation()}
+    >
       {/* HEADER */}
-      <div className="flex items-center justify-between mb-3 ">
-        <div className="flex items-center gap-3 w-full">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
           {/* Badge de estado */}
           <span
             className={[
@@ -195,7 +273,7 @@ function TaskEditor({
         </div>
       </div>
 
-      {/* BODY */}
+      {/* BODY: 3 columnas principales */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Columna 1 */}
         <div className="space-y-3">
@@ -335,6 +413,173 @@ function TaskEditor({
             </button>
           </div>
         </div>
+      </div>
+
+      {/* SUBTASKS */}
+      <div className="mt-4 rounded-xl border border-slate-200 bg-white/50 p-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-sm font-semibold text-slate-800">
+            Sub-tasks{" "}
+            <span className="text-slate-400">
+              ({form.subTasks.length}/{MAX_SUBS})
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className={btnOutline}
+              onClick={addSub}
+              disabled={form.subTasks.length >= MAX_SUBS}
+              title="Agregar sub-task"
+            >
+              Agregar
+            </button>
+          </div>
+        </div>
+
+        {form.subTasks.length === 0 ? (
+          <div className="text-sm text-slate-500">No hay sub-tasks.</div>
+        ) : (
+          <ul className="space-y-2">
+            {form.subTasks.map((st, idx) => {
+              const ass = userMap?.[st.assignedTo];
+              return (
+                <li
+                  key={`st-${idx}`}
+                  className="rounded-lg border border-slate-200 bg-white p-2"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-2">
+                    {/* Nombre */}
+                    <div className="md:col-span-4 flex items-center gap-2">
+                      <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                        <img src={titleIcon} alt="title" className="h-5 w-5" />
+                      </span>
+                      <input
+                        type="text"
+                        className={inputBase}
+                        placeholder="Nombre de la sub-task"
+                        value={st.name}
+                        onChange={onSubChange(idx, "name")}
+                        maxLength={100}
+                      />
+                    </div>
+
+                    {/* Prioridad */}
+                    <div className="md:col-span-2 flex items-center gap-2">
+                      <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                        <img
+                          src={priorityIcons[st.priority]}
+                          alt="priority"
+                          className="h-5 w-5"
+                        />
+                      </span>
+                      <select
+                        className={inputBase}
+                        value={st.priority}
+                        onChange={onSubChange(idx, "priority")}
+                      >
+                        <option value="low">Baja</option>
+                        <option value="medium">Media</option>
+                        <option value="high">Alta</option>
+                      </select>
+                    </div>
+
+                    {/* Fecha */}
+                    <div className="md:col-span-2 flex items-center gap-2">
+                      <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                        <img
+                          src={calendarIcon}
+                          alt="date"
+                          className="h-5 w-5"
+                        />
+                      </span>
+                      <input
+                        type="date"
+                        className={inputBase}
+                        value={st.completeBy}
+                        onChange={onSubChange(idx, "completeBy")}
+                      />
+                    </div>
+
+                    {/* Estado */}
+                    <div className="md:col-span-2 flex items-center gap-2">
+                      <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                        <img
+                          src={statusIcon[st.status] || statusIconImg}
+                          alt="status"
+                          className="h-5 w-5"
+                        />
+                      </span>
+                      <select
+                        className={inputBase}
+                        value={st.status}
+                        onChange={onSubChange(idx, "status")}
+                      >
+                        <option value="pending">Pendiente</option>
+                        <option value="progress">En progreso</option>
+                        <option value="completed">Completada</option>
+                        <option value="missed">Missed</option>
+                      </select>
+                    </div>
+
+                    {/* Asignado */}
+                    <div className="md:col-span-2 flex items-center gap-2">
+                      <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                        <img
+                          src={ass?.photo || samplePhoto}
+                          alt="assigned"
+                          className="h-10 w-10 rounded-full border-2 border-blue-500 object-cover"
+                        />
+                      </span>
+                      <select
+                        className={inputBase}
+                        value={st.assignedTo || ""}
+                        onChange={onSubChange(idx, "assignedTo")}
+                        disabled={task.type === "personal" || !isAdmin}
+                        style={
+                          !isAdmin ? { pointerEvents: "none", opacity: 1 } : {}
+                        }
+                      >
+                        <option value="">No asignada</option>
+                        {Object.entries(userMap || {}).map(([uid, info]) => (
+                          <option key={uid} value={uid}>
+                            {info.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Notas (fila completa) */}
+                    <div className="md:col-span-10 flex items-start gap-2">
+                      <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                        <img src={note} alt="notes" className="h-5 w-5" />
+                      </span>
+                      <textarea
+                        className={inputBase + " min-h-[60px]"}
+                        placeholder="Notas (opcional)"
+                        value={st.notes}
+                        onChange={onSubChange(idx, "notes")}
+                        maxLength={400}
+                      />
+                    </div>
+
+                    {/* Eliminar */}
+                    <div className="md:col-span-2 flex items-start justify-end">
+                      <button
+                        type="button"
+                        className={btnDanger}
+                        onClick={() => removeSub(idx)}
+                        title="Eliminar sub-task"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
     </div>
   );
