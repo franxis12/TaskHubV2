@@ -24,6 +24,7 @@ import assignIcon from "../assets/icons/progress.svg";
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
 
+  // Campos de la tarea principal
   const [taskName, setTaskName] = useState("");
   const [priority, setPriority] = useState("medium");
   const [completeBy, setCompleteBy] = useState("");
@@ -32,12 +33,13 @@ function AddPublicTask({ accion }) {
   const [members, setMembers] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
-  // NUEVO: estado para sub-tasks con mismos campos que la principal
+  // Sub-tasks (cada una con asignación independiente)
   const [stName, setStName] = useState("");
   const [stPriority, setStPriority] = useState("medium");
   const [stCompleteBy, setStCompleteBy] = useState("");
   const [stNotes, setStNotes] = useState("");
-  const [subTasks, setSubTasks] = useState([]); // [{name, priority, completeBy, notes, status}]
+  const [stAssignedTo, setStAssignedTo] = useState("");
+  const [subTasks, setSubTasks] = useState([]); // [{ name, priority, completeBy, notes, assignedTo, status }]
 
   const priorityIcons = {
     low: priorityLow,
@@ -96,13 +98,15 @@ function AddPublicTask({ accion }) {
         priority: stPriority || "medium",
         completeBy: stCompleteBy || "",
         notes: stNotes?.trim() || "",
+        assignedTo: stAssignedTo || null,
         status: "pending",
       },
     ]);
 
-    // Limpiar nombre/notas; dejo prioridad/fecha por comodidad al agregar varias similares
+    // Limpiar nombre/notas/asignación; dejar prioridad/fecha para agregar varias similares
     setStName("");
     setStNotes("");
+    setStAssignedTo("");
   };
 
   const handleRemoveSubTask = (idx) => {
@@ -136,8 +140,8 @@ function AddPublicTask({ accion }) {
         notes,
         createdAt: serverTimestamp(),
         completeBy,
-        // NUEVO: guardar sub-tasks con mismos campos que la principal
-        subTasks, // p.ej. [{name, priority, completeBy, notes, status}, ...]
+        // Guardar sub-tasks con asignación por sub-tarea
+        subTasks,
         // flags para contadores
         pendingCounted: false,
         completedCounted: false,
@@ -155,6 +159,7 @@ function AddPublicTask({ accion }) {
       setStPriority("medium");
       setStCompleteBy("");
       setStNotes("");
+      setStAssignedTo("");
 
       // Cerrar modal/form
       accion?.();
@@ -217,7 +222,7 @@ function AddPublicTask({ accion }) {
               />
             </div>
 
-            {/* Asignar usuario */}
+            {/* Asignar usuario (tarea principal) */}
             <div className="flex items-center gap-2">
               <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
                 {assignedTo ? (
@@ -298,7 +303,7 @@ function AddPublicTask({ accion }) {
           />
         </div>
 
-        {/* NUEVO: Sub-tasks */}
+        {/* Sub-tasks con asignación independiente */}
         <div className="rounded-md border border-slate-200 p-3 bg-white/50">
           <div className="flex items-center justify-between mb-2">
             <label className={labelBase + " m-0"}>
@@ -316,7 +321,7 @@ function AddPublicTask({ accion }) {
           </div>
 
           {/* Formulario de sub-task */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2 mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
             <input
               type="text"
               value={stName}
@@ -340,6 +345,18 @@ function AddPublicTask({ accion }) {
               onChange={(e) => setStCompleteBy(e.target.value)}
               className={inputBase}
             />
+            <select
+              value={stAssignedTo}
+              onChange={(e) => setStAssignedTo(e.target.value)}
+              className={inputBase}
+            >
+              <option value="">Sin asignar</option>
+              {members.map((member) => (
+                <option key={member.uid} value={member.uid}>
+                  {member.name}
+                </option>
+              ))}
+            </select>
             <button
               type="button"
               onClick={handleAddSubTask}
@@ -370,11 +387,26 @@ function AddPublicTask({ accion }) {
                     <div className="font-medium truncate">
                       {idx + 1}. {st.name}
                     </div>
-                    <div className="text-xs text-slate-500 flex flex-wrap gap-2">
+                    <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
                       <span>Prioridad: {st.priority}</span>
                       {st.completeBy && <span>• Límite: {st.completeBy}</span>}
-                      {st.notes && (
-                        <span className="truncate">• Notas: {st.notes}</span>
+                      {st.notes && <span>• Notas: {st.notes}</span>}
+                      {st.assignedTo && (
+                        <>
+                          <span>• Asignado:</span>
+                          <span className="inline-flex items-center gap-1">
+                            <img
+                              src={
+                                members.find((m) => m.uid === st.assignedTo)
+                                  ?.photo || samplePhoto
+                              }
+                              alt="assignee"
+                              className="h-4 w-4 rounded-full border"
+                            />
+                            {members.find((m) => m.uid === st.assignedTo)
+                              ?.name || "?"}
+                          </span>
+                        </>
                       )}
                     </div>
                   </div>

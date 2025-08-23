@@ -19,6 +19,7 @@ import TaskFilters, { defaultFilters } from "./TaskFilters";
 import PersonalTaskForm from "../components/PersonalTaskForm";
 import TaskEditor from "../components/TaskEditor";
 import TaskEstadistic from "../components/TaskEstadistic";
+import TeamMembers from "../components/TeamMembers";
 
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
@@ -66,6 +67,9 @@ function TaskList() {
   const [actionTaskId, setActionTaskId] = useState("");
   const [showPublicForm, setShowPublicForm] = useState(false);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
+
+  // NUEVO: control de expandir/cerrar sub-tasks por tarea
+  const [expandedTaskIds, setExpandedTaskIds] = useState(new Set());
 
   const [userMap, setUserMap] = useState({});
   const [filters, setFilters] = useState({
@@ -155,6 +159,50 @@ function TaskList() {
       return true;
     });
   }, [tasks, filters]);
+
+  // NUEVO: items asignados a mí (tareas y sub-tareas)
+  const assignedItems = useMemo(() => {
+    if (!user?.uid) return [];
+    const items = [];
+
+    for (const t of tasks) {
+      if (t.assignedTo === user.uid) {
+        items.push({
+          kind: "task",
+          id: t.id,
+          parentId: null,
+          parentName: null,
+          name: t.taskName,
+          priority: t.priority,
+          completeBy: t.completeBy,
+          status: t.status,
+          type: t.type,
+          task: t,
+        });
+      }
+      if (Array.isArray(t.subTasks)) {
+        t.subTasks.forEach((st, idx) => {
+          if (st?.assignedTo === user.uid) {
+            items.push({
+              kind: "subtask",
+              id: `${t.id}::${idx}`,
+              parentId: t.id,
+              parentName: t.taskName,
+              name: st.name,
+              priority: st.priority,
+              completeBy: st.completeBy,
+              status: st.status || "pending",
+              type: t.type,
+              task: t,
+              subtaskIndex: idx,
+              subtask: st,
+            });
+          }
+        });
+      }
+    }
+    return items;
+  }, [tasks, user]);
 
   // Cambiar estado (CFs ajustan contadores/flags)
   const updateTaskStatus = async (task, newStatus) => {
@@ -272,6 +320,16 @@ function TaskList() {
     return `${base} ${map[s] || "bg-slate-50 text-slate-600 border-slate-200"}`;
   };
 
+  // toggle expand/collapse for a task
+  const toggleExpand = (taskId) => {
+    setExpandedTaskIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(taskId)) next.delete(taskId);
+      else next.add(taskId);
+      return next;
+    });
+  };
+
   return (
     <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
       {showPublicForm && (
@@ -342,102 +400,198 @@ function TaskList() {
                   : "This task is pending"}
               </h3>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
-              {canChangeStatus(currentTask) ? (
-                currentTask.status === "missed" ? (
-                  <span className="text-sm font-medium text-rose-700">
-                    Esta tarea ya no se puede cambiar de estado.
-                  </span>
-                ) : (
-                  <>
-                    {currentTask.status === "pending" && (
-                      <button
-                        type="button"
-                        className={btnOutline}
-                        onClick={() =>
-                          updateTaskStatus(currentTask, "progress")
-                        }
-                      >
-                        Start
-                      </button>
-                    )}
-
-                    {(currentTask.status === "pending" ||
-                      currentTask.status === "progress") && (
-                      <button
-                        type="button"
-                        className={btnPrimary}
-                        onClick={() =>
-                          updateTaskStatus(currentTask, "completed")
-                        }
-                      >
-                        Complete
-                      </button>
-                    )}
-
-                    {currentTask.status !== "pending" && (
-                      <button
-                        type="button"
-                        className={btnOutline}
-                        onClick={() => updateTaskStatus(currentTask, "pending")}
-                      >
-                        Set Pending
-                      </button>
-                    )}
-                  </>
-                )
-              ) : (
-                <span className="text-sm text-slate-700">
-                  No puedes cambiar el estado. Solo el asignado o un admin.
-                </span>
-              )}
-
-              {(user?.role === "admin" ||
-                (user?.role === "member" &&
-                  currentTask.type === "personal")) && (
-                <button
-                  type="button"
-                  className={btnGhost}
-                  onClick={() => {
-                    if (editTask === currentTask.id) setEditTask("");
-                    else {
-                      setEditTask(currentTask.id);
-                      setActionTaskId("");
-                    }
-                  }}
-                >
-                  {editTask === currentTask.id ? "Close Editor" : "Edit"}
-                </button>
-              )}
-
-              <button
-                type="button"
-                className={btnGhost}
-                onClick={() => setActionTaskId("")}
-              >
-                Cancel
-              </button>
-            </div>
           </div>
         )}
       </div>
 
       <div className="grid md:grid-cols-3 grid-cols-1 grid-rows-2 gap-2 grid-flow-row-dense col-span-2">
+        <Container cols="col-span-1">
+          {/*<<<<---- Container for task assigned Task   */}
+          <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
+            <h3 className="font-semibold ml-3 mt-2">Assigned to me</h3>
+          </div>
+          <div className="space-y-3 col-span-3 p-2">
+            {assignedItems.length === 0 ? (
+              <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
+                <h3 className="text-lg font-medium text-slate-700">
+                  No tienes asignaciones.
+                </h3>
+              </div>
+            ) : (
+              assignedItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="grid grid-cols-12 rounded-xl border-purple-1"
+                  onClick={() => {
+                    const parentTask = item.task;
+                    setActionTaskId(parentTask.id);
+                    setCurrentTask(parentTask);
+                    // si es subtask, aseguro expandir el padre
+                    setExpandedTaskIds((prev) => {
+                      const next = new Set(prev);
+                      next.add(parentTask.id);
+                      return next;
+                    });
+                  }}
+                >
+                  <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
+                    <div className="px-2 text-lg font-semibold text-slate-800 w-full flex">
+                      <img
+                        src={item.type === "public" ? Public : Personal}
+                        className="mr-2 inline-block h-5 w-5 align-[-2px]"
+                        alt="Task type"
+                      />
+                      <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
+                        {/* marcador simple */}•
+                      </div>
+                      {item.kind === "subtask" ? (
+                        <span className="ml-2">
+                          {item.name}{" "}
+                          <span className="text-slate-500">— de</span>{" "}
+                          <span className="font-medium">{item.parentName}</span>
+                        </span>
+                      ) : (
+                        <span className="ml-2">{item.name}</span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-8">
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-semibold text-slate-700">
+                          {item.completeBy || ""}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col items-center">
+                        <span className="text-lg font-semibold text-emerald-600">
+                          {getTimeLeft(item.completeBy)}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={priorityIcons[item.priority] || ""}
+                          className="h-5 w-5"
+                          alt="Priority"
+                        />
+                        <span className="text-sm font-semibold text-slate-700 capitalize">
+                          {item.priority}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={statusIcon[item.status] || ""}
+                          className="h-5 w-5"
+                          alt="Status"
+                        />
+                        <span className="text-sm font-semibold text-slate-700 capitalize">
+                          {item.status}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </Container>
+
+        <Container cols="col-span-1">
+          {/*<<<<---- Container for Stats  */}
+          <TaskEstadistic />
+        </Container>
+        <Container cols="row-span-2">
+          {/*<<<<---- Container for Team Member  */}
+          <TeamMembers
+            tasks={tasks} // opcional, para mostrar conteos
+            onMemberClick={(uid) => {
+              // opcional: filtra por asignado usando tus filtros existentes
+              setFilters((f) => ({ ...f, assignedTo: uid }));
+            }}
+          />
+        </Container>
+
         <Container cols="md:col-span-2 max-h-90">
           {" "}
-          {/*<<<<---- Container for Assigne to me order for priority  */}
+          {/*<<<<---- Container for all task */}
           <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
-            <h3 className="font-semibold ">Current Tasks</h3>
+            <h3 className="font-semibold ml-3 mt-2">All Tasks</h3>
             <div className="flex gap-1 ">
-              <Button btnName="Edit" btnType={"edit"} classNameExtra={""} />
+              {/*To transfer*/}
+              <div className="flex flex-wrap items-center gap-2">
+                {canChangeStatus(currentTask) ? (
+                  currentTask.status === "missed" ? (
+                    <span className="text-sm font-medium text-rose-700">
+                      Esta tarea ya no se puede cambiar de estado.
+                    </span>
+                  ) : (
+                    <>
+                      {currentTask.status === "pending" && (
+                        <Button
+                          btnName="Start"
+                          btnType={"yellow"}
+                          classNameExtra={""}
+                          onClick={() =>
+                            updateTaskStatus(currentTask, "progress")
+                          }
+                        />
+                      )}
 
-              <Button btnName="Start" btnType={"yellow"} classNameExtra={""} />
-              <Button
-                btnName="Complete"
-                btnType={"green"}
-                classNameExtra={""}
-              />
-              <Button btnName="Delete" btnType={"orange"} classNameExtra={""} />
+                      {(currentTask.status === "pending" ||
+                        currentTask.status === "progress") && (
+                        <Button
+                          btnName="Complete"
+                          btnType={"green"}
+                          classNameExtra={""}
+                          onClick={() =>
+                            updateTaskStatus(currentTask, "completed")
+                          }
+                        />
+                      )}
+
+                      {currentTask.status !== "pending" && (
+                        <Button
+                          btnName="Set Pending"
+                          btnType={"yellow"}
+                          classNameExtra={""}
+                          onClick={() =>
+                            updateTaskStatus(currentTask, "pending")
+                          }
+                        />
+                      )}
+                    </>
+                  )
+                ) : (
+                  <span className="text-sm text-slate-700">
+                    No puedes cambiar el estado. Solo el asignado o un admin.
+                  </span>
+                )}
+
+                {(user?.role === "admin" ||
+                  (user?.role === "member" &&
+                    currentTask.type === "personal")) && (
+                  <Button
+                    btnName={
+                      editTask === currentTask.id ? "Close Editor" : "Edit"
+                    }
+                    btnType={"orange"}
+                    classNameExtra={""}
+                    type="button"
+                    className={btnGhost}
+                    onClick={() => {
+                      if (editTask === currentTask.id) setEditTask("");
+                      else {
+                        setEditTask(currentTask.id);
+                        setActionTaskId("");
+                      }
+                    }}
+                  />
+                )}
+              </div>
+              {/* To trasnfers*/}
+
+              <Button btnName="Delete" btnType={"edit"} classNameExtra={""} />
             </div>
           </div>
           <div className="space-y-3 col-span-3 p-2">
@@ -459,6 +613,7 @@ function TaskList() {
               filteredTasks.map((task) => {
                 const isSelected = actionTaskId === task.id;
                 const isEditing = editTask === task.id;
+                const isExpanded = expandedTaskIds.has(task.id);
                 return (
                   <div
                     key={task.id}
@@ -466,6 +621,7 @@ function TaskList() {
                       if (editTask) return;
                       setActionTaskId(task.id);
                       setCurrentTask(task);
+                      toggleExpand(task.id);
                     }}
                     className={[
                       " grid grid-cols-12 rounded-xl border-purple-1 ",
@@ -530,7 +686,7 @@ function TaskList() {
                             alt="Assignee"
                           />
                           <span className="text-sm font-semibold text-slate-700">
-                            {userMap[task.assignedTo]?.name || "Unassigned"}
+                            {userMap[task.assignedTo]?.name ?? "Unassigned"}
                           </span>
                         </div>
 
@@ -559,6 +715,58 @@ function TaskList() {
                         </div>
                       </div>
                     </div>
+
+                    {/* NUEVO: Subtasks expandibles */}
+                    {isExpanded &&
+                      Array.isArray(task.subTasks) &&
+                      task.subTasks.length > 0 && (
+                        <div className="w-full px-2 pb-3 col-span-12">
+                          <ul className="space-y-1">
+                            {task.subTasks.map((st, idx) => (
+                              <li
+                                key={`${task.id}-${idx}`}
+                                className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                              >
+                                <div className="min-w-0 flex-1">
+                                  <div className="font-medium truncate">
+                                    {idx + 1}. {st.name}
+                                  </div>
+                                  <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
+                                    <span>Prioridad: {st.priority}</span>
+                                    {st.completeBy && (
+                                      <span>• Límite: {st.completeBy}</span>
+                                    )}
+                                    {st.notes && (
+                                      <span>• Notas: {st.notes}</span>
+                                    )}
+                                    {st.assignedTo && (
+                                      <>
+                                        <span>• Asignado:</span>
+                                        <span className="inline-flex items-center gap-1">
+                                          <img
+                                            src={
+                                              userMap[st.assignedTo]?.photo ||
+                                              samplePhoto
+                                            }
+                                            alt="assignee"
+                                            className="h-4 w-4 rounded-full border"
+                                          />
+                                          {userMap[st.assignedTo]?.name || "?"}
+                                        </span>
+                                      </>
+                                    )}
+                                    {st.status && (
+                                      <span className="capitalize">
+                                        • Estado: {st.status}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
                     {/* Confirm delete */}
                     {deleteTaskId === task.id && (
@@ -638,19 +846,6 @@ function TaskList() {
             )}
           </div>
           <div className="flex items-start justify-between col-span-3 p-2 shadowTopInset divTitle"></div>
-        </Container>
-        <Container cols="row-span-2">
-          {/*<<<<---- Container for Team Member  */}
-        </Container>
-        <Container cols="col-span-1">
-          {/*<<<<---- Container for all Task   */}
-        </Container>
-        <Container cols="col-span-1">
-          {/*<<<<---- Container for Stats  */}
-          <TaskEstadistic />
-        </Container>
-        <Container cols="col-span-1">
-          {/*<<<<---- Container for Personals Task   */}
         </Container>
       </div>
     </div>
