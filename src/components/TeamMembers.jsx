@@ -61,22 +61,22 @@ function TeamMembers({ tasks = [], onMemberClick }) {
   }, [tasks]);
 
   return (
-    <div className="w-full">
+    <div className="flex flex-col p-2 col-span-3">
       {/* Título del bloque (ligero, sin tocar tus estilos globales) */}
-      <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
+      <div className="w-full ">
         <h3 className="font-semibold ml-3 mt-2">Team Members</h3>
       </div>
 
       {/* Lista */}
-      <div className="p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+      <div className="flex flex-col gap-2">
         {loading ? (
-          <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)] col-span-full">
+          <div className="w-full flex items-center justify-center h-full">
             <h3 className="text-lg font-medium text-slate-700">
               Cargando miembros…
             </h3>
           </div>
         ) : members.length === 0 ? (
-          <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)] col-span-full">
+          <div className="w-full flex items-center justify-center h-full">
             <h3 className="text-lg font-medium text-slate-700">
               No hay miembros
             </h3>
@@ -89,7 +89,7 @@ function TeamMembers({ tasks = [], onMemberClick }) {
                 key={m.uid}
                 type="button"
                 onClick={() => onMemberClick?.(m.uid)}
-                className="w-full rounded-xl border bg-[var(--componentsBG)] p-3 text-left hover:shadow-sm transition-shadow"
+                className="w-full rounded-xl border  p-3 text-left hover:shadow-sm transition-shadow"
                 title={m.email || m.name}
               >
                 <div className="flex items-center gap-3">
