@@ -1,3 +1,4 @@
+// src/components/PersonalTaskForm.jsx
 import React, { useState, useContext, useEffect } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
@@ -16,7 +17,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
   const [stPriority, setStPriority] = useState("medium");
   const [stCompleteBy, setStCompleteBy] = useState("");
   const [stNotes, setStNotes] = useState("");
-  const [subTasks, setSubTasks] = useState([]); // [{name, priority, completeBy, notes, status}]
+  const [subTasks, setSubTasks] = useState([]); // [{name, priority, completeBy, notes, status, assignedTo}]
 
   // Atajo: Cmd/Ctrl + Enter => enviar
   useEffect(() => {
@@ -50,6 +51,8 @@ function PersonalTaskForm({ onClose, onCreated }) {
         completeBy: stCompleteBy || "",
         notes: stNotes?.trim() || "",
         status: "pending",
+        // IMPORTANTE: para que el owner pueda cambiar estado en UI/reglas
+        assignedTo: user?.uid || null,
       },
     ]);
     // limpiar inputs sub-task
@@ -72,18 +75,20 @@ function PersonalTaskForm({ onClose, onCreated }) {
     setSubmitting(true);
     try {
       await addDoc(collection(db, "tasks"), {
+        // ===== esquema requerido =====
         taskName: taskName.trim(),
-        subTasks, // arreglo con mismos campos que la principal
-        status: "pending",
-        type: "personal",
+        subTasks, // arreglo con mismos campos que la principal (incluye assignedTo del owner)
+        status: "pending", // "completed" | "pending" | "missed"
+        type: "personal", // "personal"
         createdBy: user.uid,
-        assignedTo: user.uid,
-        companyId: user.companyId,
+        assignedTo: user.uid, // dueño asignado
+        companyId: user.companyId, // compañía del dueño
         createdAt: serverTimestamp(),
         completeBy: completeBy || "",
+        completedAt: null, // presente desde el inicio
         priority,
         notes: notes || "",
-        // flags: CFs gestionan los contadores
+        // flags para contadores/CFs
         pendingCounted: false,
         completedCounted: false,
         missedCounted: false,
