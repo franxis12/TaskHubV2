@@ -1,6 +1,6 @@
 // src/components/TaskEditor.jsx
 import React, { useMemo, useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import samplePhoto from "../assets/sample.png";
 import note from "../assets/icons/note.svg";
@@ -19,6 +19,16 @@ function TaskEditor({
 }) {
   const isAdmin = user?.role === "admin";
   const isMissed = task.status === "missed";
+
+  // permisos
+  const canEditPublic = task.type === "public" && isAdmin;
+  const canEditPersonal =
+    task.type === "personal" && task.createdBy === user?.uid;
+  const canEdit = canEditPublic || canEditPersonal;
+
+  const canDelete =
+    task.type === "public" ? isAdmin : task.createdBy === user?.uid;
+
   const MAX_SUBS = 10;
 
   // --- estado local controlado (evita mutar props) ---
@@ -54,23 +64,28 @@ function TaskEditor({
     }),
     [task]
   );
-  const dirty = useMemo(
-    () =>
-      JSON.stringify(form) !==
-      JSON.stringify({
-        ...initial,
-        // normalizamos initial.subTasks para comparar contra el shape del form
-        subTasks: (initial.subTasks || []).map((s) => ({
-          name: s?.name || "",
-          priority: s?.priority || "medium",
-          completeBy: s?.completeBy || "",
-          notes: s?.notes || "",
-          assignedTo: s?.assignedTo || "",
-          status: s?.status || "pending",
-        })),
-      }),
-    [form, initial]
+
+  const normalizedInitial = useMemo(
+    () => ({
+      ...initial,
+      subTasks: (initial.subTasks || []).map((s) => ({
+        name: s?.name || "",
+        priority: s?.priority || "medium",
+        completeBy: s?.completeBy || "",
+        notes: s?.notes || "",
+        assignedTo: s?.assignedTo || "",
+        status: s?.status || "pending",
+      })),
+    }),
+    [initial]
   );
+
+  const dirty = useMemo(
+    () => JSON.stringify(form) !== JSON.stringify(normalizedInitial),
+    [form, normalizedInitial]
+  );
+
+  const isTerminal = form.status === "completed" || form.status === "missed";
 
   const onChange = (key) => (e) => {
     const val = e?.target ? e.target.value : e;
@@ -87,6 +102,7 @@ function TaskEditor({
   };
 
   const addSub = () => {
+    if (!canEdit) return;
     if (form.subTasks.length >= MAX_SUBS) return;
     setForm((f) => ({
       ...f,
@@ -94,7 +110,7 @@ function TaskEditor({
         ...f.subTasks,
         {
           name: "",
-          priority: f.priority || "medium", // por comodidad, hereda
+          priority: f.priority || "medium",
           completeBy: f.completeBy || "",
           notes: "",
           assignedTo: "",
@@ -105,6 +121,7 @@ function TaskEditor({
   };
 
   const removeSub = (idx) => {
+    if (!canEdit) return;
     setForm((f) => {
       const copy = f.subTasks.filter((_, i) => i !== idx);
       return { ...f, subTasks: copy };
@@ -121,17 +138,22 @@ function TaskEditor({
         assignedTo: s?.assignedTo || "",
         status: s?.status || "pending",
       }))
-      .filter((s) => s.name); // descarta las vacías
+      .filter((s) => s.name); // descarta vacías
 
   const save = async () => {
     try {
+      if (!canEdit) {
+        alert("No tienes permiso para editar esta tarea.");
+        return;
+      }
       if (isMissed) {
         alert('Las tareas "missed" no se pueden editar.');
         return;
       }
       setSaving(true);
       const ref = doc(db, "tasks", task.id);
-      await updateDoc(ref, {
+
+      const payload = {
         taskName: form.taskName.trim(),
         completeBy: form.completeBy || "",
         priority: form.priority,
@@ -139,7 +161,14 @@ function TaskEditor({
         status: form.status,
         notes: form.notes || "",
         subTasks: sanitizeSubTasks(form.subTasks).slice(0, MAX_SUBS),
-      });
+      };
+
+      // si pasó a completed ahora, setear completedAt
+      if (task.status !== "completed" && form.status === "completed") {
+        payload.completedAt = serverTimestamp();
+      }
+
+      await updateDoc(ref, payload);
       onClose?.();
     } catch (err) {
       console.error("Error al actualizar la tarea:", err);
@@ -185,6 +214,11 @@ function TaskEditor({
     missed: "bg-orange-trasparent text-orange",
   };
 
+  // aviso de solo-lectura
+  const readOnlyBanner =
+    !canEdit &&
+    "Esta tarea es de solo lectura para tu usuario (no tienes permisos para editar).";
+
   if (isMissed) {
     return (
       <div
@@ -197,7 +231,12 @@ function TaskEditor({
           </p>
         </div>
         <div className="flex gap-2 justify-center">
-          <button className={btnDanger} onClick={() => onDelete?.(task)}>
+          <button
+            className={btnDanger}
+            onClick={() => onDelete?.(task)}
+            disabled={!canDelete}
+            title={!canDelete ? "No tienes permiso para eliminar." : ""}
+          >
             Delete task
           </button>
           <button className={btnSecondary} onClick={onClose}>
@@ -212,7 +251,7 @@ function TaskEditor({
 
   return (
     <div
-      className="w-full rounded-xl border border-slate-200 bg-[var(--componentsBG)] p-4 shadow-sm"
+      className="w-full rounded-xl border border-slate-200 bg-[var(--componentsBG)]  p-2 shadow-sm"
       onClick={(e) => e.stopPropagation()}
     >
       {/* HEADER */}
@@ -273,6 +312,12 @@ function TaskEditor({
         </div>
       </div>
 
+      {readOnlyBanner && (
+        <div className="mb-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          {readOnlyBanner}
+        </div>
+      )}
+
       {/* BODY: 3 columnas principales */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Columna 1 */}
@@ -287,6 +332,7 @@ function TaskEditor({
               placeholder="Editar nombre de la tarea"
               value={form.taskName}
               onChange={onChange("taskName")}
+              disabled={!canEdit}
             />
           </div>
 
@@ -299,14 +345,17 @@ function TaskEditor({
               className={inputBase}
               value={form.completeBy}
               onChange={onChange("completeBy")}
+              disabled={!canEdit}
             />
           </div>
 
           <button
             className={btnDanger}
-            disabled={task.status === "progress"}
+            disabled={!canDelete || task.status === "progress"}
             title={
-              task.status === "progress"
+              !canDelete
+                ? "No tienes permiso para eliminar."
+                : task.status === "progress"
                 ? "No puedes eliminar una tarea en progreso"
                 : ""
             }
@@ -331,8 +380,12 @@ function TaskEditor({
               className={inputBase}
               value={form.assignedTo}
               onChange={onChange("assignedTo")}
-              disabled={task.type === "personal" || !isAdmin}
-              style={!isAdmin ? { pointerEvents: "none", opacity: 1 } : {}}
+              disabled={
+                // públicas: sólo admin puede cambiar
+                (task.type === "public" && !isAdmin) ||
+                // personales: sólo el creador (canEditPersonal)
+                (task.type === "personal" && !canEditPersonal)
+              }
             >
               <option value="">No asignada</option>
               {Object.entries(userMap || {}).map(([uid, info]) => (
@@ -356,6 +409,7 @@ function TaskEditor({
               className={inputBase}
               value={form.priority}
               onChange={onChange("priority")}
+              disabled={!canEdit}
             >
               <option value="low">Baja</option>
               <option value="medium">Media</option>
@@ -376,6 +430,12 @@ function TaskEditor({
               className={inputBase}
               value={form.status}
               onChange={onChange("status")}
+              disabled={!canEdit || isTerminal}
+              title={
+                isTerminal
+                  ? "No se puede cambiar el estado cuando la tarea está Completed o Missed"
+                  : ""
+              }
             >
               <option value="pending">Pendiente</option>
               <option value="progress">En progreso</option>
@@ -396,6 +456,7 @@ function TaskEditor({
               placeholder="Notas"
               value={form.notes}
               onChange={onChange("notes")}
+              disabled={!canEdit}
             />
           </div>
 
@@ -406,8 +467,14 @@ function TaskEditor({
             <button
               className={btnPrimary}
               onClick={save}
-              disabled={!dirty || saving}
-              title={!dirty ? "Sin cambios" : ""}
+              disabled={!dirty || saving || !canEdit}
+              title={
+                !canEdit
+                  ? "No tienes permiso para editar."
+                  : !dirty
+                  ? "Sin cambios"
+                  : ""
+              }
             >
               {saving ? "Guardando..." : "Guardar cambios"}
             </button>
@@ -429,8 +496,10 @@ function TaskEditor({
               type="button"
               className={btnOutline}
               onClick={addSub}
-              disabled={form.subTasks.length >= MAX_SUBS}
-              title="Agregar sub-task"
+              disabled={form.subTasks.length >= MAX_SUBS || !canEdit}
+              title={
+                !canEdit ? "No tienes permiso para editar." : "Agregar sub-task"
+              }
             >
               Agregar
             </button>
@@ -443,6 +512,11 @@ function TaskEditor({
           <ul className="space-y-2">
             {form.subTasks.map((st, idx) => {
               const ass = userMap?.[st.assignedTo];
+              const disableSub = !canEdit;
+              const disableSubAssignee =
+                (task.type === "public" && !isAdmin) ||
+                (task.type === "personal" && !canEditPersonal);
+
               return (
                 <li
                   key={`st-${idx}`}
@@ -461,6 +535,7 @@ function TaskEditor({
                         value={st.name}
                         onChange={onSubChange(idx, "name")}
                         maxLength={100}
+                        disabled={disableSub}
                       />
                     </div>
 
@@ -477,6 +552,7 @@ function TaskEditor({
                         className={inputBase}
                         value={st.priority}
                         onChange={onSubChange(idx, "priority")}
+                        disabled={disableSub}
                       >
                         <option value="low">Baja</option>
                         <option value="medium">Media</option>
@@ -498,6 +574,7 @@ function TaskEditor({
                         className={inputBase}
                         value={st.completeBy}
                         onChange={onSubChange(idx, "completeBy")}
+                        disabled={disableSub}
                       />
                     </div>
 
@@ -514,6 +591,7 @@ function TaskEditor({
                         className={inputBase}
                         value={st.status}
                         onChange={onSubChange(idx, "status")}
+                        disabled={disableSub}
                       >
                         <option value="pending">Pendiente</option>
                         <option value="progress">En progreso</option>
@@ -535,10 +613,7 @@ function TaskEditor({
                         className={inputBase}
                         value={st.assignedTo || ""}
                         onChange={onSubChange(idx, "assignedTo")}
-                        disabled={task.type === "personal" || !isAdmin}
-                        style={
-                          !isAdmin ? { pointerEvents: "none", opacity: 1 } : {}
-                        }
+                        disabled={disableSubAssignee}
                       >
                         <option value="">No asignada</option>
                         {Object.entries(userMap || {}).map(([uid, info]) => (
@@ -560,6 +635,7 @@ function TaskEditor({
                         value={st.notes}
                         onChange={onSubChange(idx, "notes")}
                         maxLength={400}
+                        disabled={disableSub}
                       />
                     </div>
 
@@ -570,6 +646,7 @@ function TaskEditor({
                         className={btnDanger}
                         onClick={() => removeSub(idx)}
                         title="Eliminar sub-task"
+                        disabled={!canEdit}
                       >
                         Eliminar
                       </button>

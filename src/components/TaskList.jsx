@@ -1004,7 +1004,7 @@ function TaskList() {
 
                     {/* Editor */}
                     {editTask === task.id && (
-                      <div className="w-full px-2 pb-3">
+                      <div className="w-full px-2 pb-3 col-span-12">
                         <TaskEditor
                           task={task}
                           user={user}
