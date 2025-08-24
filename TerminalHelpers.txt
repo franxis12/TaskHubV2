@@ -1,0 +1,11 @@
+//Frirebase ->
+    // Desplegar reglas
+        firebase deploy --only firestore:rules
+    // Desplegar Clou funtions
+        firebase deploy --only functions
+
+//GitHub
+    // Crea una nueva rama y Cambia a esa rama automáticamente.
+        git checkout -b Nueva-rama-name
+    // Ver Rama actual
+        git branch

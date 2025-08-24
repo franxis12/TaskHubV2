@@ -558,8 +558,6 @@ function TaskList() {
           <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
             <h3 className="font-semibold ml-3 mt-2">All Tasks</h3>
 
-            {/*Revison*/}
-
             {/* Acciones de la tarea seleccionada */}
             {actionTaskId === currentTask.id && (
               <div
@@ -583,9 +581,8 @@ function TaskList() {
               </div>
             )}
 
-            {/*Revison*/}
             <div className="flex gap-1 ">
-              {/*To transfer*/}
+              {/* Botones de estado para la tarea seleccionada */}
               <div className="flex flex-wrap items-center gap-2">
                 {canChangeStatus(currentTask) ? (
                   currentTask.status === "missed" ? (
@@ -599,9 +596,10 @@ function TaskList() {
                           btnName="Start"
                           btnType={"yellow"}
                           classNameExtra={""}
-                          onClick={() =>
-                            updateTaskStatus(currentTask, "progress")
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateTaskStatus(currentTask, "progress");
+                          }}
                         />
                       )}
 
@@ -611,9 +609,10 @@ function TaskList() {
                           btnName="Complete"
                           btnType={"green"}
                           classNameExtra={""}
-                          onClick={() =>
-                            updateTaskStatus(currentTask, "completed")
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateTaskStatus(currentTask, "completed");
+                          }}
                         />
                       )}
 
@@ -622,9 +621,10 @@ function TaskList() {
                           btnName="Set Pending"
                           btnType={"yellow"}
                           classNameExtra={""}
-                          onClick={() =>
-                            updateTaskStatus(currentTask, "pending")
-                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateTaskStatus(currentTask, "pending");
+                          }}
                         />
                       )}
                     </>
@@ -646,7 +646,8 @@ function TaskList() {
                     classNameExtra={""}
                     type="button"
                     className={btnGhost}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       if (editTask === currentTask.id) setEditTask("");
                       else {
                         setEditTask(currentTask.id);
@@ -656,7 +657,6 @@ function TaskList() {
                   />
                 )}
               </div>
-              {/* To trasnfers*/}
 
               <Button btnName="Delete" btnType={"edit"} classNameExtra={""} />
             </div>
@@ -681,6 +681,16 @@ function TaskList() {
                 const isSelected = actionTaskId === task.id;
                 const isEditing = editTask === task.id;
                 const isExpanded = expandedTaskIds.has(task.id);
+
+                const totalSubs = Array.isArray(task.subTasks)
+                  ? task.subTasks.length
+                  : 0;
+                const doneSubs =
+                  totalSubs > 0
+                    ? task.subTasks.filter((s) => s.status === "completed")
+                        .length
+                    : 0;
+
                 return (
                   <div
                     key={task.id}
@@ -700,8 +710,6 @@ function TaskList() {
                     ].join(" ")}
                   >
                     <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
-                      {" "}
-                      {/*TASK Principal Div*/}
                       {/* Nombre y tipo */}
                       <div className="px-2 text-lg font-semibold text-slate-800 w-full flex">
                         <img
@@ -710,7 +718,8 @@ function TaskList() {
                           alt="Task type"
                         />
                         <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
-                          1/4
+                          {/* progreso subtasks dinámico */}
+                          {doneSubs}/{totalSubs}
                         </div>
                         {task.taskName}
                         {task.notes && (
@@ -729,6 +738,7 @@ function TaskList() {
                           />
                         )}
                       </div>
+
                       {/* Metadatos derecha */}
                       <div className="flex items-center gap-8">
                         {/* completeBy */}
@@ -783,54 +793,152 @@ function TaskList() {
                       </div>
                     </div>
 
-                    {/* NUEVO: Subtasks expandibles */}
+                    {/* Subtasks expandibles + acciones */}
                     {isExpanded &&
                       Array.isArray(task.subTasks) &&
                       task.subTasks.length > 0 && (
                         <div className="w-full px-2 pb-3 col-span-12">
                           <ul className="space-y-1">
-                            {task.subTasks.map((st, idx) => (
-                              <li
-                                key={`${task.id}-${idx}`}
-                                className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
-                              >
-                                <div className="min-w-0 flex-1">
-                                  <div className="font-medium truncate">
-                                    {idx + 1}. {st.name}
-                                  </div>
-                                  <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
-                                    <span>Prioridad: {st.priority}</span>
-                                    {st.completeBy && (
-                                      <span>• Límite: {st.completeBy}</span>
-                                    )}
-                                    {st.notes && (
-                                      <span>• Notas: {st.notes}</span>
-                                    )}
-                                    {st.assignedTo && (
-                                      <>
-                                        <span>• Asignado:</span>
-                                        <span className="inline-flex items-center gap-1">
-                                          <img
-                                            src={
-                                              userMap[st.assignedTo]?.photo ||
-                                              samplePhoto
-                                            }
-                                            alt="assignee"
-                                            className="h-4 w-4 rounded-full border"
-                                          />
-                                          {userMap[st.assignedTo]?.name || "?"}
+                            {task.subTasks.map((st, idx) => {
+                              const canChangeSub =
+                                user?.role === "admin" ||
+                                st.assignedTo === user?.uid;
+
+                              const updateSubtaskStatus = async (
+                                newStatus,
+                                e
+                              ) => {
+                                e?.stopPropagation?.();
+                                try {
+                                  if (st.status === "missed") {
+                                    alert(
+                                      'Las subtareas "missed" no se pueden cambiar.'
+                                    );
+                                    return;
+                                  }
+                                  const ref = doc(db, "tasks", task.id);
+                                  const updated = [...task.subTasks];
+                                  updated[idx] = {
+                                    ...updated[idx],
+                                    status: newStatus,
+                                  };
+                                  await updateDoc(ref, { subTasks: updated });
+                                } catch (err) {
+                                  console.error(
+                                    "Error al actualizar subtask:",
+                                    err
+                                  );
+                                  alert(
+                                    "No se pudo cambiar el estado de la subtask."
+                                  );
+                                }
+                              };
+
+                              return (
+                                <li
+                                  key={`${task.id}-${idx}`}
+                                  className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <div className="min-w-0 flex-1">
+                                    <div className="font-medium truncate">
+                                      {idx + 1}. {st.name}
+                                    </div>
+                                    <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
+                                      <span>Prioridad: {st.priority}</span>
+                                      {st.completeBy && (
+                                        <span>• Límite: {st.completeBy}</span>
+                                      )}
+                                      {st.notes && (
+                                        <span>• Notas: {st.notes}</span>
+                                      )}
+                                      {st.assignedTo && (
+                                        <>
+                                          <span>• Asignado:</span>
+                                          <span className="inline-flex items-center gap-1">
+                                            <img
+                                              src={
+                                                userMap[st.assignedTo]?.photo ||
+                                                samplePhoto
+                                              }
+                                              alt="assignee"
+                                              className="h-4 w-4 rounded-full border"
+                                            />
+                                            {userMap[st.assignedTo]?.name ||
+                                              "?"}
+                                          </span>
+                                        </>
+                                      )}
+                                      {st.status && (
+                                        <span className="capitalize">
+                                          • Estado: {st.status}
                                         </span>
-                                      </>
-                                    )}
-                                    {st.status && (
-                                      <span className="capitalize">
-                                        • Estado: {st.status}
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Acciones subtarea */}
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    {canChangeSub ? (
+                                      st.status === "missed" ? (
+                                        <span className="text-xs font-medium text-rose-700">
+                                          Esta subtask no se puede cambiar.
+                                        </span>
+                                      ) : (
+                                        <>
+                                          {st.status === "pending" && (
+                                            <Button
+                                              btnName="Start"
+                                              btnType={"yellow"}
+                                              classNameExtra={""}
+                                              onClick={(e) =>
+                                                updateSubtaskStatus(
+                                                  "progress",
+                                                  e
+                                                )
+                                              }
+                                            />
+                                          )}
+
+                                          {(st.status === "pending" ||
+                                            st.status === "progress") && (
+                                            <Button
+                                              btnName="Complete"
+                                              btnType={"green"}
+                                              classNameExtra={""}
+                                              onClick={(e) =>
+                                                updateSubtaskStatus(
+                                                  "completed",
+                                                  e
+                                                )
+                                              }
+                                            />
+                                          )}
+
+                                          {st.status !== "pending" && (
+                                            <Button
+                                              btnName="Set Pending"
+                                              btnType={"yellow"}
+                                              classNameExtra={""}
+                                              onClick={(e) =>
+                                                updateSubtaskStatus(
+                                                  "pending",
+                                                  e
+                                                )
+                                              }
+                                            />
+                                          )}
+                                        </>
+                                      )
+                                    ) : (
+                                      <span className="text-xs text-slate-500">
+                                        No puedes cambiar el estado
                                       </span>
                                     )}
                                   </div>
-                                </div>
-                              </li>
-                            ))}
+                                </li>
+                              );
+                            })}
                           </ul>
                         </div>
                       )}
@@ -844,7 +952,8 @@ function TaskList() {
                         <div className="flex gap-2">
                           <button
                             className={btnPrimary}
-                            onClick={async () => {
+                            onClick={async (e) => {
+                              e.stopPropagation();
                               try {
                                 if (task.status === "progress") {
                                   alert(
@@ -882,7 +991,10 @@ function TaskList() {
                           </button>
                           <button
                             className={btnOutline}
-                            onClick={() => setDeleteTaskId(null)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDeleteTaskId(null);
+                            }}
                           >
                             Keep
                           </button>

@@ -47,7 +47,7 @@ function AddPublicTask({ accion }) {
     high: priorityHigh,
   };
 
-  // Obtener miembros de la empresa
+  // Obtener miembros de la empresa (desde 'users')
   useEffect(() => {
     async function fetchMembers() {
       if (!user?.companyId) return;
@@ -129,23 +129,33 @@ function AddPublicTask({ accion }) {
 
     try {
       setSubmitting(true);
+
+      // Documento con todos los campos que pediste
       await addDoc(collection(db, "tasks"), {
-        taskName: taskName.trim(),
-        status: "pending",
-        type: "public",
-        createdBy: user.uid,
-        companyId: user.companyId,
-        assignedTo: assignedTo || null,
-        priority,
-        notes,
-        createdAt: serverTimestamp(),
-        completeBy,
-        // Guardar sub-tasks con asignación por sub-tarea
-        subTasks,
-        // flags para contadores
+        // Identidad / ownership
+        type: "public", // "public" | "personal"
+        companyId: user.companyId, // companyId
+        createdBy: user.uid, // user que crea la tarea
+        assignedTo: assignedTo || null, // usuario asignado (o null)
+
+        // Contenido
+        taskName: taskName.trim(), // "Task name"
+        notes, // ""
+        priority, // prioridad
+
+        // Fechas
+        createdAt: serverTimestamp(), // fecha que se creó la tarea
+        completeBy, // fecha límite (string "YYYY-MM-DD" o vacío)
+        completedAt: null, // fecha que se completó (nulo al crear)
+
+        // Estado + flags de métricas
+        status: "pending", // "pending" | "progress" | "completed" | "missed"
         pendingCounted: false,
         completedCounted: false,
         missedCounted: false,
+
+        // Subtareas (array)
+        subTasks, // []
       });
 
       // Reset
