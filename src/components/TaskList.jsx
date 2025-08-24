@@ -28,6 +28,7 @@ import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
 import lowImportantIcon from "../assets/icons/LImportant.png";
 import mediumImportantIcon from "../assets/icons/MImportant.png";
+import SubIcon from "../assets/iconsV2/arrow-turn-right-solid-full.svg?react";
 
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
@@ -379,121 +380,160 @@ function TaskList() {
             />
           </div>
         )}
-
-        {/* Acciones de la tarea seleccionada */}
-        {actionTaskId === currentTask.id && (
-          <div
-            className="mt-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-2 flex items-center justify-between">
-              <span className={badgeByStatus(currentTask.status)}>
-                {currentTask.status}
-              </span>
-              <h3 className="text-sm font-medium text-slate-800">
-                {currentTask.status === "progress"
-                  ? "This task is in progress"
-                  : currentTask.status === "completed"
-                  ? "This task is completed"
-                  : currentTask.status === "missed"
-                  ? "This task is missed"
-                  : "This task is pending"}
-              </h3>
-            </div>
-          </div>
-        )}
       </div>
 
-      <div className="grid md:grid-cols-3 grid-cols-1 grid-rows-2 gap-2 grid-flow-row-dense col-span-2">
-        <Container cols="md:col-span-1 max-h-90">
-          {/*<<<<---- Container for task assigned Task   */}
-          <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
-            <h3 className="font-semibold ml-3 mt-2">Assigned to me</h3>
-          </div>
-          <div className="space-y-3 col-span-3 p-2">
-            {assignedItems.length === 0 ? (
-              <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
-                <h3 className="text-lg font-medium text-slate-700">
-                  No tienes asignaciones.
-                </h3>
-              </div>
-            ) : (
-              assignedItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-12 rounded-xl border-purple-1"
-                  onClick={() => {
-                    const parentTask = item.task;
-                    setActionTaskId(parentTask.id);
-                    setCurrentTask(parentTask);
-                    // si es subtask, aseguro expandir el padre
-                    setExpandedTaskIds((prev) => {
-                      const next = new Set(prev);
-                      next.add(parentTask.id);
-                      return next;
-                    });
-                  }}
-                >
-                  <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
-                    <div className="px-2 text-lg font-semibold text-slate-800 w-full flex">
-                      <img
-                        src={item.type === "public" ? Public : Personal}
-                        className="mr-2 inline-block h-5 w-5 align-[-2px]"
-                        alt="Task type"
-                      />
-                      <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
-                        {/* marcador simple */}•
-                      </div>
-                      {item.kind === "subtask" ? (
-                        <span className="ml-2">
-                          {item.name}{" "}
-                          <span className="text-slate-500">— de</span>{" "}
-                          <span className="font-medium">{item.parentName}</span>
-                        </span>
-                      ) : (
-                        <span className="ml-2">{item.name}</span>
-                      )}
-                    </div>
+      <div className="grid md:grid-cols-3 grid-cols-1  gap-2 grid-flow-row-dense col-span-2">
+        <Container cols="md:col-span-1 p-2">
+          <div className="w-full h-full col-span-3 ">
+            {/*<<<<---- Container for task assigned Task   */}
+            <div className="col-span-3  mb-2 divTitle flex items-start justify-between shadowBottom divTitle ">
+              <h3 className="font-semibold ml-3 mt-2 w-full">Assigned to me</h3>
+            </div>
 
-                    <div className="flex items-center gap-8">
-                      <div className="flex flex-col items-center">
-                        <span className="text-sm font-semibold text-slate-700">
-                          {item.completeBy || ""}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col items-center">
-                        <span className="text-lg font-semibold text-emerald-600">
-                          {getTimeLeft(item.completeBy)}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col items-center">
-                        <img
-                          src={priorityIcons[item.priority] || ""}
-                          className="h-5 w-5"
-                          alt="Priority"
-                        />
-                        <span className="text-sm font-semibold text-slate-700 capitalize">
-                          {item.priority}
-                        </span>
-                      </div>
-
-                      <div className="flex flex-col items-center">
-                        <img
-                          src={statusIcon[item.status] || ""}
-                          className="h-5 w-5"
-                          alt="Status"
-                        />
-                        <span className="text-sm font-semibold text-slate-700 capitalize">
-                          {item.status}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+            <div className=" col-span-3 h-full items-start">
+              {assignedItems.length === 0 ? (
+                <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
+                  <h3 className="text-lg font-medium text-slate-700">
+                    No tienes asignaciones.
+                  </h3>
                 </div>
-              ))
-            )}
+              ) : (
+                assignedItems.map((item) => {
+                  // badge: número de subtask o 'M' para la principal
+                  const badgeText =
+                    item.kind === "subtask" &&
+                    typeof item.subtaskIndex === "number"
+                      ? item.subtaskIndex + 1
+                      : "M";
+                  const badgeClass =
+                    item.kind === "subtask"
+                      ? "bg-yellow-trasparent text-yellow border-Yellow-2"
+                      : "bg-teal-trasparent text-teal border-teal-2";
+
+                  // chip tiempo restante
+                  const timeLeft = getTimeLeft(item.completeBy);
+                  const timeChipClass =
+                    timeLeft === "Overdue"
+                      ? "bg-orange-trasparent text-orange border-orange-2"
+                      : "bg-teal-trasparent text-teal border-teal-2";
+
+                  // chip de estado
+                  const statusChipClass =
+                    item.status === "missed"
+                      ? "bg-orange-trasparent text-orange border-orange-2"
+                      : item.status === "pending"
+                      ? "bg-yellow-trasparent text-yellow border-Yellow-2"
+                      : "bg-teal-trasparent text-teal border-teal-2";
+
+                  return (
+                    <div
+                      key={item.id}
+                      className="grid grid-cols-12 rounded-xl col-span-3 border-purple-1 mt-1 cursor-pointer hover:bg-white/50 transition"
+                      onClick={() => {
+                        const parentTask = item.task;
+                        setActionTaskId(parentTask.id);
+                        setCurrentTask(parentTask);
+                        // si es subtask, aseguro expandir el padre
+                        setExpandedTaskIds((prev) => {
+                          const next = new Set(prev);
+                          next.add(parentTask.id);
+                          return next;
+                        });
+                      }}
+                      title={
+                        item.kind === "subtask"
+                          ? `${item.parentName} → ${item.name}`
+                          : item.name
+                      }
+                    >
+                      <div className="my-2 flex w-full items-center justify-between rounded-xl min-h-10 px-2 col-span-12 mb-2">
+                        {/* Izquierda: tipo + badge + nombres */}
+                        <div className="px-2 text-xs font-semibold text-slate-800 w-full h-full flex items-center">
+                          <img
+                            src={item.type === "public" ? Public : Personal}
+                            className="mr-2 inline-block h-5 w-5 align-[-2px] col-span-1"
+                            alt="Task type"
+                          />
+
+                          {/* badge suave (antes negro) */}
+                          <div
+                            className={[
+                              "p-1 px-3 rounded-lg text-[11px] min-w-10 text-center border",
+                              "bg-black text-white w-10",
+                            ].join(" ")}
+                            aria-label={
+                              item.kind === "subtask"
+                                ? `Subtask #${badgeText}`
+                                : "Main task"
+                            }
+                          >
+                            {badgeText}
+                          </div>
+
+                          {/* nombres */}
+                          {item.kind === "subtask" ? (
+                            <span className="ml-2 text-xs col-span-3">
+                              <span className="text-slate-500">
+                                {item.parentName}
+                              </span>
+                              <div className="flex gap-2 items-center">
+                                <SubIcon className="w-4 h-4" />
+                                <span className="text-sm text-slate-800">
+                                  {item.name}
+                                </span>
+                              </div>
+                            </span>
+                          ) : (
+                            <span className="ml-2 text-sm text-slate-800">
+                              {item.name}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Derecha: tiempo, estado, prioridad */}
+                        <div className="flex items-center gap-6 pr-2">
+                          {/* tiempo restante */}
+                          <div className="flex flex-col items-center w-20">
+                            <span
+                              className={[
+                                "text-[11px] font-semibold whitespace-nowrap border rounded-3xl px-2 py-[2px]",
+                                timeChipClass,
+                              ].join(" ")}
+                            >
+                              {timeLeft}
+                            </span>
+                          </div>
+
+                          {/* status */}
+                          <div className="flex flex-col items-center w-20">
+                            <span
+                              className={[
+                                "text-[11px] font-semibold capitalize border rounded-3xl px-2 py-[2px]",
+                                statusChipClass,
+                              ].join(" ")}
+                            >
+                              {item.status}
+                            </span>
+                          </div>
+
+                          {/* prioridad */}
+                          <div className="flex flex-col items-center w-16">
+                            <img
+                              src={priorityIcons[item.priority] || ""}
+                              className="h-5 w-5"
+                              alt="Priority"
+                            />
+                            <span className="text-[11px] font-semibold text-slate-700 capitalize">
+                              {item.priority}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </Container>
 
@@ -517,6 +557,33 @@ function TaskList() {
           {/*<<<<---- Container for all task */}
           <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
             <h3 className="font-semibold ml-3 mt-2">All Tasks</h3>
+
+            {/*Revison*/}
+
+            {/* Acciones de la tarea seleccionada */}
+            {actionTaskId === currentTask.id && (
+              <div
+                className="mt-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className={badgeByStatus(currentTask.status)}>
+                    {currentTask.status}
+                  </span>
+                  <h3 className="text-sm font-medium text-slate-800">
+                    {currentTask.status === "progress"
+                      ? "This task is in progress"
+                      : currentTask.status === "completed"
+                      ? "This task is completed"
+                      : currentTask.status === "missed"
+                      ? "This task is missed"
+                      : "This task is pending"}
+                  </h3>
+                </div>
+              </div>
+            )}
+
+            {/*Revison*/}
             <div className="flex gap-1 ">
               {/*To transfer*/}
               <div className="flex flex-wrap items-center gap-2">
