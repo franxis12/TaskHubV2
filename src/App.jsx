@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
 import Setting from "./pages/Setting";
+import AwayAproval from "./pages/AwayAproval";
 
 import { UserProvider } from "./context/UserContext";
 import PrivateRoute from "./components/PrivateRoute";
@@ -36,6 +37,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Setting />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/await-approval"
+              element={
+                <PrivateRoute>
+                  <AwayAproval />
                 </PrivateRoute>
               }
             />
