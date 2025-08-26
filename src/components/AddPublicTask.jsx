@@ -217,17 +217,16 @@ function AddPublicTask({ accion }) {
         >
           {/* Header */}
           <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2 w-full border-b-2  ">
-              <PublicIcon className="w-10 h-7 text-black" />
-              <span className="text-black">
-                //pending icon creation no color
+            <div className="flex items-center gap-1 w-full border-b-2  ">
+              <PublicIcon className="w-10 h-7 textColor" />
+              <span className="text-black w-full">
                 <input
                   type="text"
                   placeholder="Enter Task Name"
                   value={taskName}
                   onChange={(e) => setTaskName(e.target.value)}
                   required
-                  className="inputBase"
+                  className="inputBase "
                 />
               </span>
             </div>

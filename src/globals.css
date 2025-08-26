@@ -36,6 +36,7 @@
     --bg-color-component: #333;
 
 
+
 }
 
 @media (prefers-color-scheme: light) {
@@ -82,7 +83,11 @@
 }
 
 
+
 @layer components{
+    /*Helpers*/
+    .textColor{color: var(--textColor);}
+
     .btn-green{
         background-color: var(--green);
         height: 40px;
@@ -128,20 +133,31 @@
         font-weight: bold;
         color: var(--textColor);
 
+
+
     }
-    .inputBase:focus{
+    .inputBase:focus::placeholder{
         outline: none;
+                color: #4788b98f;/*Pendoing*/
+
+                
+
+        
     }
+
     .inputBase::placeholder{
-        color: #000000;/*Pendoing*/
+        color: #3236398f;/*Pendoing*/
     }
+    input:focus::placeholder {
+      color: blue; /* Color of the placeholder text when the input is focused */
+     }
     .text-black{
         color: var(--textColor);
+        color: #ff2121;
     }
     .bg-principal{
         background-color: var(--bg-color-component);
     }
-
 
 
 
@@ -152,7 +168,7 @@
     /* Hide scrollbar in IE, Edge, and Firefox */
     .no-scrollbar {
       -ms-overflow-style: none; /* IE and Edge */
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: none; /* Firefox n*/
     }
     
 }
