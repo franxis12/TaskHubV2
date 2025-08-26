@@ -19,7 +19,7 @@
     background-color: rgb(255, 255, 255);
     border-radius: 15px;
 }
-
+/*
 .btn-danger{
     height: 35px;
     display: flex;
@@ -41,7 +41,7 @@
     border-radius: 15px;
         background-color: var(--dangerActionsRed);
 
-}
+}*/
 .selected{
     color: var(--primaryColorBorder);
     color: white;

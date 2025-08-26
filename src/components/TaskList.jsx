@@ -52,7 +52,7 @@ const calendarIcon = pendingIcon;
 const titleIcon = note;
 const statusIconImg = progressIcon;
 
-function TaskList() {
+function TaskList({ showPublicForm, setShowPublicForm }) {
   const { user } = useContext(UserContext);
 
   // Data
@@ -66,7 +66,7 @@ function TaskList() {
   const [editTask, setEditTask] = useState(""); // task.id activo en editor
   const [deleteTaskId, setDeleteTaskId] = useState(null);
   const [actionTaskId, setActionTaskId] = useState("");
-  const [showPublicForm, setShowPublicForm] = useState(false);
+  //const [showPublicForm, setShowPublicForm] = useState(false);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
 
   // NUEVO: control de expandir/cerrar sub-tasks por tarea
@@ -333,9 +333,6 @@ function TaskList() {
 
   return (
     <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
-      {showPublicForm && (
-        <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
-      )}
       {/* Toolbar */}
       <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2 shadow-md">
         {/* Primary actions and Filters */}

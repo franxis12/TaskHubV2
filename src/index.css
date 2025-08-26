@@ -1,7 +1,7 @@
 /* src/styles/tailwind-overrides.css */
 @import "tailwindcss";
 
-/* === Variables (dark / light) sin cambios === */
+/* === Variables (dark / light) sin cambios ===// */
 :root {
   --primaryBlue: #35a7ff;
   --primaryBlueTransparent: #35a7ff24;
@@ -145,7 +145,7 @@ body::-webkit-scrollbar{
     opacity: 1;
   }*/
 
-  /* Botón primario (antes .btn-primary) */
+  /* Botón primario (antes .btn-primary) 
   .btn-primary {
     position: relative;
     display: inline-flex;
@@ -300,14 +300,6 @@ body::-webkit-scrollbar{
     
   }
   /* Hide scrollbar in Chrome, Safari, and Opera */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
 
-/* Hide scrollbar in IE, Edge, and Firefox */
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
 
 }

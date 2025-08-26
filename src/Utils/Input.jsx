@@ -17,6 +17,7 @@ function Input({
   value,
   cols,
   current,
+  required,
 
   expandedId,
   setExpandedId,
@@ -28,7 +29,7 @@ function Input({
   const inputBase = `bg-white block flex p-2 gap-2 rounded-xl items-center  
   ${
     isExpanded
-      ? `w-auto h-9 items-center justify-center shadow-lg border ${(cols = 1)}`
+      ? `w-full h-9 items-center justify-center shadow-lg border ${(cols = 1)}`
       : "w-10 h-9 items-center "
   } `;
 
@@ -40,7 +41,9 @@ function Input({
   const IconPicked = iconsArr[iconPick];
 
   return (
-    <div className={`w-auto flex items-center justify-center`}>
+    <div
+      className={`${expanded && " w-full "}flex items-center justify-center`}
+    >
       <label htmlFor={id} className="block text-xs font-medium text-slate-600">
         {labelName}
       </label>
@@ -55,12 +58,15 @@ function Input({
           <input
             id={id}
             type={type}
-            className={` ${classNameExtra} w-full placeholder-slate-400 focus:outline-none text-sm `}
+            className={` ${classNameExtra} ${
+              expanded && " w-full "
+            } placeholder-slate-400 focus:outline-none text-sm `}
             placeholder={placeholder}
             defaultValue={defaultValue}
             onChange={onChange}
             aria-label="Search tasks"
             value={value}
+            required={required}
           />
         )}
       </div>

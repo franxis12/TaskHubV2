@@ -20,6 +20,8 @@ import priorityLow from "../assets/icons/LImportant.png";
 import priorityMedium from "../assets/icons/MImportant.png";
 import priorityHigh from "../assets/icons/HImportan.png";
 import assignIcon from "../assets/icons/progress.svg";
+import Input from "../Utils/Input";
+import PublicIcon from "../assets/iconsV2/publicIcon.svg?react";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -198,288 +200,300 @@ function AddPublicTask({ accion }) {
     " border border-slate-300 bg-white text-slate-700 hover:bg-slate-50";
 
   return (
-    <div
-      className="mt-4 w-full max-w-4xl rounded-xl p-4 ring-1 ring-slate-200"
-      style={{
-        backgroundColor: "var(--componentsBG)",
-        color: "var(--textColor)",
-      }}
-    >
-      {/* Header */}
-      <div className="mb-3 flex items-center justify-between">
-        <h4 className="text-base font-semibold">Crear nueva tarea pública</h4>
-        <button onClick={accion} className={btnOutlineDanger}>
-          Close
-        </button>
-      </div>
-
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Columna izquierda */}
-          <div className="space-y-3">
-            {/* Nombre de tarea */}
-            <div className="flex items-center gap-2">
-              <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
-                <img src={titleIcon} alt="title" className="h-5 w-5" />
-              </span>
-              <input
-                type="text"
-                placeholder="Nombre de la tarea"
-                value={taskName}
-                onChange={(e) => setTaskName(e.target.value)}
-                required
-                className={inputBase}
-              />
-            </div>
-
-            {/* Asignar usuario (tarea principal) */}
-            <div className="flex items-center gap-2">
-              <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
-                {assignedTo ? (
-                  <img
-                    src={
-                      members.find((m) => m.uid === assignedTo)?.photo ||
-                      samplePhoto
-                    }
-                    alt="assigned"
-                    className="h-10 w-10 rounded-full border-2 border-blue-500 object-cover"
-                  />
-                ) : (
-                  <img src={assignIcon} alt="assign" className="h-5 w-5" />
-                )}
-              </span>
-              <select
-                value={assignedTo}
-                onChange={(e) => setAssignedTo(e.target.value)}
-                className={inputBase}
-              >
-                <option value="">Sin asignar (puede tomarla cualquiera)</option>
-                {members.map((member) => (
-                  <option key={member.uid} value={member.uid}>
-                    {member.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Columna derecha */}
-          <div className="space-y-3">
-            {/* Fecha */}
-            <div className="flex items-center gap-2">
-              <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
-                <img src={calendarIcon} alt="date" className="h-5 w-5" />
-              </span>
-              <input
-                type="date"
-                value={completeBy}
-                onChange={(e) => setCompleteBy(e.target.value)}
-                className={inputBase}
-              />
-            </div>
-
-            {/* Prioridad */}
-            <div className="flex items-center gap-2">
-              <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
-                <img
-                  src={priorityIcons[priority]}
-                  alt="priority"
-                  className="h-5 w-5"
+    <div className="fixed inset-0 z-[4000] bg-black/50 overflow-y-auto overscroll-contain">
+      {/* Wrapper responsivo: top en móvil, centrado en md+ */}
+      <div
+        className="min-h-svh flex items-start md:items-center justify-center p-4 md:p-6"
+        style={{ paddingTop: "max(16px, env(safe-area-inset-top))" }} // respeta notch
+      >
+        {/* Contenido del modal */}
+        <div
+          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal"
+          style={{
+            color: "var(--textColor)",
+            maxHeight: "calc(100svh - 2rem)", // que no rebase la pantalla
+            overflow: "auto", // scroll interno si hace falta
+          }}
+        >
+          {/* Header */}
+          <div className="mb-3 flex items-center justify-between">
+            <div className="flex items-center gap-2 w-full border-b-2  ">
+              <PublicIcon className="w-10 h-7 text-black" />
+              <span className="text-black">
+                //pending icon creation no color
+                <input
+                  type="text"
+                  placeholder="Enter Task Name"
+                  value={taskName}
+                  onChange={(e) => setTaskName(e.target.value)}
+                  required
+                  className="inputBase"
                 />
               </span>
-              <select
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
-                className={inputBase}
-              >
-                <option value="low">Prioridad baja</option>
-                <option value="medium">Prioridad media</option>
-                <option value="high">Prioridad alta</option>
-              </select>
             </div>
           </div>
-        </div>
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Columna izquierda */}
+              <div className="space-y-3">
+                {/* Nombre de tarea */}
 
-        {/* Notas */}
-        <div className="flex items-start gap-2">
-          <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
-            <img src={noteIcon} alt="notes" className="h-5 w-5" />
-          </span>
-          <textarea
-            placeholder="Notas (opcional)"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className={inputBase + " min-h-[84px]"}
-          />
-        </div>
-
-        {/* Sub-tasks con asignación independiente */}
-        <div className="rounded-md border border-slate-200 p-3 bg-white/50">
-          <div className="flex items-center justify-between mb-2">
-            <label className={labelBase + " m-0"}>
-              Sub-tasks{" "}
-              <span className="text-slate-400">({subTasks.length}/10)</span>
-            </label>
-            <button
-              type="button"
-              className="text-xs text-slate-600 hover:text-slate-900 underline"
-              onClick={copyFromMain}
-              title="Copiar prioridad y fecha desde la tarea principal"
-            >
-              Copiar de la principal
-            </button>
-          </div>
-
-          {/* Formulario de sub-task */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
-            <input
-              type="text"
-              value={stName}
-              onChange={(e) => setStName(e.target.value)}
-              className={inputBase}
-              placeholder="Nombre (p. ej. wireframe)"
-              maxLength={100}
-            />
-            <select
-              value={stPriority}
-              onChange={(e) => setStPriority(e.target.value)}
-              className={inputBase}
-            >
-              <option value="low">Baja</option>
-              <option value="medium">Media</option>
-              <option value="high">Alta</option>
-            </select>
-            <input
-              type="date"
-              value={stCompleteBy}
-              onChange={(e) => setStCompleteBy(e.target.value)}
-              className={inputBase}
-            />
-            <select
-              value={stAssignedTo}
-              onChange={(e) => setStAssignedTo(e.target.value)}
-              className={inputBase}
-            >
-              <option value="">Sin asignar</option>
-              {members.map((member) => (
-                <option key={member.uid} value={member.uid}>
-                  {member.name}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={handleAddSubTask}
-              className={btnOutline}
-              disabled={!stName.trim() || subTasks.length >= 10}
-              title="Agregar sub-task"
-            >
-              Agregar
-            </button>
-          </div>
-
-          <textarea
-            value={stNotes}
-            onChange={(e) => setStNotes(e.target.value)}
-            className={inputBase + " mb-2 min-h-[60px]"}
-            placeholder="Notas de la sub-task (opcional)"
-            maxLength={400}
-          />
-
-          {subTasks.length > 0 && (
-            <ul className="space-y-1">
-              {subTasks.map((st, idx) => (
-                <li
-                  key={`${st.name}-${idx}`}
-                  className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="font-medium truncate">
-                      {idx + 1}. {st.name}
-                    </div>
-                    <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
-                      <span>Prioridad: {st.priority}</span>
-                      {st.completeBy && <span>• Límite: {st.completeBy}</span>}
-                      {st.notes && <span>• Notas: {st.notes}</span>}
-                      {st.assignedTo && (
-                        <>
-                          <span>• Asignado:</span>
-                          <span className="inline-flex items-center gap-1">
-                            <img
-                              src={
-                                members.find((m) => m.uid === st.assignedTo)
-                                  ?.photo || samplePhoto
-                              }
-                              alt="assignee"
-                              className="h-4 w-4 rounded-full border"
-                            />
-                            {members.find((m) => m.uid === st.assignedTo)
-                              ?.name || "?"}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSubTask(idx)}
-                    className="text-xs text-slate-600 hover:text-rose-600"
-                    title="Eliminar"
+                {/* Asignar usuario (tarea principal) */}
+                <div className="flex items-center gap-2">
+                  <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                    {assignedTo ? (
+                      <img
+                        src={
+                          members.find((m) => m.uid === assignedTo)?.photo ||
+                          samplePhoto
+                        }
+                        alt="assigned"
+                        className="h-10 w-10 rounded-full border-2 border-blue-500 object-cover"
+                      />
+                    ) : (
+                      <img src={assignIcon} alt="assign" className="h-5 w-5" />
+                    )}
+                  </span>
+                  <select
+                    value={assignedTo}
+                    onChange={(e) => setAssignedTo(e.target.value)}
+                    className={inputBase}
                   >
-                    Eliminar
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                    <option value="">
+                      Sin asignar (puede tomarla cualquiera)
+                    </option>
+                    {members.map((member) => (
+                      <option key={member.uid} value={member.uid}>
+                        {member.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-        {/* Acciones */}
-        <div className="flex items-center gap-2">
-          <button
-            id="create-public-task"
-            type="submit"
-            className={btnPrimary}
-            disabled={submitting || !taskName.trim() || user?.role !== "admin"}
-            title={
-              user?.role !== "admin"
-                ? "Solo los administradores pueden crear tareas públicas"
-                : "Cmd/Ctrl + Enter para crear"
-            }
-          >
-            {submitting ? (
-              <span className="inline-flex items-center gap-2">
-                <svg
-                  className="h-4 w-4 animate-spin"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
+              {/* Columna derecha */}
+              <div className="space-y-3">
+                {/* Fecha */}
+                <div className="flex items-center gap-2">
+                  <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                    <img src={calendarIcon} alt="date" className="h-5 w-5" />
+                  </span>
+                  <input
+                    type="date"
+                    value={completeBy}
+                    onChange={(e) => setCompleteBy(e.target.value)}
+                    className={inputBase}
                   />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                  />
-                </svg>
-                Creando...
+                </div>
+
+                {/* Prioridad */}
+                <div className="flex items-center gap-2">
+                  <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                    <img
+                      src={priorityIcons[priority]}
+                      alt="priority"
+                      className="h-5 w-5"
+                    />
+                  </span>
+                  <select
+                    value={priority}
+                    onChange={(e) => setPriority(e.target.value)}
+                    className={inputBase}
+                  >
+                    <option value="low">Prioridad baja</option>
+                    <option value="medium">Prioridad media</option>
+                    <option value="high">Prioridad alta</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Notas */}
+            <div className="flex items-start gap-2">
+              <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                <img src={noteIcon} alt="notes" className="h-5 w-5" />
               </span>
-            ) : (
-              "Crear tarea"
-            )}
-          </button>
+              <textarea
+                placeholder="Notas (opcional)"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className={inputBase + " min-h-[84px]"}
+              />
+            </div>
 
-          <button type="button" onClick={accion} className={btnOutlineDanger}>
-            Cancelar
-          </button>
+            {/* Sub-tasks con asignación independiente */}
+            <div className="rounded-md border border-slate-200 p-3 bg-white/50">
+              <div className="flex items-center justify-between mb-2">
+                <label className={labelBase + " m-0"}>
+                  Sub-tasks{" "}
+                  <span className="text-slate-400">({subTasks.length}/10)</span>
+                </label>
+                <button
+                  type="button"
+                  className="text-xs text-slate-600 hover:text-slate-900 underline"
+                  onClick={copyFromMain}
+                  title="Copiar prioridad y fecha desde la tarea principal"
+                >
+                  Copiar de la principal
+                </button>
+              </div>
+
+              {/* Formulario de sub-task */}
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
+                <input
+                  type="text"
+                  value={stName}
+                  onChange={(e) => setStName(e.target.value)}
+                  className={inputBase}
+                  placeholder="Nombre (p. ej. wireframe)"
+                  maxLength={100}
+                />
+                <select
+                  value={stPriority}
+                  onChange={(e) => setStPriority(e.target.value)}
+                  className={inputBase}
+                >
+                  <option value="low">Baja</option>
+                  <option value="medium">Media</option>
+                  <option value="high">Alta</option>
+                </select>
+                <input
+                  type="date"
+                  value={stCompleteBy}
+                  onChange={(e) => setStCompleteBy(e.target.value)}
+                  className={inputBase}
+                />
+                <select
+                  value={stAssignedTo}
+                  onChange={(e) => setStAssignedTo(e.target.value)}
+                  className={inputBase}
+                >
+                  <option value="">Sin asignar</option>
+                  {members.map((member) => (
+                    <option key={member.uid} value={member.uid}>
+                      {member.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={handleAddSubTask}
+                  className={btnOutline}
+                  disabled={!stName.trim() || subTasks.length >= 10}
+                  title="Agregar sub-task"
+                >
+                  Agregar
+                </button>
+              </div>
+
+              <textarea
+                value={stNotes}
+                onChange={(e) => setStNotes(e.target.value)}
+                className={inputBase + " mb-2 min-h-[60px]"}
+                placeholder="Notas de la sub-task (opcional)"
+                maxLength={400}
+              />
+
+              {subTasks.length > 0 && (
+                <ul className="space-y-1">
+                  {subTasks.map((st, idx) => (
+                    <li
+                      key={`${st.name}-${idx}`}
+                      className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium truncate">
+                          {idx + 1}. {st.name}
+                        </div>
+                        <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
+                          <span>Prioridad: {st.priority}</span>
+                          {st.completeBy && (
+                            <span>• Límite: {st.completeBy}</span>
+                          )}
+                          {st.notes && <span>• Notas: {st.notes}</span>}
+                          {st.assignedTo && (
+                            <>
+                              <span>• Asignado:</span>
+                              <span className="inline-flex items-center gap-1">
+                                <img
+                                  src={
+                                    members.find((m) => m.uid === st.assignedTo)
+                                      ?.photo || samplePhoto
+                                  }
+                                  alt="assignee"
+                                  className="h-4 w-4 rounded-full border"
+                                />
+                                {members.find((m) => m.uid === st.assignedTo)
+                                  ?.name || "?"}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSubTask(idx)}
+                        className="text-xs text-slate-600 hover:text-rose-600"
+                        title="Eliminar"
+                      >
+                        Eliminar
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Acciones */}
+            <div className="flex items-center gap-2">
+              <button
+                id="create-public-task"
+                type="submit"
+                className="btn-green "
+                disabled={
+                  submitting || !taskName.trim() || user?.role !== "admin"
+                }
+                title={
+                  user?.role !== "admin"
+                    ? "Solo los administradores pueden crear tareas públicas"
+                    : "Cmd/Ctrl + Enter para crear"
+                }
+              >
+                {submitting ? (
+                  <span className="inline-flex items-center gap-2">
+                    <svg
+                      className="h-4 w-4 animate-spin"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      />
+                    </svg>
+                    Creando...
+                  </span>
+                ) : (
+                  "Created task"
+                )}
+              </button>
+
+              <button type="button" onClick={accion} className="btn-danger">
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
