@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+:root {
+     /*Unchange colors*/
+    --color-alwaysBlack: #000000;
+    --color-alwaysWhite: #ffffff;
+    --border-awalysWhite-1px: solid 1px #fff;
+
+ /*==========PRIMARY==========*/    
+    /*Primary Color*/
+    --green: #36b2c0;
+    --orange: #f6673c;
+    --yellow: #f0a938;
+    --red: #ff4f4f;
+
+    /*Transparent Primary colors*/
+    --green-trasparent: #2478818d;
+    --orange-trasparent: #ef63388b;
+    --yellow-trasparent: #f9a82595;
+    --red-trasparent: #ff4f4f88;
+
+    /*Borders Primary colors*/
+    --boder-green: solid 1px #247881;
+    --boder-orange: solid 1px #EF6438;
+    --boder-yellow: solid 1px #f9a825;
+    --boder-red: solid 1px #f04747;
+
+    /*Hover Primary colors*/
+    --hoverColor-green: #1fcde0;
+    --hoverColor-orange: #d84619;
+    --hoverColor-yellow: #ce8b1e;
+    --hoverColor-red: #cc1a1a;
+        
+    --radio09: 0.9rem;
+    --textColor: #fff;
+    --bg-color-component: #333;
+
+
+}
+
+@media (prefers-color-scheme: light) {
+  :root{
+    /*Unchange colors*/
+    --color-alwaysBlack: #000000;
+    --color-alwaysWhite: #ffffff;
+
+    --text-awaysWhite: #fff;
+    --border-awalysWhite-1px: solid 1px #fff;
+
+ /*==========PRIMARY==========*/    
+    /*Primary Color*/
+    --green: #36b2c0;
+    --orange: #f6673c;
+    --yellow: #f0a938;
+    --red: #ff4f4f;
+
+    /*Transparent Primary colors*/
+    --green-trasparent: #2478818d;
+    --orange-trasparent: #ef63388b;
+    --yellow-trasparent: #f9a82595;
+    --red-trasparent: #ff4f4f88;
+
+    /*Borders Primary colors*/
+    --boder-green: solid 1px #247881;
+    --boder-orange: solid 1px #EF6438;
+    --boder-yellow: solid 1px #f9a825;
+    --boder-red: solid 1px #f04747;
+
+    /*Hover Primary colors*/
+    --hoverColor-green: #1fcde0;
+    --hoverColor-orange: #d84619;
+    --hoverColor-yellow: #ce8b1e;
+    --hoverColor-red: #cc1a1a;
+
+    --radio09: 0.9rem;
+    --textColor: #000000;
+    --bg-color-component: #ffffff;
+
+
+
+  }
+}
+
+
+@layer components{
+    .btn-green{
+        background-color: var(--green);
+        height: 40px;
+        border-radius: var(--radio09);
+        color: var(--text-awaysWhite);
+        font-weight: 400;
+        padding-inline: 20px;
+        font-size: var(--radio09);
+        border: solid 1px #82828277;
+        transition: box-shadow 0.3s,  width 0.3s ease;}
+    .btn-green:hover{
+        background-color: var(--hoverColor-green);
+        cursor: pointer;
+        transform: scale(1.03);
+        box-shadow: 0 2px 4px #0000007a;
+        border: var(--border-awalysWhite-1px);}
+
+    .btn-danger{
+        background-color: var(--red-trasparent);
+        height: 40px;
+        border-radius: 0.9rem;
+        color: var(--color-alwaysWhite);
+        font-weight: 500;
+        padding-inline: 20px;
+        font-size: 0.9rem;
+        border: solid 1px var(--red);
+        box-shadow: 0 0 2px #00000096;
+        transition: box-shadow 0.3s,  width 0.3s ease;}
+    .btn-danger:hover{
+        background-color: var(--red);
+        color: var(--color-alwaysWhite);
+        cursor: pointer;
+        transform: scale(1.03);
+        box-shadow: 0 0 10px var(--color-alwaysWhite);
+        border: var(--border-awalysWhite-1px);}
+
+    .inputBase{
+        padding: 8px;
+        padding-left: 10px;
+        color: #000000;
+        font-size: 1.5rem;
+        width: 100%;
+        font-weight: bold;
+        color: var(--textColor);
+
+    }
+    .inputBase:focus{
+        outline: none;
+    }
+    .inputBase::placeholder{
+        color: #000000;/*Pendoing*/
+    }
+    .text-black{
+        color: var(--textColor);
+    }
+    .bg-principal{
+        background-color: var(--bg-color-component);
+    }
+
+
+
+
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    /* Hide scrollbar in IE, Edge, and Firefox */
+    .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+    
+}

@@ -25,7 +25,7 @@ function Dashboard() {
   return (
     <div className="bg-pages w-screen h-screen flex">
       <NavMenu expanded={expanded} setExpanded={setExpanded} />
-      <div className="w-full mainSection">
+      <div className="w-screen mainSection">
         <TopBar expanded={expanded} setExpanded={setExpanded} />
         <TaskList
           showPublicForm={showPublicForm}
