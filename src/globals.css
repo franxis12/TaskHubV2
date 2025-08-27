@@ -189,6 +189,7 @@
     }
 
 
+
     .selectBase {
         /* ... (appearance: none as above) ... */
         background-image: var(--inputArrow); /* Or .png, .jpg */
@@ -196,6 +197,7 @@
         background-position: right 10px center; /* Adjust position as needed */
         background-size: 16px 16px; /* Adjust size as needed */
         padding-right: 30px; /* Add padding to prevent text overlap with the arrow */
+
     }
     .selectBase:focus{
         outline: none;
