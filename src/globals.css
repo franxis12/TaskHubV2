@@ -12,6 +12,7 @@
     --orange: #f6673c;
     --yellow: #f0a938;
     --red: #ff4f4f;
+    --grayLight: #a7a7a7;
 
     /*Transparent Primary colors*/
     --green-trasparent: #2478818d;
@@ -25,6 +26,7 @@
     --boder-yellow: solid 1px #f9a825;
     --boder-red: solid 1px #f04747;
 
+
     /*Hover Primary colors*/
     --hoverColor-green: #1fcde0;
     --hoverColor-orange: #d84619;
@@ -33,7 +35,13 @@
         
     --radio09: 0.9rem;
     --textColor: #fff;
+    --placeholderColor: #cecece8f;
     --bg-color-component: #333;
+    --color-input: #252525;
+    --inputArrow: url('./assets/iconsV2/arrowDown-White.svg')
+
+
+
 
 
 }
@@ -74,7 +82,11 @@
 
     --radio09: 0.9rem;
     --textColor: #000000;
+    --placeholderColor: #3236398f;
+
     --bg-color-component: #ffffff;
+    --color-input: #fff;
+    --inputArrow: url('./assets/iconsV2/arrowDown.svg')
 
 
 
@@ -82,7 +94,12 @@
 }
 
 
+
 @layer components{
+    /*Helpers*/
+    .textColor{color: var(--textColor);}
+    .bg-hover-green:hover{background-color: var(--green-trasparent);}
+
     .btn-green{
         background-color: var(--green);
         height: 40px;
@@ -119,6 +136,19 @@
         box-shadow: 0 0 10px var(--color-alwaysWhite);
         border: var(--border-awalysWhite-1px);}
 
+    .btn-disable{
+        background-color: var(--grayLight);
+        height: 40px;
+        border-radius: var(--radio09);
+        color: var(--text-awaysWhite);
+        font-weight: 400;
+        padding-inline: 20px;
+        font-size: var(--radio09);
+        border: solid 1px #82828277;
+        transition: box-shadow 0.3s,  width 0.3s ease;}
+    .btn-disable:hover{
+        cursor: not-allowed;}
+
     .inputBase{
         padding: 8px;
         padding-left: 10px;
@@ -126,23 +156,68 @@
         font-size: 1.5rem;
         width: 100%;
         font-weight: bold;
-        color: var(--textColor);
+        color: var(--textColor);}
+
+    .inputBase::placeholder{
+        color: var(--placeholderColor);}
+        
+.inputBase:focus{
+        outline: none;
+                  }
+ 
+    
+    .inputBase:focus::placeholder{
+        outline: none;
+        color: #4788b98f;           }
+ 
+    
+ 
+    .text-black{
+        color: var(--textColor);}
+    .bg-principal{
+        background-color: var(--bg-color-component);}
+
+   
+
+    .selectBase {
+        width: 100%;
+        height: 100%;
+        margin-left: 20px;
+        -webkit-appearance: none; /* For WebKit browsers like Chrome and Safari */
+        -moz-appearance: none;    /* For Mozilla Firefox */
+        appearance: none;         /* Standard property */
+    }
+
+
+
+    .selectBase {
+        /* ... (appearance: none as above) ... */
+        background-image: var(--inputArrow); /* Or .png, .jpg */
+        background-repeat: no-repeat;
+        background-position: right 10px center; /* Adjust position as needed */
+        background-size: 16px 16px; /* Adjust size as needed */
+        padding-right: 30px; /* Add padding to prevent text overlap with the arrow */
 
     }
-    .inputBase:focus{
+    .selectBase:focus{
         outline: none;
     }
-    .inputBase::placeholder{
-        color: #93e3fd;/*Pending*/
-    }
-    .text-black{
-        color: var(--textColor);
-    }
-    .bg-principal{
-        background-color: var(--bg-color-component);
+    .selectBase:hover{
+        background-image: url('./assets/iconsV2/arrowDown-hover.svg'); /* Or .png, .jpg */
     }
 
+     .textAreaBase{
+        height: auto;
+        max-height: max-content;
+        width: 100%;
+        padding-inline: 10px;
+        margin-top: 0;
+        
 
+    }
+    .textAreaBase:focus{
+        outline: none;
+    }
 
 
 
@@ -152,7 +227,9 @@
     /* Hide scrollbar in IE, Edge, and Firefox */
     .no-scrollbar {
       -ms-overflow-style: none; /* IE and Edge */
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: none; /* Firefox n*/
     }
+
+ 
     
 }
