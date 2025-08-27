@@ -16,12 +16,7 @@ import samplePhoto from "../assets/sample.png";
 import noteIcon from "../assets/icons/note.svg";
 import calendarIcon from "../assets/icons/pending.svg";
 import titleIcon from "../assets/icons/note.svg";
-import priorityLow from "../assets/icons/LImportant.png";
-import priorityMedium from "../assets/icons/MImportant.png";
-import priorityHigh from "../assets/icons/HImportan.png";
-import assignIcon from "../assets/icons/progress.svg";
-import Input from "../Utils/Input";
-import PublicIcon from "../assets/iconsV2/publicIcon.svg?react";
+import { SVGIcons, myImage } from "../imports";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -42,12 +37,6 @@ function AddPublicTask({ accion }) {
   const [stNotes, setStNotes] = useState("");
   const [stAssignedTo, setStAssignedTo] = useState("");
   const [subTasks, setSubTasks] = useState([]); // [{ name, priority, completeBy, notes, assignedTo, status }]
-
-  const priorityIcons = {
-    low: priorityLow,
-    medium: priorityMedium,
-    high: priorityHigh,
-  };
 
   // Obtener miembros de la empresa (desde 'users')
   useEffect(() => {
@@ -216,30 +205,29 @@ function AddPublicTask({ accion }) {
           }}
         >
           {/* Header */}
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-1 w-full border-b-2  ">
-              <PublicIcon className="w-10 h-7 textColor" />
-              <span className="text-black w-full">
-                <input
-                  type="text"
-                  placeholder="Enter Task Name"
-                  value={taskName}
-                  onChange={(e) => setTaskName(e.target.value)}
-                  required
-                  className="inputBase "
-                />
-              </span>
-            </div>
-          </div>
+
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-1 w-full border-b-2  ">
+                <SVGIcons.public className="w-10 h-7 textColor" />
+                <span className="text-black w-full">
+                  <input
+                    type="text"
+                    placeholder="Enter Task Name"
+                    value={taskName}
+                    onChange={(e) => setTaskName(e.target.value)}
+                    required
+                    className="inputBase"
+                  />
+                </span>
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Columna izquierda */}
               <div className="space-y-3">
-                {/* Nombre de tarea */}
-
                 {/* Asignar usuario (tarea principal) */}
-                <div className="flex items-center gap-2">
-                  <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
+                <div className=" h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
+                  <span className=" ml-2 aspect-square min-w-10 min-h-10 flex items-center ">
                     {assignedTo ? (
                       <img
                         src={
@@ -247,20 +235,22 @@ function AddPublicTask({ accion }) {
                           samplePhoto
                         }
                         alt="assigned"
-                        className="h-10 w-10 rounded-full border-2 border-blue-500 object-cover"
+                        className="fixed h-15 w-auto rounded-full border-2 border-blue-500 object-cover aspect-square"
                       />
                     ) : (
-                      <img src={assignIcon} alt="assign" className="h-5 w-5" />
+                      <img
+                        src={myImage.defaultUser}
+                        alt="assign"
+                        className=" fixed h-15 w-auto rounded-full border-2 border-slate-400 object-cover aspect-square"
+                      />
                     )}
                   </span>
                   <select
                     value={assignedTo}
                     onChange={(e) => setAssignedTo(e.target.value)}
-                    className={inputBase}
+                    className="selectBase"
                   >
-                    <option value="">
-                      Sin asignar (puede tomarla cualquiera)
-                    </option>
+                    <option value="">Unassigned</option>
                     {members.map((member) => (
                       <option key={member.uid} value={member.uid}>
                         {member.name}
@@ -268,63 +258,79 @@ function AddPublicTask({ accion }) {
                     ))}
                   </select>
                 </div>
-              </div>
-
-              {/* Columna derecha */}
-              <div className="space-y-3">
                 {/* Fecha */}
-                <div className="flex items-center gap-2">
-                  <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
-                    <img src={calendarIcon} alt="date" className="h-5 w-5" />
+                <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
+                  <span className="ml-3 mx-3 px-2 py-2 ">
+                    <SVGIcons.calendar className="h-6 w-6" alt="date" />
                   </span>
                   <input
                     type="date"
                     value={completeBy}
                     onChange={(e) => setCompleteBy(e.target.value)}
-                    className={inputBase}
+                    className="inputBaseDate"
                   />
                 </div>
 
                 {/* Prioridad */}
-                <div className="flex items-center gap-2">
-                  <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
-                    <img
-                      src={priorityIcons[priority]}
-                      alt="priority"
-                      className="h-5 w-5"
-                    />
+                <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
+                  <span className="ml-3  px-2 py-2 ">
+                    {priority === "high" ? (
+                      <SVGIcons.high
+                        className="h-6 w-6 text-[var(--orange)]"
+                        alt="high"
+                      />
+                    ) : priority === "medium" ? (
+                      <SVGIcons.med
+                        className="h-6 w-6 text-[var(--yellow)]"
+                        alt="medium"
+                      />
+                    ) : priority === "low" ? (
+                      <SVGIcons.low
+                        className="h-6 w-6 text-[var(--green)]"
+                        alt="low"
+                      />
+                    ) : (
+                      <SVGIcons.question
+                        className="h-6 w-6"
+                        alt="No priority selected reload"
+                      />
+                    )}
                   </span>
                   <select
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
-                    className={inputBase}
+                    className="selectBase"
                   >
-                    <option value="low">Prioridad baja</option>
-                    <option value="medium">Prioridad media</option>
-                    <option value="high">Prioridad alta</option>
+                    <option value="low">Low priority</option>
+                    <option value="medium">Medium priority</option>
+                    <option value="high">High priority</option>
                   </select>
                 </div>
               </div>
-            </div>
 
-            {/* Notas */}
-            <div className="flex items-start gap-2">
-              <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
-                <img src={noteIcon} alt="notes" className="h-5 w-5" />
-              </span>
-              <textarea
-                placeholder="Notas (opcional)"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className={inputBase + " min-h-[84px]"}
-              />
+              {/* Columna derecha */}
+              <div className="space-y-3">
+                {/* Notas */}
+                <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
+                  <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
+                    <SVGIcons.note className="h-6 w-6" />
+                    Notes <span className="text-slate-600 ">(Optional)</span>
+                  </span>
+                  <textarea
+                    placeholder="Enter here your notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className={"textAreaBase" + " min-h-[102px]"}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Sub-tasks con asignación independiente */}
             <div className="rounded-md border border-slate-200 p-3 bg-white/50">
               <div className="flex items-center justify-between mb-2">
                 <label className={labelBase + " m-0"}>
-                  Sub-tasks{" "}
+                  Sub-tasks
                   <span className="text-slate-400">({subTasks.length}/10)</span>
                 </label>
                 <button
@@ -448,7 +454,9 @@ function AddPublicTask({ accion }) {
               <button
                 id="create-public-task"
                 type="submit"
-                className="btn-green "
+                className={
+                  user?.role !== "admin" ? "btn-disable " : "btn-green"
+                }
                 disabled={
                   submitting || !taskName.trim() || user?.role !== "admin"
                 }
