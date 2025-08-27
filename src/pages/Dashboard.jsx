@@ -10,17 +10,10 @@ import AddPublicTask from "../components/AddPublicTask";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const { user, logout } = useContext(UserContext);
-  // Estado inicial según el viewport actual:
   const isMobileInit = typeof window !== "undefined" && window.innerWidth < 700;
   const [expanded, setExpanded] = useState(!isMobileInit);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
   const [showPublicForm, setShowPublicForm] = useState(false);
-
-  function handleLogout() {
-    logout();
-    navigate("/");
-  }
 
   return (
     <div className="bg-pages w-screen h-screen flex">

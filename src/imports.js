@@ -27,5 +27,4 @@ const myImage = {
     defaultUser: defaultUser
 }
 
-
 export {SVGIcons, myImage};
