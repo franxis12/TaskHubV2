@@ -1,5 +1,6 @@
 //SVG icons components
 import PublicIcon from "./assets/iconsV2/publicIcon.svg?react";
+import PersonalIcon from "./assets/iconsV2/personalIcon.svg?react"
 import CalendarIcon from "./assets/iconsV2/calendar-days-solid-full.svg?react"
 import HighIcon from "./assets/iconsV2/priorHigh.svg?react"
 import MediumIcon from "./assets/iconsV2/priorMedium.svg?react"
@@ -14,6 +15,7 @@ import defaultUser from "./assets/default/default-userImg.jpg"
 
 const SVGIcons = {
     public: PublicIcon,
+    personal: PersonalIcon,
     calendar: CalendarIcon,
     low: LowIcon,
     med: MediumIcon,

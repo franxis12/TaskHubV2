@@ -231,6 +231,20 @@
         background-color: var(--green-trasparent);}
     .bg-principal{
         background-color: var(--bg-color-component);}
+    .divClose{
+        height: 0;
+        width: 0;
+        overflow: hidden;
+
+
+    }
+    .divOpen{
+        overflow: hidden;
+        transition: all 0.3s;
+        
+
+
+    }
 
  
     

@@ -33,6 +33,16 @@ function AddPublicTask({ accion }) {
   const [stAssignedTo, setStAssignedTo] = useState("");
   const [subTasks, setSubTasks] = useState([]); // [{ name, priority, completeBy, notes, assignedTo, status }]
 
+  const [animation, setAnimation] = useState(false);
+
+  useEffect(() => {
+    if (subTaskMenu) {
+      setAnimation(true);
+    } else {
+      const timeout = setTimeout(() => setAnimation(false), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [subTaskMenu]);
   // Obtener miembros de la empresa (desde 'users')
   useEffect(() => {
     async function fetchMembers() {
@@ -324,7 +334,11 @@ function AddPublicTask({ accion }) {
             {/* Sub-tasks con asignación independiente */}
 
             {subTaskMenu ? (
-              <div className="rounded-2xl border border-slate-200 p-3 bg-white/10">
+              <div
+                className={`${
+                  animation ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+                } overflow-hidden transition-all duration-700 rounded-2xl border border-slate-200 p-3 bg-white/10`}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <label
                     className={
@@ -489,11 +503,13 @@ function AddPublicTask({ accion }) {
                     className="flex  items-start justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
                   >
                     <div className="flex ">
-                      <SVGIcons.arrowTurn.right className="w-4 h-full mr-3" />
-                      <div className="min-w-0 flex-1">
-                        <div className="font-medium truncate mb-1">
-                          {idx + 1}. {st.name}
+                      <div className="h-full w-5">
+                        <div className="bg-black text-white w-5 rounded-sm items-center flex justify-center">
+                          {idx + 1}
                         </div>
+                        <SVGIcons.arrowTurn.right className="w-4 h-full mr-3 ml-2" />
+                      </div>
+                      <div className="min-w-0 flex-1 ml-3">
                         <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
                           {st.assignedTo && (
                             <>
@@ -511,6 +527,9 @@ function AddPublicTask({ accion }) {
                               </span>
                             </>
                           )}
+                        </div>
+                        <div className="font-medium truncate mb-1 ">
+                          {st.name}
                         </div>
                       </div>
                     </div>
