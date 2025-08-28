@@ -7,6 +7,8 @@ import LowIcon from "./assets/iconsV2/priorLow.svg?react"
 import CircleQuestionIcon from "./assets/iconsV2/circle-question-solid-full.svg?react"
 import NotesIcon from "./assets/iconsV2/note-sticky-solid-full.svg?react"
 import ArrowTurnRight from "./assets/iconsV2/arrow-turn-right-solid-full.svg?react"
+import PlusIcon from "./assets/iconsV2/plus-solid-full.svg?react"
+
 //Images
 import defaultUser from "./assets/default/default-userImg.jpg"
 
@@ -22,6 +24,7 @@ const SVGIcons = {
         right: ArrowTurnRight,
         left: ArrowTurnRight,
     },
+    plus: PlusIcon,
 }
 const myImage = {
     defaultUser: defaultUser
