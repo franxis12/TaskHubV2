@@ -14,9 +14,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
-import AddPublicTask from "./AddPublicTask";
 import TaskFilters, { defaultFilters } from "./TaskFilters";
-import PersonalTaskForm from "../components/PersonalTaskForm";
 import TaskEditor from "../components/TaskEditor";
 import TaskEstadistic from "../components/TaskEstadistic";
 import TeamMembers from "../components/TeamMembers";
@@ -362,7 +360,7 @@ function TaskList({
             />
           </div>
 
-          {/*Task Filters */}
+          {/*Task Filters 
           <div className="mb-4 w-full" onClick={() => setEditTask("")}>
             <TaskFilters
               filters={filters}
@@ -370,7 +368,7 @@ function TaskList({
               assignees={assignees}
               currentUserId={user?.uid}
             />
-          </div>
+          </div>*/}
         </div>
       </div>
 

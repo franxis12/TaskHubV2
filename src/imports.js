@@ -13,6 +13,8 @@ import PlusIcon from "./assets/iconsV2/plus-solid-full.svg?react"
 //Images
 import defaultUser from "./assets/default/default-userImg.jpg"
 
+//Components
+
 const SVGIcons = {
     public: PublicIcon,
     personal: PersonalIcon,
@@ -31,5 +33,7 @@ const SVGIcons = {
 const myImage = {
     defaultUser: defaultUser
 }
+
+
 
 export {SVGIcons, myImage};
