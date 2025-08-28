@@ -138,7 +138,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
       >
         {/* Contenedor modal */}
         <div
-          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30 shadow-[inset_0_0_1px_#fff9] shadow-lg"
+          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30 shadow-[inset_0_0_1px_#fff9] "
           style={{
             color: "var(--textColor)",
             maxHeight: "calc(100svh - 2rem)",

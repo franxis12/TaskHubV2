@@ -52,7 +52,12 @@ const calendarIcon = pendingIcon;
 const titleIcon = note;
 const statusIconImg = progressIcon;
 
-function TaskList({ showPublicForm, setShowPublicForm }) {
+function TaskList({
+  showPublicForm,
+  setShowPublicForm,
+  showPersonalForm,
+  setShowPersonalForm,
+}) {
   const { user } = useContext(UserContext);
 
   // Data
@@ -67,7 +72,7 @@ function TaskList({ showPublicForm, setShowPublicForm }) {
   const [deleteTaskId, setDeleteTaskId] = useState(null);
   const [actionTaskId, setActionTaskId] = useState("");
   //const [showPublicForm, setShowPublicForm] = useState(false);
-  const [showPersonalForm, setShowPersonalForm] = useState(false);
+  //const [showPersonalForm, setShowPersonalForm] = useState(false);
 
   // NUEVO: control de expandir/cerrar sub-tasks por tarea
   const [expandedTaskIds, setExpandedTaskIds] = useState(new Set());
@@ -367,16 +372,6 @@ function TaskList({ showPublicForm, setShowPublicForm }) {
             />
           </div>
         </div>
-
-        {/* PersonalTask Form */}
-        {showPersonalForm && (
-          <div className="mt-3">
-            <PersonalTaskForm
-              onClose={() => setShowPersonalForm(false)}
-              onCreated={() => {}}
-            />
-          </div>
-        )}
       </div>
 
       <div className="grid md:grid-cols-3 grid-cols-1  gap-2 grid-flow-row-dense col-span-2">

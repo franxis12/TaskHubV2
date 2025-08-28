@@ -7,6 +7,7 @@ import NavMenu from "../components/NavMenu";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import AddPublicTask from "../components/AddPublicTask";
+import PersonalTaskForm from "../components/PersonalTaskForm";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -23,10 +24,19 @@ function Dashboard() {
         <TaskList
           showPublicForm={showPublicForm}
           setShowPublicForm={setShowPublicForm}
+          showPersonalForm={showPersonalForm}
+          setShowPersonalForm={setShowPersonalForm}
         />
       </div>
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
+      )}
+      {/* PersonalTask Fo/rm */}
+      {showPersonalForm && (
+        <PersonalTaskForm
+          onClose={() => setShowPersonalForm(false)}
+          onCreated={() => {}}
+        />
       )}
     </div>
   );
