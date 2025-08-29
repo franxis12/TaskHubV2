@@ -59,18 +59,18 @@
 .btn-second{
     height: 36px;
     display: flex;
-    font-size: 12px;
     align-items: center;
     gap: 7px;
     width: auto;
     position: relative;
-    font-weight: 700;
+    font-weight: 600;
     color: white;
     background-color: black;
     padding-inline-end: 10px;
     border-radius: 15px;
     flex-direction: row;
-   font-size: 0.5rem;
+   font-size: 0.8rem;
+   text-wrap: nowrap;
     
     
     

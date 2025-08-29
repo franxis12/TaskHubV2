@@ -1,9 +1,9 @@
 import React from "react";
 
-function Container({ cols, rows, children }) {
+function Container({ className, children }) {
   return (
     <div
-      className={` min-w-120 min-h-90 w-full bg-pages rounded-3xl overflow-y-scroll scroll-smooth no-scrollbar grid grid-cols-3  ${cols}  ${rows} gap-2 shadow-2xl`}
+      className={`  bg-pages  rounded-3xl overflow-y-scroll scroll-smooth no-scrollbar grid   ${className}  gap-2 shadow-2xl`}
     >
       {children}
     </div>

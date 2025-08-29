@@ -273,32 +273,17 @@ body::-webkit-scrollbar{
   .text-teal   { color: #247881; } 
   .text-yellow { color: #f9a825; }
 
-  /**/
+  /*5*/
   .mainSection{
    width: 90vw;
    padding-right: 15px;
    padding-left: 8px;
   }
 
-  .divTitle{
-    position: sticky;
-    top: 0;
-    background-color: var(--pagesBackground);
-    z-index: 500;
-  }
+  
 
-  .shadowBottom{
-    box-shadow: 0 8px 12px var(--pagesBackground);
-    
-  }
-  .shadowTopInset{
-    box-shadow:  0 -10px 10px var(--pagesBackground);
-    height: 10px;
-    position: sticky;
-    bottom: 0px;
-    background-color: var(--pagesBackground);
-    
-  }
+ 
+  
   /* Hide scrollbar in Chrome, Safari, and Opera */
 
 

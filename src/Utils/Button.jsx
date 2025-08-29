@@ -27,7 +27,7 @@ function Button({
   };
   const buttonType = {
     primary: "btn-prima border",
-    secondary: "btn-second",
+    secondary: "btn-second text-4xl",
     danger: "btn-danger",
     orange:
       "btn-orange bg-orange text-white min-w-20 items-center justify-center",
@@ -47,9 +47,9 @@ function Button({
       <button
         onClick={onClick}
         disabled={disabled}
-        className={`${btnSelected} ${classNameExtra} `}
+        className={`${btnSelected} ${classNameExtra} text-3xl `}
       >
-        {hasIcon && <IconComponent className={`iconColor w-5 h-5 m-1  `} />}{" "}
+        {hasIcon && <IconComponent className={`iconColor w-10 h-5 m-1  `} />}{" "}
         {/*Pending create .iconColor class for dinamyc color changed*/}
         {btnName}
       </button>

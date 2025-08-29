@@ -10,12 +10,6 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { UserContext } from "../context/UserContext";
-
-// Iconos
-import samplePhoto from "../assets/sample.png";
-import noteIcon from "../assets/icons/note.svg";
-import calendarIcon from "../assets/icons/pending.svg";
-import titleIcon from "../assets/icons/note.svg";
 import { SVGIcons, myImage } from "../imports";
 
 function AddPublicTask({ accion }) {
@@ -29,6 +23,7 @@ function AddPublicTask({ accion }) {
   const [assignedTo, setAssignedTo] = useState("");
   const [members, setMembers] = useState([]);
   const [submitting, setSubmitting] = useState(false);
+  const [subTaskMenu, setSubTaskMenu] = useState(false);
 
   // Sub-tasks (cada una con asignación independiente)
   const [stName, setStName] = useState("");
@@ -38,6 +33,16 @@ function AddPublicTask({ accion }) {
   const [stAssignedTo, setStAssignedTo] = useState("");
   const [subTasks, setSubTasks] = useState([]); // [{ name, priority, completeBy, notes, assignedTo, status }]
 
+  const [animation, setAnimation] = useState(false);
+
+  useEffect(() => {
+    if (subTaskMenu) {
+      setAnimation(true);
+    } else {
+      const timeout = setTimeout(() => setAnimation(false), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [subTaskMenu]);
   // Obtener miembros de la empresa (desde 'users')
   useEffect(() => {
     async function fetchMembers() {
@@ -52,7 +57,7 @@ function AddPublicTask({ accion }) {
         name: `${doc.data().firstName || ""} ${
           doc.data().lastName || ""
         }`.trim(),
-        photo: doc.data().photo || samplePhoto,
+        photo: doc.data().photo || myImage.defaultUser,
       }));
       setMembers(users);
     }
@@ -197,7 +202,7 @@ function AddPublicTask({ accion }) {
       >
         {/* Contenido del modal */}
         <div
-          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal"
+          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30 shadow-[inset_0_0_1px_#fff9    ] shadow-lg "
           style={{
             color: "var(--textColor)",
             maxHeight: "calc(100svh - 2rem)", // que no rebase la pantalla
@@ -226,29 +231,29 @@ function AddPublicTask({ accion }) {
               {/* Columna izquierda */}
               <div className="space-y-3">
                 {/* Asignar usuario (tarea principal) */}
-                <div className=" h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
+                <div className=" h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl mb-5">
                   <span className=" ml-2 aspect-square min-w-10 min-h-10 flex items-center ">
                     {assignedTo ? (
                       <img
                         src={
                           members.find((m) => m.uid === assignedTo)?.photo ||
-                          samplePhoto
+                          myImage.defaultUser
                         }
                         alt="assigned"
-                        className="fixed h-15 w-auto rounded-full border-2 border-blue-500 object-cover aspect-square"
+                        className="relative h-15 w-19 rounded-full border-2 border-blue-500 outline-4  outline-[var(--bg-color-component)] object-cover aspect-square"
                       />
                     ) : (
                       <img
                         src={myImage.defaultUser}
                         alt="assign"
-                        className=" fixed h-15 w-auto rounded-full border-2 border-slate-400 object-cover aspect-square"
+                        className="  relative h-15 w-19  rounded-full outline-4  outline-[var(--bg-color-component)] object-cover aspect-square"
                       />
                     )}
                   </span>
                   <select
                     value={assignedTo}
                     onChange={(e) => setAssignedTo(e.target.value)}
-                    className="selectBase"
+                    className="selectBase "
                   >
                     <option value="">Unassigned</option>
                     {members.map((member) => (
@@ -275,17 +280,17 @@ function AddPublicTask({ accion }) {
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
                   <span className="ml-3  px-2 py-2 ">
                     {priority === "high" ? (
-                      <SVGIcons.high
+                      <SVGIcons.priority.high
                         className="h-6 w-6 text-[var(--orange)]"
                         alt="high"
                       />
                     ) : priority === "medium" ? (
-                      <SVGIcons.med
+                      <SVGIcons.priority.med
                         className="h-6 w-6 text-[var(--yellow)]"
                         alt="medium"
                       />
                     ) : priority === "low" ? (
-                      <SVGIcons.low
+                      <SVGIcons.priority.low
                         className="h-6 w-6 text-[var(--green)]"
                         alt="low"
                       />
@@ -320,110 +325,199 @@ function AddPublicTask({ accion }) {
                     placeholder="Enter here your notes"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className={"textAreaBase" + " min-h-[102px]"}
+                    className={"textAreaBase" + " min-h-[110px]"}
                   />
                 </div>
               </div>
             </div>
 
             {/* Sub-tasks con asignación independiente */}
-            <div className="rounded-md border border-slate-200 p-3 bg-white/50">
-              <div className="flex items-center justify-between mb-2">
-                <label className={labelBase + " m-0"}>
-                  Sub-tasks
-                  <span className="text-slate-400">({subTasks.length}/10)</span>
-                </label>
-                <button
-                  type="button"
-                  className="text-xs text-slate-600 hover:text-slate-900 underline"
-                  onClick={copyFromMain}
-                  title="Copiar prioridad y fecha desde la tarea principal"
-                >
-                  Copiar de la principal
-                </button>
-              </div>
 
-              {/* Formulario de sub-task */}
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
-                <input
-                  type="text"
-                  value={stName}
-                  onChange={(e) => setStName(e.target.value)}
-                  className={inputBase}
-                  placeholder="Nombre (p. ej. wireframe)"
-                  maxLength={100}
-                />
-                <select
-                  value={stPriority}
-                  onChange={(e) => setStPriority(e.target.value)}
-                  className={inputBase}
-                >
-                  <option value="low">Baja</option>
-                  <option value="medium">Media</option>
-                  <option value="high">Alta</option>
-                </select>
-                <input
-                  type="date"
-                  value={stCompleteBy}
-                  onChange={(e) => setStCompleteBy(e.target.value)}
-                  className={inputBase}
-                />
-                <select
-                  value={stAssignedTo}
-                  onChange={(e) => setStAssignedTo(e.target.value)}
-                  className={inputBase}
-                >
-                  <option value="">Sin asignar</option>
-                  {members.map((member) => (
-                    <option key={member.uid} value={member.uid}>
-                      {member.name}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={handleAddSubTask}
-                  className={btnOutline}
-                  disabled={!stName.trim() || subTasks.length >= 10}
-                  title="Agregar sub-task"
-                >
-                  Agregar
-                </button>
-              </div>
-
-              <textarea
-                value={stNotes}
-                onChange={(e) => setStNotes(e.target.value)}
-                className={inputBase + " mb-2 min-h-[60px]"}
-                placeholder="Notas de la sub-task (opcional)"
-                maxLength={400}
-              />
-
-              {subTasks.length > 0 && (
-                <ul className="space-y-1">
-                  {subTasks.map((st, idx) => (
-                    <li
-                      key={`${st.name}-${idx}`}
-                      className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+            {subTaskMenu ? (
+              <div
+                className={`${
+                  animation ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+                } overflow-hidden transition-all duration-700 rounded-2xl border border-slate-200 p-3 bg-white/10`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <label
+                    className={
+                      "labelBase" + " m-0 text-[var(--textColor)] font-medium "
+                    }
+                  >
+                    Sub-tasks
+                    <span className="text-slate-400">
+                      ({subTasks.length}/10)
+                    </span>
+                  </label>
+                  <div className="gap-2 flex">
+                    <button
+                      type="button"
+                      className="text-xs text-slate-600 hover:text-slate-900 underline"
+                      onClick={copyFromMain}
+                      title="Copiar prioridad y fecha desde la tarea principal"
                     >
-                      <div className="min-w-0 flex-1">
-                        <div className="font-medium truncate">
-                          {idx + 1}. {st.name}
+                      Copy from main
+                    </button>
+                    <button
+                      onClick={() => setSubTaskMenu(false)}
+                      className="btn-danger  h-7 font-bold "
+                    >
+                      X
+                    </button>
+                  </div>
+                </div>
+
+                {/* Formulario de sub-task */}
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={stName}
+                    onChange={(e) => setStName(e.target.value)}
+                    className={"inputBase text-lg border-b-2"}
+                    placeholder="Enter Sub-task name"
+                    maxLength={100}
+                  />
+                  <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
+                    <select
+                      value={stPriority}
+                      onChange={(e) => setStPriority(e.target.value)}
+                      className={"selectBase"}
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                  <div className="pl-4 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
+                    <input
+                      type="date"
+                      value={stCompleteBy}
+                      onChange={(e) => setStCompleteBy(e.target.value)}
+                      className="flex items-center"
+                    />
+                  </div>
+                  <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
+                    <select
+                      value={stAssignedTo}
+                      onChange={(e) => setStAssignedTo(e.target.value)}
+                      className="selectBase"
+                    >
+                      <option value="">Sin asignar</option>
+                      {members.map((member) => (
+                        <option key={member.uid} value={member.uid}>
+                          {member.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddSubTask}
+                    className="btn-green"
+                    disabled={!stName.trim() || subTasks.length >= 10}
+                    title="Agregar sub-task"
+                  >
+                    Add Sub-task
+                  </button>
+                </div>
+                <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
+                  <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
+                    <SVGIcons.note className="h-6 w-6" />
+                    Sub-task notes
+                    <span className="text-slate-600 ">(Optional)</span>
+                  </span>
+                  <textarea
+                    value={stNotes}
+                    onChange={(e) => setStNotes(e.target.value)}
+                    className={"textAreaBase" + " mb-2 min-h-[60px]"}
+                    placeholder="Enter your notes here"
+                    maxLength={400}
+                  />
+                </div>
+
+                {subTasks.length > 0 && (
+                  <ul className="space-y-1">
+                    {subTasks.map((st, idx) => (
+                      <li
+                        key={`${st.name}-${idx}`}
+                        className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium truncate">
+                            {idx + 1}. {st.name}
+                          </div>
+                          <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
+                            <span>Prioridad: {st.priority}</span>
+                            {st.completeBy && (
+                              <span>• Límite: {st.completeBy}</span>
+                            )}
+                            {st.notes && <span>• Notas: {st.notes}</span>}
+                            {st.assignedTo && (
+                              <>
+                                <span>• Asignado:</span>
+                                <span className="inline-flex items-center gap-1">
+                                  <img
+                                    src={
+                                      members.find(
+                                        (m) => m.uid === st.assignedTo
+                                      )?.photo || myImage.defaultUser
+                                    }
+                                    alt="assignee"
+                                    className="h-4 w-4 rounded-full border"
+                                  />
+                                  {members.find((m) => m.uid === st.assignedTo)
+                                    ?.name || "?"}
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSubTask(idx)}
+                          className="text-xs text-slate-600 hover:text-rose-600"
+                          title="Eliminar"
+                        >
+                          Eliminar
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 rounded-2xl border border-slate-200 p-3 bg-white/50">
+                {/*overflow de subtask arreglar*/}
+                <div
+                  onClick={() => setSubTaskMenu(true)}
+                  className=" flex flex-col h-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                >
+                  <span className="btn-">Add Sub-Taks</span>
+                  <SVGIcons.plus className="w-5 h-5 border rounded-3xl " />
+                </div>
+
+                {subTasks.map((st, idx) => (
+                  <li
+                    key={`${st.name}-${idx}`}
+                    className="flex  items-start justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                  >
+                    <div className="flex ">
+                      <div className="h-full w-5">
+                        <div className="bg-black text-white w-5 rounded-sm items-center flex justify-center">
+                          {idx + 1}
+                        </div>
+                        <SVGIcons.arrowTurn.right className="w-4 h-full mr-3 ml-2" />
+                      </div>
+                      <div className="min-w-0 flex-1 ml-3">
                         <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
-                          <span>Prioridad: {st.priority}</span>
-                          {st.completeBy && (
-                            <span>• Límite: {st.completeBy}</span>
-                          )}
-                          {st.notes && <span>• Notas: {st.notes}</span>}
                           {st.assignedTo && (
                             <>
-                              <span>• Asignado:</span>
                               <span className="inline-flex items-center gap-1">
                                 <img
                                   src={
                                     members.find((m) => m.uid === st.assignedTo)
-                                      ?.photo || samplePhoto
+                                      ?.photo || myImage.defaultUser
                                   }
                                   alt="assignee"
                                   className="h-4 w-4 rounded-full border"
@@ -434,20 +528,15 @@ function AddPublicTask({ accion }) {
                             </>
                           )}
                         </div>
+                        <div className="font-medium truncate mb-1 ">
+                          {st.name}
+                        </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveSubTask(idx)}
-                        className="text-xs text-slate-600 hover:text-rose-600"
-                        title="Eliminar"
-                      >
-                        Eliminar
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+                    </div>
+                  </li>
+                ))}
+              </div>
+            )}
 
             {/* Acciones */}
             <div className="flex items-center gap-2">
