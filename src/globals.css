@@ -36,7 +36,7 @@
     --radio09: 0.9rem;
     --textColor: #fff;
     --placeholderColor: #cecece8f;
-    --bg-color-component: #333;
+    --bg-color-component: #1a1a1a;
     --color-input: #252525;
     --inputArrow: url('./assets/iconsV2/arrowDown-White.svg')
 }
@@ -231,21 +231,28 @@
         background-color: var(--green-trasparent);}
     .bg-principal{
         background-color: var(--bg-color-component);}
-    .divClose{
-        height: 0;
-        width: 0;
-        overflow: hidden;
-
-
-    }
-    .divOpen{
-        overflow: hidden;
-        transition: all 0.3s;
-        
-
-
-    }
-
+   
+    
+        .divTitle{
+    position: sticky;
+    top: 0;
+    background-color: var(--bg-color-component);
+    z-index: 500;
+  }
+       .divFooter{
+    position: sticky;
+    bottom: 0;
+    background-color: var(--bg-color-component);
+    z-index: 500;
+  }
+   .shadowBottom{
+    box-shadow: 0 12px 10px var(--bg-color-component);
+    
+  }
+  .shadowTop{
+    box-shadow: 0 -10px 8px var(--bg-color-component);
+    
+  }
  
     
 }

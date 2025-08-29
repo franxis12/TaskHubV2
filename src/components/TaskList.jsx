@@ -21,6 +21,7 @@ import TeamMembers from "../components/TeamMembers";
 
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
+import { SVGIcons } from "../imports";
 
 import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
@@ -372,18 +373,19 @@ function TaskList({
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 grid-cols-1  gap-2 grid-flow-row-dense col-span-2">
-        <Container cols="md:col-span-1 p-2">
-          <div className="w-full h-full col-span-3 ">
+      <div className="grid grid-cols-12   gap-2 grid-flow-row-dense col-span-2">
+        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12">
+          <div className="flex flex-col gap-2 col-span-12  ">
             {/*<<<<---- Container for task assigned Task   */}
-            <div className="col-span-3  mb-2 divTitle flex items-start justify-between shadowBottom divTitle ">
+            <div className="col-span-12 divTitle max-h-20 h-12 shadowBottom bg-[var(--bg-color-component)] ">
               <h3 className="font-semibold ml-3 mt-2 w-full">Assigned to me</h3>
             </div>
 
-            <div className=" col-span-3 h-full items-start">
+            <div className=" col-span-12 grid grid-cols-12 min-h-50 p-2">
               {assignedItems.length === 0 ? (
-                <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
-                  <h3 className="text-lg font-medium text-slate-700">
+                <div className="col-span-12 rounded-xl border bg-[var(--componentsBG)]">
+                  {/*Pending*/}
+                  <h3 className="text-lg font-medium text-[var(--textColor)]">
                     No tienes asignaciones.
                   </h3>
                 </div>
@@ -418,7 +420,7 @@ function TaskList({
                   return (
                     <div
                       key={item.id}
-                      className="grid grid-cols-12 rounded-xl col-span-3 border-purple-1 mt-1 cursor-pointer hover:bg-white/50 transition"
+                      className="grid grid-cols-12 min-h-17 rounded-3xl col-span-12 border border-slate-200/20 mt-1 cursor-pointer hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
                       onClick={() => {
                         const parentTask = item.task;
                         setActionTaskId(parentTask.id);
@@ -436,20 +438,25 @@ function TaskList({
                           : item.name
                       }
                     >
-                      <div className="my-2 flex w-full items-center justify-between rounded-xl min-h-10 px-2 col-span-12 mb-2">
+                      <div className="grid col-span-12 grid-cols-12 my-2 max-h-8 px-2  mb-2">
                         {/* Izquierda: tipo + badge + nombres */}
-                        <div className="px-2 text-xs font-semibold text-slate-800 w-full h-full flex items-center">
-                          <img
-                            src={item.type === "public" ? Public : Personal}
-                            className="mr-2 inline-block h-5 w-5 align-[-2px] col-span-1"
-                            alt="Task type"
-                          />
+                        <div className=" col-span-8 flex items-center justify-start h-full px-2 text-xs font-semibold text-slate-800 ">
+                          {item.type === "public" ? (
+                            <SVGIcons.public
+                              className="text-[var(--textColor)] mr-2 inline-block h-5 w-5 align-[-2px] "
+                              alt="Task type"
+                            />
+                          ) : (
+                            <SVGIcons.personal
+                              className="text-[var(--textColor)] mr-2 inline-block h-5 w-5 align-[-2px] "
+                              alt="Task type"
+                            />
+                          )}
 
-                          {/* badge suave (antes negro) */}
                           <div
                             className={[
-                              "p-1 px-3 rounded-lg text-[11px] min-w-10 text-center border",
-                              "bg-black text-white w-10",
+                              " p-1 px-3 rounded-lg text-[10px] min-w-8 text-center border ",
+                              "bg-black text-white w-8",
                             ].join(" ")}
                             aria-label={
                               item.kind === "subtask"
@@ -462,58 +469,64 @@ function TaskList({
 
                           {/* nombres */}
                           {item.kind === "subtask" ? (
-                            <span className="ml-2 text-xs col-span-3">
+                            <span className="ml-2 text-xs text-[var(--textColor)]">
                               <span className="text-slate-500">
                                 {item.parentName}
                               </span>
                               <div className="flex gap-2 items-center">
-                                <SubIcon className="w-4 h-4" />
-                                <span className="text-sm text-slate-800">
+                                <SVGIcons.arrowTurn.right className="w-4 h-4" />
+                                <span className="text-sm text-[var(--textColor)]">
                                   {item.name}
                                 </span>
                               </div>
                             </span>
                           ) : (
-                            <span className="ml-2 text-sm text-slate-800">
+                            <span className="ml-2 text-sm text-[var(--textColor)] ">
                               {item.name}
                             </span>
                           )}
                         </div>
 
                         {/* Derecha: tiempo, estado, prioridad */}
-                        <div className="flex items-center gap-6 pr-2">
-                          {/* tiempo restante */}
-                          <div className="flex flex-col items-center w-20">
-                            <span
-                              className={[
-                                "text-[11px] font-semibold whitespace-nowrap border rounded-3xl px-2 py-[2px]",
-                                timeChipClass,
-                              ].join(" ")}
-                            >
-                              {timeLeft}
-                            </span>
-                          </div>
+                        <div className=" col-span-4 flex items-center justify-end gap-2">
+                          <div className="flex flex-col items-center justify-start  ">
+                            {/* tiempo restante */}
+                            <div className="">
+                              <span
+                                className={[
+                                  "text-[11px] font-semibold whitespace-nowrap border rounded-3xl px-2 py-[2px]",
+                                  timeChipClass,
+                                ].join(" ")}
+                              >
+                                {timeLeft}
+                              </span>
+                            </div>
 
-                          {/* status */}
-                          <div className="flex flex-col items-center w-20">
-                            <span
-                              className={[
-                                "text-[11px] font-semibold capitalize border rounded-3xl px-2 py-[2px]",
-                                statusChipClass,
-                              ].join(" ")}
-                            >
-                              {item.status}
-                            </span>
+                            {/* status */}
+                            <div className="">
+                              <span
+                                className={[
+                                  "text-[11px] font-semibold capitalize border rounded-3xl px-2 py-[2px]",
+                                  statusChipClass,
+                                ].join(" ")}
+                              >
+                                {item.status}
+                              </span>
+                            </div>
                           </div>
 
                           {/* prioridad */}
-                          <div className="flex flex-col items-center w-16">
-                            <img
-                              src={priorityIcons[item.priority] || ""}
-                              className="h-5 w-5"
-                              alt="Priority"
-                            />
-                            <span className="text-[11px] font-semibold text-slate-700 capitalize">
+                          <div className="flex flex-col items-center justify-center w-10 ">
+                            {item.priority === "high" ? (
+                              <SVGIcons.priority.high className="text-[var(--orange)]" />
+                            ) : item.priority === "medium" ? (
+                              <SVGIcons.priority.med className="text-[var(--yellow)]" />
+                            ) : item.priority === "low" ? (
+                              <SVGIcons.priority.low className="text-[var(--green)]" />
+                            ) : (
+                              <SVGIcons.question />
+                            )}
+                            <span className="text-[11px] font-semibold text-[var(--textColor)] capitalize">
                               {item.priority}
                             </span>
                           </div>
@@ -525,13 +538,14 @@ function TaskList({
               )}
             </div>
           </div>
+          <div className="divFooter col-span-12 h-4 shadowTop "></div>
         </Container>
 
-        <Container cols="md:col-span-1 max-h-90">
-          {/*<<<<---- Container for Stats  */}
+        <Container className="col-span-4 ">
           <TaskEstadistic />
         </Container>
-        <Container cols="row-span-2 ">
+
+        <Container className="row-span-2 col-span-4 ">
           {/*<<<<---- Container for Team Member  */}
           <TeamMembers
             tasks={tasks} // opcional, para mostrar conteos
@@ -542,7 +556,7 @@ function TaskList({
           />
         </Container>
 
-        <Container cols="md:col-span-2 max-h-90">
+        <Container className="col-span-8">
           {" "}
           {/*<<<<---- Container for all task */}
           <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
@@ -691,7 +705,7 @@ function TaskList({
                       toggleExpand(task.id);
                     }}
                     className={[
-                      " grid grid-cols-12 rounded-xl border-purple-1 ",
+                      " grid grid-cols-12 rounded-xl  ",
                       isEditing
                         ? "ring-2 ring-slate-400 shadow-sm"
                         : isSelected

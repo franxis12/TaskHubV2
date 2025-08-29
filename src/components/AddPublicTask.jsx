@@ -280,17 +280,17 @@ function AddPublicTask({ accion }) {
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
                   <span className="ml-3  px-2 py-2 ">
                     {priority === "high" ? (
-                      <SVGIcons.high
+                      <SVGIcons.priority.high
                         className="h-6 w-6 text-[var(--orange)]"
                         alt="high"
                       />
                     ) : priority === "medium" ? (
-                      <SVGIcons.med
+                      <SVGIcons.priority.med
                         className="h-6 w-6 text-[var(--yellow)]"
                         alt="medium"
                       />
                     ) : priority === "low" ? (
-                      <SVGIcons.low
+                      <SVGIcons.priority.low
                         className="h-6 w-6 text-[var(--green)]"
                         alt="low"
                       />

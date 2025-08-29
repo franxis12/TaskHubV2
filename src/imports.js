@@ -19,14 +19,17 @@ const SVGIcons = {
     public: PublicIcon,
     personal: PersonalIcon,
     calendar: CalendarIcon,
-    low: LowIcon,
-    med: MediumIcon,
-    high: HighIcon,
+    priority:{
+        low: LowIcon,
+        med: MediumIcon,
+        high: HighIcon,
+        
+    },
     question: CircleQuestionIcon,
     note: NotesIcon,
     arrowTurn: {
         right: ArrowTurnRight,
-        left: ArrowTurnRight,
+        left: ArrowTurnRight,//Pending change icon.
     },
     plus: PlusIcon,
 }
