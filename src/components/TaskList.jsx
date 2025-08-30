@@ -37,7 +37,6 @@ dayjs.extend(duration);
 import Personal from "../assets/icons/personal.svg";
 import Public from "../assets/icons/public.svg";
 import note from "../assets/icons/note.svg";
-import noteHover from "../assets/icons/note-hover.svg";
 
 import completeIcon from "../assets/icons/complete.svg";
 import pendingIcon from "../assets/icons/pending.svg";
@@ -62,7 +61,6 @@ function TaskList({
   const [currentTask, setCurrentTask] = useState([]);
 
   // UI
-  const [hoveredIcon, setHoveredIcon] = useState("");
   const [editTask, setEditTask] = useState(""); // task.id activo en editor
   const [deleteTaskId, setDeleteTaskId] = useState(null);
   const [actionTaskId, setActionTaskId] = useState("");
