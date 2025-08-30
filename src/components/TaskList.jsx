@@ -347,7 +347,7 @@ function TaskList({
         </div>
       </div>
 
-      <div className="grid grid-cols-12   gap-2 grid-flow-row-dense col-span-2">
+      <div className="grid grid-cols-12   gap-2 grid-flow-row-dense  col-span-2">
         <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-hidden">
           <div className="flex flex-col gap-2 col-span-12  ">
             {/*<<<<---- Container for task assigned Task   */}
@@ -515,7 +515,10 @@ function TaskList({
           <TaskEstadistic />
         </Container>
 
-        <Container className="row-span-2 col-span-4 ">
+        <Container
+          className="row-span-2 lg:col-span-4 col-span-12"
+          onClick={() => setCurrentTask([])}
+        >
           {/*<<<<---- Container for Team Member  */}
           <TeamMembers
             tasks={tasks} // opcional, para mostrar conteos
@@ -526,7 +529,7 @@ function TaskList({
           />
         </Container>
 
-        <Container className="col-span-8">
+        <Container className="col-span-12 md:col-span-12 lg:col-span-8 ">
           {/*<<<<---- Container for all task */}
           <div className="flex items-center justify-between col-span-3 p-2 shadowBottom divTitle  ">
             <h3 className="font-semibold ml-3 ">All Tasks</h3>
@@ -635,7 +638,10 @@ function TaskList({
           </div>
 
           {/*Task Filters */}
-          <div className="mb-4 w-full" onClick={() => setEditTask("")}>
+          <div
+            className="mb-4 w-full col-span-3"
+            onClick={() => setEditTask("")}
+          >
             <TaskFilters
               filters={filters}
               setFilters={setFilters}
@@ -644,7 +650,7 @@ function TaskList({
             />
           </div>
 
-          <div className="space-y-3 col-span-3 p-2">
+          <div className=" col-span-3 p-2">
             {/* Estados vacíos / aprobación */}
             {user?.pendingApproval ? (
               <div className="my-6 w-full text-center">
@@ -683,7 +689,7 @@ function TaskList({
                       toggleExpand(task.id);
                     }}
                     className={[
-                      " grid grid-cols-12 rounded-3xl ",
+                      " grid grid-cols-12 rounded-3xl m-2 px-2",
                       isEditing
                         ? "ring-2 ring-slate-400 shadow-sm bg-amber-50"
                         : isSelected
@@ -691,66 +697,63 @@ function TaskList({
                         : "",
                     ].join(" ")}
                   >
-                    <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
+                    <div className="grid grid-cols-12  col-span-12 bg-amber-200 max-h-25">
                       {/* Nombre y tipo */}
-                      <div className="px-2 text-lg font-semibold text-slate-800 w-full flex items-center">
-                        {task.type === "public" ? (
-                          <SVGIcons.public className={tailwindClass.icons} />
-                        ) : (
-                          <SVGIcons.personal className={tailwindClass.icons} />
-                        )}
-                        <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
+                      <div className="px-2 text-lg font-semibold text-slate-800  col-span-7 grid grid-cols-7 bg-blue-300">
+                        <span className="col-span-1">
+                          {" "}
+                          {task.type === "public" ? (
+                            <SVGIcons.public className={tailwindClass.icons} />
+                          ) : (
+                            <SVGIcons.personal
+                              className={tailwindClass.icons}
+                            />
+                          )}
+                        </span>
+                        <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 col-span-1">
                           {/* progreso subtasks dinámico */}
-                          {doneSubs}/{totalSubs}
+                          {task.subTasks.length === 0
+                            ? "M"
+                            : doneSubs + "/" + totalSubs}
                         </div>
-                        {task.taskName}
-                        {task.notes && (
-                          <img
-                            src={
-                              hoveredIcon === `note-${task.id}`
-                                ? noteHover
-                                : note
-                            }
-                            onMouseEnter={() =>
-                              setHoveredIcon(`note-${task.id}`)
-                            }
-                            onMouseLeave={() => setHoveredIcon("")}
-                            className="ml-2 inline-block h-5 w-5 align-[-2px]"
-                            alt="Note"
-                          />
-                        )}
+                        <span className="col-span-5">{task.taskName}</span>
+                        {/*<span className="col-span-1">
+                          {task.notes && (
+                            <SVGIcons.note className="text-[var(--orange)]" />
+                          )}
+                        </span>*/}
                       </div>
 
                       {/* Metadatos derecha */}
-                      <div className="flex items-center gap-8">
+                      <div className="col-span-5 grid grid-cols-5 bg-green-400">
                         {/* completeBy */}
-                        <div className="flex flex-col items-center">
-                          <span className="text-sm font-semibold text-slate-700">
+                        <div className="col-span-1 font-semibold">
+                          <span className={tailwindClass.badge.green}>
                             {task.completeBy}
                           </span>
                         </div>
 
                         {/* time left */}
-                        <div className="flex flex-col items-center">
+                        <div className="col-span-1">
                           <span className="text-lg font-semibold text-emerald-600">
                             {getTimeLeft(task.completeBy)}
                           </span>
                         </div>
 
                         {/* assignedTo */}
-                        <div className="flex flex-col items-center">
+                        <div className="col-span-1">
                           <img
                             src={userMap[task.assignedTo]?.photo || samplePhoto}
                             className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
                             alt="Assignee"
                           />
-                          <span className="text-sm font-semibold text-slate-700">
+                          <span className="text-sm font-semibold text-slate-700 col-span-1">
                             {userMap[task.assignedTo]?.name ?? "Unassigned"}
                           </span>
                         </div>
 
                         {/* priority */}
-                        <div className="flex flex-col items-center">
+                        <div className="col-span-1">
                           <img
                             src={priorityIcons[task.priority] || ""}
                             className="h-5 w-5"
@@ -762,7 +765,7 @@ function TaskList({
                         </div>
 
                         {/* status */}
-                        <div className="flex flex-col items-center">
+                        <div className="col-span-1 ">
                           <img
                             src={statusIcon[task.status] || ""}
                             className="h-5 w-5"
