@@ -1,3 +1,4 @@
+//./src/importFiles/imports.js
 //SVG icons components
 import PublicIcon from "../assets/iconsV2/publicIcon.svg?react";
 import PersonalIcon from "../assets/iconsV2/personalIcon.svg?react"
@@ -13,7 +14,6 @@ import PlusIcon from "../assets/iconsV2/plus-solid-full.svg?react"
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
 
-//Components
 
 const SVGIcons = {
     public: PublicIcon,
@@ -29,7 +29,6 @@ const SVGIcons = {
     note: NotesIcon,
     arrowTurn: {
         right: ArrowTurnRight,
-        left: ArrowTurnRight,//Pending change icon.
     },
     plus: PlusIcon,
 }

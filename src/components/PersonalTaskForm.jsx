@@ -200,11 +200,11 @@ function PersonalTaskForm({ onClose, onCreated }) {
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
                   <span className="ml-3  px-2 py-2 ">
                     {priority === "high" ? (
-                      <SVGIcons.high className="h-6 w-6 text-[var(--orange)]" />
+                      <SVGIcons.priority.high className="h-6 w-6 text-[var(--orange)]" />
                     ) : priority === "medium" ? (
-                      <SVGIcons.med className="h-6 w-6 text-[var(--yellow)]" />
+                      <SVGIcons.priority.med className="h-6 w-6 text-[var(--yellow)]" />
                     ) : priority === "low" ? (
-                      <SVGIcons.low className="h-6 w-6 text-[var(--green)]" />
+                      <SVGIcons.priority.low className="h-6 w-6 text-[var(--green)]" />
                     ) : (
                       <SVGIcons.question className="h-6 w-6" />
                     )}
@@ -319,7 +319,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
                 <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
                   <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
                     <SVGIcons.note className="h-6 w-6" />
-                    Sub-task notes{" "}
+                    Sub-task notes
                     <span className="text-slate-600 ">(Optional)</span>
                   </span>
                   <textarea

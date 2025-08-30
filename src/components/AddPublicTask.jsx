@@ -250,7 +250,7 @@ function AddPublicTask({ accion }) {
                 {/* Fecha */}
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
                   <span className="ml-3 mx-3 px-2 py-2 ">
-                    <SVGIcons.calendar className="h-6 w-6" alt="date" />
+                    <SVGIcons.calendar className="h-6 w-6" />
                   </span>
                   <input
                     type="date"
@@ -262,27 +262,18 @@ function AddPublicTask({ accion }) {
 
                 {/* Prioridad */}
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                  <span className="ml-3  px-2 py-2 ">
+                  <span
+                    className="ml-3  px-2 py-2 "
+                    alt="No priority selected reload"
+                  >
                     {priority === "high" ? (
-                      <SVGIcons.priority.high
-                        className="h-6 w-6 text-[var(--orange)]"
-                        alt="high"
-                      />
+                      <SVGIcons.priority.high className="h-6 w-6 text-[var(--orange)]" />
                     ) : priority === "medium" ? (
-                      <SVGIcons.priority.med
-                        className="h-6 w-6 text-[var(--yellow)]"
-                        alt="medium"
-                      />
+                      <SVGIcons.priority.med className="h-6 w-6 text-[var(--yellow)]" />
                     ) : priority === "low" ? (
-                      <SVGIcons.priority.low
-                        className="h-6 w-6 text-[var(--green)]"
-                        alt="low"
-                      />
+                      <SVGIcons.priority.low className="h-6 w-6 text-[var(--green)]" />
                     ) : (
-                      <SVGIcons.question
-                        className="h-6 w-6"
-                        alt="No priority selected reload"
-                      />
+                      <SVGIcons.question />
                     )}
                   </span>
                   <select

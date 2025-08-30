@@ -22,6 +22,7 @@ import TeamMembers from "../components/TeamMembers";
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
 import { SVGIcons } from "../importFiles/imports";
+import { tailwindClass } from "../importFiles/tailwindStyles";
 
 import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
@@ -663,7 +664,6 @@ function TaskList({
                 const isSelected = actionTaskId === task.id;
                 const isEditing = editTask === task.id;
                 const isExpanded = expandedTaskIds.has(task.id);
-
                 const totalSubs = Array.isArray(task.subTasks)
                   ? task.subTasks.length
                   : 0;
@@ -683,9 +683,9 @@ function TaskList({
                       toggleExpand(task.id);
                     }}
                     className={[
-                      " grid grid-cols-12 rounded-xl  ",
+                      " grid grid-cols-12 rounded-3xl ",
                       isEditing
-                        ? "ring-2 ring-slate-400 shadow-sm"
+                        ? "ring-2 ring-slate-400 shadow-sm bg-amber-50"
                         : isSelected
                         ? " shadow-xl  scale-101 transition-transform  bg-indigo-100"
                         : "",
@@ -693,12 +693,12 @@ function TaskList({
                   >
                     <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
                       {/* Nombre y tipo */}
-                      <div className="px-2 text-lg font-semibold text-slate-800 w-full flex">
-                        <img
-                          src={task.type === "public" ? Public : Personal}
-                          className="mr-2 inline-block h-5 w-5 align-[-2px]"
-                          alt="Task type"
-                        />
+                      <div className="px-2 text-lg font-semibold text-slate-800 w-full flex items-center">
+                        {task.type === "public" ? (
+                          <SVGIcons.public className={tailwindClass.icons} />
+                        ) : (
+                          <SVGIcons.personal className={tailwindClass.icons} />
+                        )}
                         <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
                           {/* progreso subtasks dinámico */}
                           {doneSubs}/{totalSubs}
