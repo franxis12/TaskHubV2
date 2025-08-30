@@ -420,7 +420,7 @@ function TaskList({
                   return (
                     <div
                       key={item.id}
-                      className="grid grid-cols-12 min-h-17 rounded-3xl col-span-12 border border-slate-200/20 mt-1 cursor-pointer hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
+                      className="grid grid-cols-12 min-h-17 rounded-3xl col-span-12 border dark:border-slate-200/20 border-slate-300 mt-1 cursor-pointer hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
                       onClick={() => {
                         const parentTask = item.task;
                         setActionTaskId(parentTask.id);
@@ -541,7 +541,7 @@ function TaskList({
           <div className="divFooter col-span-12 h-4 shadowTop "></div>
         </Container>
 
-        <Container className="col-span-4 ">
+        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12">
           <TaskEstadistic />
         </Container>
 

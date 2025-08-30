@@ -122,9 +122,9 @@ export default function TaskEstadistic() {
   const extra = Math.max(0, teamPhotosRaw.length - stackPhotos.length);
 
   return (
-    <div className="w-full col-span-3 rounded-2xl p-3 ring-1 ring-slate-200 overflow-hidden ">
+    <div className="flex flex-col gap-2 col-span-12 ">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 p-3 shadowBottom ">
         <h3 className="text-lg font-semibold">Stats</h3>
 
         {/* Toggle Team / Company / Personal */}
@@ -169,107 +169,132 @@ export default function TaskEstadistic() {
       </div>
 
       {/* Body */}
-      <div className="grid grid-cols-12 gap-3 h-full items-center">
+      <div className="grid grid-cols-12 gap-3 h-full items-center p-3  ">
         {/* Barras (col 8) */}
-        <div className="col-span-8">
-          <div className="flex items-end gap-6 h-56 rounded-2xl p-3">
-            {/* Complete (teal) */}
-            <div className="flex flex-col justify-end h-full">
-              <div
-                className="w-16 rounded-3xl bg-teal"
-                style={{ height: `${pct.completed}%` }}
-                title={`Complete: ${pct.completed}%`}
-                aria-label={`Complete: ${pct.completed}%`}
-              />
-            </div>
+        <div className="col-span-7 h-full flex items-end  w-full gap-2">
+          {/* Complete (teal) */}
+          <div className="flex flex-col items-center  justify-end h-full  rounded-3xl  w-full min-w-5 ">
+            <spa className="font-extrabold text-md text-[var(--greenMain)]">
+              {completed}
+            </spa>
+            <div
+              className="w-full min-w-5 max-w-16 rounded-3xl bg-teal  transition-height duration-500 ease-in-out "
+              style={{ height: `${pct.completed}%` }}
+              title={`Complete: ${pct.completed}%`}
+              aria-label={`Complete: ${pct.completed}%`}
+            />
+          </div>
 
-            {/* Pending (yellow) */}
-            <div className="flex flex-col justify-end h-full">
-              <div
-                className="w-16 rounded-3xl bg-yellow"
-                style={{ height: `${pct.pending}%` }}
-                title={`Pending: ${pct.pending}%`}
-                aria-label={`Pending: ${pct.pending}%`}
-              />
-            </div>
+          {/* Pending (yellow) */}
+          <div className="flex flex-col items-center justify-end h-full  rounded-3xl  w-full min-w-5 ">
+            <spa className="font-extrabold text-md text-[var(--yellow)]">
+              {pending}
+            </spa>
 
-            {/* Missed (orange) */}
-            <div className="flex flex-col justify-end h-full">
-              <div
-                className="w-16 rounded-3xl bg-orange"
-                style={{ height: `${pct.missed}%` }}
-                title={`Missed: ${pct.missed}%`}
-                aria-label={`Missed: ${pct.missed}%`}
-              />
-            </div>
+            <div
+              className="w-full min-w-5 max-w-16 rounded-3xl bg-yellow  transition-height duration-500 ease-in-out"
+              style={{ height: `${pct.pending}%` }}
+              title={`Pending: ${pct.pending}%`}
+              aria-label={`Pending: ${pct.pending}%`}
+            />
+          </div>
+
+          {/* Missed (orange) */}
+          <div className="flex flex-col items-center justify-end h-full rounded-3xl w-full min-w-5 ">
+            <spa className="font-extrabold text-md text-[var(--orange)]">
+              {missed}
+            </spa>
+
+            <div
+              className="w-full min-w-5 max-w-16  rounded-3xl bg-orange  transition-height duration-500 ease-in-out"
+              style={{ height: `${pct.missed}%` }}
+              title={`Missed: ${pct.missed}%`}
+              aria-label={`Missed: ${pct.missed}%`}
+            />
           </div>
         </div>
 
         {/* Avatar / Collage + leyenda (col 4) */}
-        <div className="col-span-4">
-          <div className="flex flex-col items-center gap-4">
-            {/* Contenedor circular con borde teal */}
-            <div className="p-1 rounded-full border-teal-2">
-              {view === "personal" ? (
-                <img
-                  src={userAvatar}
-                  alt="user"
-                  className="h-28 w-28 rounded-full object-cover bg-white"
-                />
-              ) : (
-                <div className="h-28 w-28 rounded-full overflow-hidden bg-white flex flex-wrap">
-                  {/* 2x2 grid dentro del círculo */}
-                  {gridPhotos.map((src, i) => (
-                    <img
-                      key={`g${i}`}
-                      src={src || samplePhoto}
-                      alt={`member ${i + 1}`}
-                      className="h-1/2 w-1/2 object-cover"
-                    />
-                  ))}
-                </div>
-              )}
+        <div className="col-span-5  h-full flex flex-col items-center justify-between gap-4 w-full  ">
+          {/* Contenedor circular con borde teal */}
+          <div
+            className={`p-1 border-teal-2 transition-all duration-500 ease-in-out
+                   ${
+                     view === "team" ? "rounded-3xl" : "rounded-[50%]"
+                   } overflow-hidden aspect-square object-contain`}
+          >
+            {view === "personal" || view === "company" ? (
+              <img
+                src={userAvatar}
+                alt="user"
+                className={`h-28 w-28 object-cover bg-white transition-all duration-500 ease-in-out
+                   ${
+                     view === "team" ? "rounded-3xl" : "rounded-[50%]"
+                   } object-contain`}
+              />
+            ) : (
+              <div
+                className={`h-28 w-28 overflow-hidden bg-white flex flex-wrap transition-all duration-500 ease-in-out
+                    ${
+                      view === "team" ? "rounded-3xl" : "rounded-[50%]"
+                    }  object-contain`}
+              >
+                {gridPhotos.map((src, i) => (
+                  <img
+                    key={`g${i}`}
+                    src={src || samplePhoto}
+                    alt={`member ${i + 1}`}
+                    className="h-1/2 w-1/2 object-contain "
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Stack de avatares (Team y Company) */}
+          {(view === "team" || view === "company") &&
+            stackPhotos.length > 0 && (
+              <div className="flex items-center -space-x-3">
+                {stackPhotos.map((src, i) => (
+                  <img
+                    key={`s${i}`}
+                    src={src || samplePhoto}
+                    alt={`member ${i + 1}`}
+                    className="h-8 w-8 rounded-full border-2 border-white shadow"
+                  />
+                ))}
+                {extra > 0 && (
+                  <div className="h-8 w-8 rounded-full border-2 border-white bg-slate-200 text-slate-700 text-[11px] font-semibold grid place-items-center shadow">
+                    +{extra}
+                  </div>
+                )}
+              </div>
+            )}
+
+          {/* Leyenda */}
+          <div className="w-full grid grid-cols-2 gap-x-2 gap-y-1 min-w-30">
+            <div className="text-sm text-[var(--orange)] font-semibold  ">
+              Missed
+            </div>
+            <div className="flex items-center justify-end gap-2 ">
+              <span className="text-sm">{pct.missed}%</span>
+              <span className="inline-block h-3 w-3 rounded-full bg-orange" />
             </div>
 
-            {/* Stack de avatares (Team y Company) */}
-            {(view === "team" || view === "company") &&
-              stackPhotos.length > 0 && (
-                <div className="flex items-center -space-x-3">
-                  {stackPhotos.map((src, i) => (
-                    <img
-                      key={`s${i}`}
-                      src={src || samplePhoto}
-                      alt={`member ${i + 1}`}
-                      className="h-8 w-8 rounded-full border-2 border-white shadow"
-                    />
-                  ))}
-                  {extra > 0 && (
-                    <div className="h-8 w-8 rounded-full border-2 border-white bg-slate-200 text-slate-700 text-[11px] font-semibold grid place-items-center shadow">
-                      +{extra}
-                    </div>
-                  )}
-                </div>
-              )}
+            <div className="text-sm text-[var(--yellow)] font-semibold">
+              Pending
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-sm">{pct.pending}%</span>
+              <span className="inline-block h-3 w-3 rounded-full bg-yellow" />
+            </div>
 
-            {/* Leyenda */}
-            <div className="w-full grid grid-cols-2 gap-x-2 gap-y-1">
-              <div className="text-sm">Missed</div>
-              <div className="flex items-center justify-end gap-2">
-                <span className="text-sm">{pct.missed}%</span>
-                <span className="inline-block h-3 w-3 rounded-full bg-orange" />
-              </div>
-
-              <div className="text-sm">Pending</div>
-              <div className="flex items-center justify-end gap-2">
-                <span className="text-sm">{pct.pending}%</span>
-                <span className="inline-block h-3 w-3 rounded-full bg-yellow" />
-              </div>
-
-              <div className="text-sm">Complete</div>
-              <div className="flex items-center justify-end gap-2">
-                <span className="text-sm">{pct.completed}%</span>
-                <span className="inline-block h-3 w-3 rounded-full bg-teal" />
-              </div>
+            <div className="text-sm text-[var(--greenMain)] font-semibold">
+              Complete
+            </div>
+            <div className="flex items-center justify-end gap-2">
+              <span className="text-sm">{pct.completed}%</span>
+              <span className="inline-block h-3 w-3 rounded-full bg-[var(--greenMain)]" />
             </div>
           </div>
         </div>

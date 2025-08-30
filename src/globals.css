@@ -8,7 +8,9 @@
 
  /*==========PRIMARY==========*/    
     /*Primary Color*/
-    --green: #36b2c0;
+    --greenMain: #29727b;
+
+    --green: #38bccb;/*Hover*/
     --orange: #f6673c;
     --yellow: #f0a938;
     --red: #ff4f4f;
