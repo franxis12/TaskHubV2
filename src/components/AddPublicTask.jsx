@@ -1,6 +1,6 @@
 // src/components/AddPublicTask.jsx
 import React, { useState, useContext, useEffect } from "react";
-import { db } from "../firebaseConfig";
+import { db } from "../auth/firebaseConfig";
 import {
   collection,
   addDoc,
@@ -10,7 +10,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { UserContext } from "../context/UserContext";
-import { SVGIcons, myImage } from "../imports";
+import { SVGIcons, myImage } from "../importFiles/imports";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -177,22 +177,6 @@ function AddPublicTask({ accion }) {
     }
   }
 
-  // estilos base
-  const inputBase =
-    "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 " +
-    "placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400/40";
-  const labelBase = "mb-1 block text-xs font-medium text-slate-600";
-  const btnBase =
-    "inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
-  const btnPrimary =
-    btnBase +
-    " bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-800/90";
-  const btnOutlineDanger =
-    btnBase + " border border-rose-300 bg-white text-rose-700 hover:bg-rose-50";
-  const btnOutline =
-    btnBase +
-    " border border-slate-300 bg-white text-slate-700 hover:bg-slate-50";
-
   return (
     <div className="fixed inset-0 z-[4000] bg-black/50 overflow-y-auto overscroll-contain">
       {/* Wrapper responsivo: top en móvil, centrado en md+ */}
@@ -266,7 +250,7 @@ function AddPublicTask({ accion }) {
                 {/* Fecha */}
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
                   <span className="ml-3 mx-3 px-2 py-2 ">
-                    <SVGIcons.calendar className="h-6 w-6" alt="date" />
+                    <SVGIcons.calendar className="h-6 w-6" />
                   </span>
                   <input
                     type="date"
@@ -278,27 +262,18 @@ function AddPublicTask({ accion }) {
 
                 {/* Prioridad */}
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                  <span className="ml-3  px-2 py-2 ">
+                  <span
+                    className="ml-3  px-2 py-2 "
+                    alt="No priority selected reload"
+                  >
                     {priority === "high" ? (
-                      <SVGIcons.priority.high
-                        className="h-6 w-6 text-[var(--orange)]"
-                        alt="high"
-                      />
+                      <SVGIcons.priority.high className="h-6 w-6 text-[var(--orange)]" />
                     ) : priority === "medium" ? (
-                      <SVGIcons.priority.med
-                        className="h-6 w-6 text-[var(--yellow)]"
-                        alt="medium"
-                      />
+                      <SVGIcons.priority.med className="h-6 w-6 text-[var(--yellow)]" />
                     ) : priority === "low" ? (
-                      <SVGIcons.priority.low
-                        className="h-6 w-6 text-[var(--green)]"
-                        alt="low"
-                      />
+                      <SVGIcons.priority.low className="h-6 w-6 text-[var(--green)]" />
                     ) : (
-                      <SVGIcons.question
-                        className="h-6 w-6"
-                        alt="No priority selected reload"
-                      />
+                      <SVGIcons.question />
                     )}
                   </span>
                   <select

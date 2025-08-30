@@ -1,7 +1,7 @@
 // src/components/TaskEditor.jsx
 import React, { useMemo, useState } from "react";
 import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { db } from "../auth/firebaseConfig";
 import samplePhoto from "../assets/sample.png";
 import note from "../assets/icons/note.svg";
 

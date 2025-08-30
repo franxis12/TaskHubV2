@@ -1,18 +1,17 @@
 // src/components/NavMenu.jsx
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../firebaseConfig";
-import logoFallback from "../assets/company-logo.png";
+//import { doc, onSnapshot } from "firebase/firestore";
+//import { db } from "../firebaseConfig";
+//import logoFallback from "../assets/LOGO.svg";
 import Button from "../Utils/Button";
 import LogoExpand from "../assets/LogoExpand.svg?react";
 import Logo from "../assets/LOGO.svg?react";
 
 function NavMenu({ expanded, setExpanded }) {
-  const { user, logout } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   // (Si usas el logo de DB en otro sitio, mantenemos esto)
-  const [logoUrl, setLogoUrl] = useState(logoFallback);
 
   // Estado mobile inicial sin causar parpadeo
   const [isMobile, setIsMobile] = useState(
@@ -25,26 +24,6 @@ function NavMenu({ expanded, setExpanded }) {
     const id = setTimeout(() => setTransitionsOn(true), 0);
     return () => clearTimeout(id);
   }, []);
-
-  function handleLogout() {
-    logout();
-    navigate("/");
-  }
-
-  // Suscripción al logo (opcional)
-  useEffect(() => {
-    if (!user?.companyId) {
-      setLogoUrl(logoFallback);
-      return;
-    }
-    const ref = doc(db, "companies", user.companyId);
-    const unsub = onSnapshot(
-      ref,
-      (snap) => setLogoUrl(snap.data()?.logo || logoFallback),
-      () => setLogoUrl(logoFallback)
-    );
-    return () => unsub();
-  }, [user?.companyId]);
 
   // Resize: solo actuamos cuando CRUZAMOS el umbral (sin tocar el primer render)
   const prevIsMobile = useRef(isMobile);
@@ -202,7 +181,7 @@ function NavMenu({ expanded, setExpanded }) {
               expanded ? "justify-start w-full" : "justify-center w-full"
             }
             btnType={"primary"}
-            onClick={handleLogout}
+            // onClick={"handleLogout"}
           />
         </div>
       </aside>

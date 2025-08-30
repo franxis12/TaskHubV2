@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { auth } from './firebaseConfig'
+import { auth } from '../firebaseConfig'
 
 //Resgister User
 export const resgisterUser = async (email, password) => {

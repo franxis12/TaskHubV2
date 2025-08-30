@@ -12,7 +12,7 @@ import {
   getDocs,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { db } from "../auth/firebaseConfig";
 
 import TaskFilters, { defaultFilters } from "./TaskFilters";
 import TaskEditor from "../components/TaskEditor";
@@ -21,7 +21,8 @@ import TeamMembers from "../components/TeamMembers";
 
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
-import { SVGIcons } from "../imports";
+import { SVGIcons } from "../importFiles/imports";
+import { tailwindClass } from "../importFiles/tailwindStyles";
 
 import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
@@ -34,11 +35,7 @@ import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 
 import Personal from "../assets/icons/personal.svg";
-import addPersonal from "../assets/icons/add-personal.svg";
-import addPersonalHover from "../assets/icons/add-personal-hover.svg";
 import Public from "../assets/icons/public.svg";
-import addPublic from "../assets/icons/add-public.svg";
-import addPublicHover from "../assets/icons/add-public-hover.svg";
 import note from "../assets/icons/note.svg";
 import noteHover from "../assets/icons/note-hover.svg";
 
@@ -52,9 +49,8 @@ const titleIcon = note;
 const statusIconImg = progressIcon;
 
 function TaskList({
-  showPublicForm,
   setShowPublicForm,
-  showPersonalForm,
+
   setShowPersonalForm,
 }) {
   const { user } = useContext(UserContext);
@@ -313,17 +309,6 @@ function TaskList({
     "inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100";
   const btnPrimary =
     "inline-flex items-center gap-2 rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800 active:bg-slate-800/90";
-  const badgeByStatus = (s) => {
-    const base =
-      "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border";
-    const map = {
-      pending: "bg-amber-50 text-amber-700 border-amber-200",
-      progress: "bg-blue-50 text-blue-700 border-blue-200",
-      completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
-      missed: "bg-rose-50 text-rose-700 border-rose-200",
-    };
-    return `${base} ${map[s] || "bg-slate-50 text-slate-600 border-slate-200"}`;
-  };
 
   // toggle expand/collapse for a task
   const toggleExpand = (taskId) => {
@@ -334,7 +319,6 @@ function TaskList({
       return next;
     });
   };
-
   return (
     <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
       {/* Toolbar */}
@@ -360,16 +344,6 @@ function TaskList({
               onClick={() => setShowPersonalForm((s) => !s)}
             />
           </div>
-
-          {/*Task Filters 
-          <div className="mb-4 w-full" onClick={() => setEditTask("")}>
-            <TaskFilters
-              filters={filters}
-              setFilters={setFilters}
-              assignees={assignees}
-              currentUserId={user?.uid}
-            />
-          </div>*/}
         </div>
       </div>
 
@@ -397,10 +371,6 @@ function TaskList({
                     typeof item.subtaskIndex === "number"
                       ? item.subtaskIndex + 1
                       : "M";
-                  const badgeClass =
-                    item.kind === "subtask"
-                      ? "bg-yellow-trasparent text-yellow border-Yellow-2"
-                      : "bg-teal-trasparent text-teal border-teal-2";
 
                   // chip tiempo restante
                   const timeLeft = getTimeLeft(item.completeBy);
@@ -420,7 +390,7 @@ function TaskList({
                   return (
                     <div
                       key={item.id}
-                      className="grid grid-cols-12 min-h-17 rounded-3xl col-span-12 border border-slate-200/20 mt-1 cursor-pointer hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
+                      className="grid grid-cols-12 min-h-17 rounded-3xl col-span-12 border dark:border-slate-200/20 border-slate-300 mt-1 cursor-pointer hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
                       onClick={() => {
                         const parentTask = item.task;
                         setActionTaskId(parentTask.id);
@@ -541,7 +511,7 @@ function TaskList({
           <div className="divFooter col-span-12 h-4 shadowTop "></div>
         </Container>
 
-        <Container className="col-span-4 ">
+        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12">
           <TaskEstadistic />
         </Container>
 
@@ -557,17 +527,13 @@ function TaskList({
         </Container>
 
         <Container className="col-span-8">
-          {" "}
           {/*<<<<---- Container for all task */}
-          <div className="flex items-start justify-between col-span-3 p-2 shadowBottom divTitle ">
-            <h3 className="font-semibold ml-3 mt-2">All Tasks</h3>
+          <div className="flex items-center justify-between col-span-3 p-2 shadowBottom divTitle  ">
+            <h3 className="font-semibold ml-3 ">All Tasks</h3>
 
-            {/* Acciones de la tarea seleccionada */}
+            {/* Acciones de la tarea seleccionada 
             {actionTaskId === currentTask.id && (
-              <div
-                className="mt-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm"
-                onClick={(e) => e.stopPropagation()}
-              >
+              <div className=" " onClick={(e) => e.stopPropagation()}>
                 <div className="mb-2 flex items-center justify-between">
                   <span className={badgeByStatus(currentTask.status)}>
                     {currentTask.status}
@@ -583,88 +549,101 @@ function TaskList({
                   </h3>
                 </div>
               </div>
-            )}
+            )}*/}
 
-            <div className="flex gap-1 ">
-              {/* Botones de estado para la tarea seleccionada */}
-              <div className="flex flex-wrap items-center gap-2">
-                {canChangeStatus(currentTask) ? (
-                  currentTask.status === "missed" ? (
-                    <span className="text-sm font-medium text-rose-700">
-                      Esta tarea ya no se puede cambiar de estado.
-                    </span>
+            {currentTask.length !== 0 && (
+              <div className="flex gap-1 ">
+                {/* Botones de estado para la tarea seleccionada */}
+                <div className="flex flex-wrap items-center gap-2 ">
+                  {canChangeStatus(currentTask) ? (
+                    currentTask.status === "missed" ? (
+                      <span className="text-sm font-medium text-rose-700">
+                        This task can no longer be changed in status.
+                      </span>
+                    ) : (
+                      <>
+                        {currentTask.status === "pending" && (
+                          <Button
+                            btnName="Start"
+                            btnType={"yellow"}
+                            classNameExtra={""}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateTaskStatus(currentTask, "progress");
+                            }}
+                          />
+                        )}
+
+                        {(currentTask.status === "pending" ||
+                          currentTask.status === "progress") && (
+                          <Button
+                            btnName="Complete"
+                            btnType={"green"}
+                            classNameExtra={""}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateTaskStatus(currentTask, "completed");
+                            }}
+                          />
+                        )}
+
+                        {currentTask.status !== "pending" && (
+                          <Button
+                            btnName="Set Pending"
+                            btnType={"yellow"}
+                            classNameExtra={""}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateTaskStatus(currentTask, "pending");
+                            }}
+                          />
+                        )}
+                      </>
+                    )
                   ) : (
-                    <>
-                      {currentTask.status === "pending" && (
-                        <Button
-                          btnName="Start"
-                          btnType={"yellow"}
-                          classNameExtra={""}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            updateTaskStatus(currentTask, "progress");
-                          }}
-                        />
-                      )}
+                    <span className="text-sm text-slate-700">
+                      Only the assignee or an admin can change the status.
+                    </span>
+                  )}
 
-                      {(currentTask.status === "pending" ||
-                        currentTask.status === "progress") && (
-                        <Button
-                          btnName="Complete"
-                          btnType={"green"}
-                          classNameExtra={""}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            updateTaskStatus(currentTask, "completed");
-                          }}
-                        />
-                      )}
-
-                      {currentTask.status !== "pending" && (
-                        <Button
-                          btnName="Set Pending"
-                          btnType={"yellow"}
-                          classNameExtra={""}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            updateTaskStatus(currentTask, "pending");
-                          }}
-                        />
-                      )}
-                    </>
-                  )
-                ) : (
-                  <span className="text-sm text-slate-700">
-                    No puedes cambiar el estado. Solo el asignado o un admin.
-                  </span>
-                )}
-
-                {(user?.role === "admin" ||
-                  (user?.role === "member" &&
-                    currentTask.type === "personal")) && (
-                  <Button
-                    btnName={
-                      editTask === currentTask.id ? "Close Editor" : "Edit"
-                    }
-                    btnType={"orange"}
-                    classNameExtra={""}
-                    type="button"
-                    className={btnGhost}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (editTask === currentTask.id) setEditTask("");
-                      else {
-                        setEditTask(currentTask.id);
-                        setActionTaskId("");
+                  {(user?.role === "admin" ||
+                    (user?.role === "member" &&
+                      currentTask.type === "personal")) && (
+                    <Button
+                      btnName={
+                        editTask === currentTask.id ? "Close Editor" : "Edit"
                       }
-                    }}
-                  />
-                )}
-              </div>
+                      btnType={"orange"}
+                      classNameExtra={""}
+                      type="button"
+                      className={btnGhost}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (editTask === currentTask.id) setEditTask("");
+                        else {
+                          setEditTask(currentTask.id);
+                          setActionTaskId("");
+                        }
+                      }}
+                    />
+                  )}
+                </div>
 
-              <Button btnName="Delete" btnType={"edit"} classNameExtra={""} />
-            </div>
+                <Button btnName="Delete" btnType={"edit"} classNameExtra={""} />
+              </div>
+            )}
           </div>
+
+          {/*Task Filters */}
+          <div className="mb-4 w-full" onClick={() => setEditTask("")}>
+            <TaskFilters
+              filters={filters}
+              setFilters={setFilters}
+              assignees={assignees}
+              currentUserId={user?.uid}
+            />
+          </div>
+
           <div className="space-y-3 col-span-3 p-2">
             {/* Estados vacíos / aprobación */}
             {user?.pendingApproval ? (
@@ -677,7 +656,7 @@ function TaskList({
             ) : filteredTasks.length === 0 ? (
               <div className="flex min-h-40 w-full items-center justify-center rounded-xl border bg-[var(--componentsBG)]">
                 <h3 className="text-lg font-medium text-slate-700">
-                  No tienes tareas aún.
+                  You don't have any tasks yet.
                 </h3>
               </div>
             ) : (
@@ -685,7 +664,6 @@ function TaskList({
                 const isSelected = actionTaskId === task.id;
                 const isEditing = editTask === task.id;
                 const isExpanded = expandedTaskIds.has(task.id);
-
                 const totalSubs = Array.isArray(task.subTasks)
                   ? task.subTasks.length
                   : 0;
@@ -705,9 +683,9 @@ function TaskList({
                       toggleExpand(task.id);
                     }}
                     className={[
-                      " grid grid-cols-12 rounded-xl  ",
+                      " grid grid-cols-12 rounded-3xl ",
                       isEditing
-                        ? "ring-2 ring-slate-400 shadow-sm"
+                        ? "ring-2 ring-slate-400 shadow-sm bg-amber-50"
                         : isSelected
                         ? " shadow-xl  scale-101 transition-transform  bg-indigo-100"
                         : "",
@@ -715,12 +693,12 @@ function TaskList({
                   >
                     <div className=" my-2 flex w-full items-center justify-between rounded-xl px-2 col-span-12">
                       {/* Nombre y tipo */}
-                      <div className="px-2 text-lg font-semibold text-slate-800 w-full flex">
-                        <img
-                          src={task.type === "public" ? Public : Personal}
-                          className="mr-2 inline-block h-5 w-5 align-[-2px]"
-                          alt="Task type"
-                        />
+                      <div className="px-2 text-lg font-semibold text-slate-800 w-full flex items-center">
+                        {task.type === "public" ? (
+                          <SVGIcons.public className={tailwindClass.icons} />
+                        ) : (
+                          <SVGIcons.personal className={tailwindClass.icons} />
+                        )}
                         <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 flex items-center justify-center">
                           {/* progreso subtasks dinámico */}
                           {doneSubs}/{totalSubs}

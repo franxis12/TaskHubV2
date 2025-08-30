@@ -2,7 +2,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import { auth } from "../firebaseConfig";
+import { auth } from "../auth/firebaseConfig";
 //import { sendEmailVerification } from "firebase/auth";
 
 function Setting() {
@@ -43,7 +43,7 @@ function Setting() {
         );
       }
     } catch (e) {
-      setMessage("No se pudo revisar el estado. Intenta de nuevo.");
+      setMessage("No se pudo revisar el estado. Intenta de nuevo. " + e);
     } finally {
       setChecking(false);
     }

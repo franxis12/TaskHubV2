@@ -2,20 +2,18 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import TaskEstadistic from "./TaskEstadistic";
 import { UserContext } from "../context/UserContext";
-import { useNavigate, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../firebaseConfig";
-import logoFallback from "../assets/company-logo.png";
+import { db } from "../auth/firebaseConfig";
+import logoFallback from "../assets/LOGO.svg";
 import samplePhoto from "../assets/sample.png";
 import OpenMenu from "../assets/iconsV2/bars-solid-full.svg?react";
 import CloseMenu from "../assets/iconsV2/ellipsis-vertical-solid-full.svg?react";
 
 // Recibir props correctamente
 function TopBar({ expanded, setExpanded }) {
-  const { user, logout } = useContext(UserContext);
-  const navigate = useNavigate();
+  const { user } = useContext(UserContext);
   const [logoUrl, setLogoUrl] = useState(logoFallback);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   // (Opcional) Tienes este mismo efecto duplicado; deja solo uno.
   useEffect(() => {
@@ -37,11 +35,6 @@ function TopBar({ expanded, setExpanded }) {
     return full || (user?.email ?? "User");
   }, [user]);
 
-  function handleLogout() {
-    logout();
-    navigate("/");
-  }
-
   const roleBadgeClasses = useMemo(() => {
     const r = (user?.role || "").toLowerCase();
     const base =
@@ -56,14 +49,6 @@ function TopBar({ expanded, setExpanded }) {
       palette[r] || "bg-slate-100 text-slate-700 border-slate-200"
     }`;
   }, [user?.role]);
-
-  const navLinkClasses = ({ isActive }) =>
-    [
-      "transition-colors text-white rounded-md px-3 py-2 text-sm font-medium btn border-opacity-0",
-      isActive
-        ? "btn-primary"
-        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
-    ].join(" ");
 
   return (
     <div className="bg-color flex items-center justify-between">

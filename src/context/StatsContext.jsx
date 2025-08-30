@@ -1,7 +1,7 @@
 // src/context/StatsContext.jsx
 import { createContext, useState, useContext, useEffect, useMemo } from "react";
 import { UserContext } from "../context/UserContext";
-import { db } from "../firebaseConfig";
+import { db } from "../auth/firebaseConfig";
 import { doc, onSnapshot, updateDoc, increment } from "firebase/firestore";
 
 export const StatsContext = createContext(null);
@@ -30,8 +30,12 @@ export function StatsProvider({ children }) {
   useEffect(() => {
     // si no hay usuario, resetea y marca listo
     if (!user?.uid) {
-      setCCompleted(0); setCPending(0); setCMissed(0);
-      setPCompleted(0); setPPending(0); setPMissed(0);
+      setCCompleted(0);
+      setCPending(0);
+      setCMissed(0);
+      setPCompleted(0);
+      setPPending(0);
+      setPMissed(0);
       setLoading(false);
       return;
     }
@@ -109,5 +113,7 @@ export function StatsProvider({ children }) {
     [loading, cCompleted, cPending, cMissed, pCompleted, pPending, pMissed]
   );
 
-  return <StatsContext.Provider value={value}>{children}</StatsContext.Provider>;
+  return (
+    <StatsContext.Provider value={value}>{children}</StatsContext.Provider>
+  );
 }

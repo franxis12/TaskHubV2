@@ -5,7 +5,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
 } from "firebase/auth";
-import { auth, db } from "../firebaseConfig";
+import { auth, db } from "../auth/firebaseConfig";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -37,7 +37,7 @@ function Register() {
   const emailValid = useMemo(() => /\S+@\S+\.\S+/.test(email), [email]);
   const canStep1 = name.trim() && apellido.trim() && emailValid;
   const canStep2 = password.length >= 6 && password === confirmPassword;
-  const canStep3 = true;
+  //const canStep3 = true;
   const canStep4 = role && companyId.trim();
 
   useEffect(() => {

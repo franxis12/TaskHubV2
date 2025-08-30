@@ -12,7 +12,7 @@ import AwayAproval from "./pages/AwayAproval";
 import { UserProvider } from "./context/UserContext";
 import PrivateRoute from "./components/PrivateRoute";
 import { StatsProvider } from "./context/StatsContext";
-import app from "./firebaseConfig";
+import app from "./auth/firebaseConfig";
 
 function App() {
   return (
