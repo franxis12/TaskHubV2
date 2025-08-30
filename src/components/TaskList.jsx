@@ -348,7 +348,7 @@ function TaskList({
       </div>
 
       <div className="grid grid-cols-12   gap-2 grid-flow-row-dense col-span-2">
-        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12">
+        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-hidden">
           <div className="flex flex-col gap-2 col-span-12  ">
             {/*<<<<---- Container for task assigned Task   */}
             <div className="col-span-12 divTitle max-h-20 h-12 shadowBottom bg-[var(--bg-color-component)] ">
