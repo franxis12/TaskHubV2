@@ -21,7 +21,7 @@ import TeamMembers from "../components/TeamMembers";
 
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
-import { SVGIcons } from "../imports";
+import { SVGIcons } from "../importFiles/imports";
 
 import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
@@ -318,7 +318,6 @@ function TaskList({
       return next;
     });
   };
-  console.log(currentTask.length);
   return (
     <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
       {/* Toolbar */}

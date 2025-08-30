@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import { UserContext } from "../context/UserContext";
-import { SVGIcons, myImage } from "../imports";
+import { SVGIcons, myImage } from "../importFiles/imports";
 
 function PersonalTaskForm({ onClose, onCreated }) {
   const { user } = useContext(UserContext);

@@ -10,7 +10,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { UserContext } from "../context/UserContext";
-import { SVGIcons, myImage } from "../imports";
+import { SVGIcons, myImage } from "../importFiles/imports";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -176,22 +176,6 @@ function AddPublicTask({ accion }) {
       setSubmitting(false);
     }
   }
-
-  // estilos base
-  const inputBase =
-    "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 " +
-    "placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400/40";
-  const labelBase = "mb-1 block text-xs font-medium text-slate-600";
-  const btnBase =
-    "inline-flex items-center justify-center rounded-md px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
-  const btnPrimary =
-    btnBase +
-    " bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-800/90";
-  const btnOutlineDanger =
-    btnBase + " border border-rose-300 bg-white text-rose-700 hover:bg-rose-50";
-  const btnOutline =
-    btnBase +
-    " border border-slate-300 bg-white text-slate-700 hover:bg-slate-50";
 
   return (
     <div className="fixed inset-0 z-[4000] bg-black/50 overflow-y-auto overscroll-contain">
