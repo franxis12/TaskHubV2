@@ -14,4 +14,4 @@ const tailwindClass = {
     },
 }
 
-export {inputs, tailwindClass};
+export {inputs, tailwindClass};//
