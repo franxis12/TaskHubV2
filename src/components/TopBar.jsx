@@ -5,7 +5,7 @@ import { UserContext } from "../context/UserContext";
 import { useNavigate, NavLink } from "react-router-dom";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import logoFallback from "../assets/company-logo.png";
+import logoFallback from "../assets/LOGO.svg";
 import samplePhoto from "../assets/sample.png";
 import OpenMenu from "../assets/iconsV2/bars-solid-full.svg?react";
 import CloseMenu from "../assets/iconsV2/ellipsis-vertical-solid-full.svg?react";

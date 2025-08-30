@@ -1,7 +1,6 @@
 // src/pages/Landing.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import fullLogo from "../assets/company-logo.png";
 import heroMock from "../assets/hero.png";
 import notifyMock from "../assets/notify.png";
 
@@ -32,7 +31,7 @@ function Landing() {
           {/* Logo */}
           <a className="navbar-brand d-flex align-items-center gap-2" href="#">
             <img
-              src={fullLogo}
+              src={"fullLogo"}
               alt="Task Hub logo"
               style={{ width: "auto", height: "40px" }}
             />

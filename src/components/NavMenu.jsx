@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import logoFallback from "../assets/company-logo.png";
+import logoFallback from "../assets/LOGO.svg";
 import Button from "../Utils/Button";
 import LogoExpand from "../assets/LogoExpand.svg?react";
 import Logo from "../assets/LOGO.svg?react";
