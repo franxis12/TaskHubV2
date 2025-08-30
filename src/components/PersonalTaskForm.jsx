@@ -1,7 +1,7 @@
 // src/components/PersonalTaskForm.jsx
 import React, { useState, useContext, useEffect } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { db } from "../auth/firebaseConfig";
 import { UserContext } from "../context/UserContext";
 import { SVGIcons, myImage } from "../imports";
 
@@ -186,7 +186,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
                 {/* Fecha */}
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
                   <span className="ml-3 mx-3 px-2 py-2 ">
-                    <SVGIcons.calendar className="h-6 w-6" alt="date" />
+                    <SVGIcons.calendar className="h-6 w-6" />
                   </span>
                   <input
                     type="date"

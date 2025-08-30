@@ -1,13 +1,25 @@
 // src/context/UserContext.jsx
-import { createContext, useState, useEffect, useMemo, useCallback } from "react";
-import { auth, db } from "../firebaseConfig";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
+import { auth, db } from "../auth/firebaseConfig";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, getDoc, onSnapshot, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  onSnapshot,
+  setDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
 export const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState(null);      // datos combinados: auth + firestore
+  const [user, setUser] = useState(null); // datos combinados: auth + firestore
   const [loading, setLoading] = useState(true); // bloquea UI hasta resolver estado inicial
 
   // Guarda el último unsubscribe del userDoc para limpiarlo al cambiar de cuenta
@@ -20,7 +32,7 @@ export function UserProvider({ children }) {
     const ref = doc(db, "users", uid);
     const snap = await getDoc(ref);
     if (snap.exists()) {
-      setUser(prev => ({
+      setUser((prev) => ({
         uid,
         email: auth.currentUser.email,
         emailVerified: !!auth.currentUser.emailVerified,
@@ -53,41 +65,49 @@ export function UserProvider({ children }) {
       // Asegura doc base si no existe (evita nulls en la app)
       const snapOnce = await getDoc(ref);
       if (!snapOnce.exists()) {
-        await setDoc(ref, {
-          // mínimos necesarios para tu app
-          firstName: "",
-          lastName: "",
-          role: "member",
-          companyId: "",
-          photo: "",
-          createdAt: serverTimestamp(),
-          stats: {
-            company: { completed: 0, pending: 0, missed: 0 },
-            personal:{ completed: 0, pending: 0, missed: 0 },
+        await setDoc(
+          ref,
+          {
+            // mínimos necesarios para tu app
+            firstName: "",
+            lastName: "",
+            role: "member",
+            companyId: "",
+            photo: "",
+            createdAt: serverTimestamp(),
+            stats: {
+              company: { completed: 0, pending: 0, missed: 0 },
+              personal: { completed: 0, pending: 0, missed: 0 },
+            },
           },
-        }, { merge: true });
+          { merge: true }
+        );
       }
 
-      const unsub = onSnapshot(ref, (snap) => {
-        const data = snap.data() || {};
-        setUser({
-          uid,
-          email,
-          emailVerified,
-          ...data,
-        });
-        setLoading(false);
-      }, (err) => {
-        console.error("onSnapshot(users/{uid}) error:", err);
-        // si falla, al menos deja pasar la UI con lo que tengamos
-        setUser({
-          uid,
-          email,
-          emailVerified,
-          ...snapOnce.data(),
-        });
-        setLoading(false);
-      });
+      const unsub = onSnapshot(
+        ref,
+        (snap) => {
+          const data = snap.data() || {};
+          setUser({
+            uid,
+            email,
+            emailVerified,
+            ...data,
+          });
+          setLoading(false);
+        },
+        (err) => {
+          console.error("onSnapshot(users/{uid}) error:", err);
+          // si falla, al menos deja pasar la UI con lo que tengamos
+          setUser({
+            uid,
+            email,
+            emailVerified,
+            ...snapOnce.data(),
+          });
+          setLoading(false);
+        }
+      );
 
       setUnsubUserDoc(() => unsub);
     });
@@ -111,16 +131,15 @@ export function UserProvider({ children }) {
     }
   };
 
-  const value = useMemo(() => ({
-    user,
-    loading,
-    refreshUser,
-    logout,
-  }), [user, loading, refreshUser]);
-
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      refreshUser,
+      logout,
+    }),
+    [user, loading, refreshUser]
   );
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

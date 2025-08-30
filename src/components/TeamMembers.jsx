@@ -1,7 +1,7 @@
 // src/components/TeamMembers.jsx
 import React, { useEffect, useMemo, useState, useContext } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { db } from "../auth/firebaseConfig";
 import { UserContext } from "../context/UserContext";
 
 import samplePhoto from "../assets/sample.png";

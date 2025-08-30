@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { StatsContext } from "../context/StatsContext";
 import { UserContext } from "../context/UserContext";
-import { db } from "../firebaseConfig";
+import { db } from "../auth/firebaseConfig";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import samplePhoto from "../assets/sample.png";
 
@@ -27,16 +27,24 @@ export default function TaskEstadistic() {
   const [view, setView] = useState("company"); // por defecto "company"
 
   // --- Stats del usuario actual (de tus contextos) ---
-  const companyStats = stats?.company || {
-    completed: 0,
-    pending: 0,
-    missed: 0,
-  };
-  const personalStats = stats?.personal || {
-    completed: 0,
-    pending: 0,
-    missed: 0,
-  };
+  const companyStats = useMemo(() => {
+    return (
+      stats?.company || {
+        completed: 0,
+        pending: 0,
+        missed: 0,
+      }
+    );
+  }, [stats]);
+  const personalStats = useMemo(() => {
+    return (
+      stats?.personal || {
+        completed: 0,
+        pending: 0,
+        missed: 0,
+      }
+    );
+  }, [stats]);
 
   // --- Suscripción a TODOS los usuarios de la misma compañía para sumar COMPANY ---
   const [members, setMembers] = useState([]); // [{photo, company:{completed,pending,missed}}]
@@ -174,9 +182,9 @@ export default function TaskEstadistic() {
         <div className="col-span-7 h-full flex items-end  w-full gap-2">
           {/* Complete (teal) */}
           <div className="flex flex-col items-center  justify-end h-full  rounded-3xl  w-full min-w-5 ">
-            <spa className="font-extrabold text-md text-[var(--greenMain)]">
+            <span className="font-extrabold text-md text-[var(--greenMain)]">
               {completed}
-            </spa>
+            </span>
             <div
               className="w-full min-w-5 max-w-16 rounded-3xl bg-teal  transition-height duration-500 ease-in-out "
               style={{ height: `${pct.completed}%` }}
@@ -187,9 +195,9 @@ export default function TaskEstadistic() {
 
           {/* Pending (yellow) */}
           <div className="flex flex-col items-center justify-end h-full  rounded-3xl  w-full min-w-5 ">
-            <spa className="font-extrabold text-md text-[var(--yellow)]">
+            <span className="font-extrabold text-md text-[var(--yellow)]">
               {pending}
-            </spa>
+            </span>
 
             <div
               className="w-full min-w-5 max-w-16 rounded-3xl bg-yellow  transition-height duration-500 ease-in-out"
@@ -201,9 +209,9 @@ export default function TaskEstadistic() {
 
           {/* Missed (orange) */}
           <div className="flex flex-col items-center justify-end h-full rounded-3xl w-full min-w-5 ">
-            <spa className="font-extrabold text-md text-[var(--orange)]">
+            <span className="font-extrabold text-md text-[var(--orange)]">
               {missed}
-            </spa>
+            </span>
 
             <div
               className="w-full min-w-5 max-w-16  rounded-3xl bg-orange  transition-height duration-500 ease-in-out"

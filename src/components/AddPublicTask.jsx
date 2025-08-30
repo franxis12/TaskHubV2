@@ -1,6 +1,6 @@
 // src/components/AddPublicTask.jsx
 import React, { useState, useContext, useEffect } from "react";
-import { db } from "../firebaseConfig";
+import { db } from "../auth/firebaseConfig";
 import {
   collection,
   addDoc,
