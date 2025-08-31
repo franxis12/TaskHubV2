@@ -10,6 +10,10 @@ import CircleQuestionIcon from "../assets/iconsV2/circle-question-solid-full.svg
 import NotesIcon from "../assets/iconsV2/note-sticky-solid-full.svg?react"
 import ArrowTurnRight from "../assets/iconsV2/arrow-turn-right-solid-full.svg?react"
 import PlusIcon from "../assets/iconsV2/plus-solid-full.svg?react"
+import PendingIcon from "../assets/iconsV2/clock-solid-full.svg?react"
+import CompleteIcon from "../assets/iconsV2/check-solid-full.svg?react"
+import MissedIcon from "../assets/iconsV2/xmark-solid-full.svg?react"
+
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
@@ -31,6 +35,11 @@ const SVGIcons = {
         right: ArrowTurnRight,
     },
     plus: PlusIcon,
+    status:{
+        completed: CompleteIcon,
+        pending: PendingIcon,
+        missed: MissedIcon,
+    }
 }
 const myImage = {
     defaultUser: defaultUser

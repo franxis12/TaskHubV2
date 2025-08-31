@@ -37,6 +37,8 @@
         
     --radio09: 0.9rem;
     --textColor: #fff;
+    --textColorInverse: #000000;
+
     --placeholderColor: #cecece8f;
     --bg-color-component: #1a1a1a;
     --color-input: #252525;
@@ -79,6 +81,8 @@
 
     --radio09: 0.9rem;
     --textColor: #000000;
+        --textColorInverse: #ffffff;
+
     --placeholderColor: #3236398f;
 
     --bg-color-component: #ffffff;

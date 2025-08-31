@@ -1,6 +1,8 @@
 // src/components/NavMenu.jsx
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
+
 //import { doc, onSnapshot } from "firebase/firestore";
 //import { db } from "../firebaseConfig";
 //import logoFallback from "../assets/LOGO.svg";
@@ -9,9 +11,12 @@ import LogoExpand from "../assets/LogoExpand.svg?react";
 import Logo from "../assets/LOGO.svg?react";
 
 function NavMenu({ expanded, setExpanded }) {
-  const { user } = useContext(UserContext);
-
-  // (Si usas el logo de DB en otro sitio, mantenemos esto)
+  const { user, logout } = useContext(UserContext);
+  const navigate = useNavigate();
+  function handleLogout() {
+    logout();
+    navigate("/");
+  }
 
   // Estado mobile inicial sin causar parpadeo
   const [isMobile, setIsMobile] = useState(
@@ -181,7 +186,7 @@ function NavMenu({ expanded, setExpanded }) {
               expanded ? "justify-start w-full" : "justify-center w-full"
             }
             btnType={"primary"}
-            // onClick={"handleLogout"}
+            onClick={handleLogout}
           />
         </div>
       </aside>
