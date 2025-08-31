@@ -13,7 +13,9 @@ import PlusIcon from "../assets/iconsV2/plus-solid-full.svg?react"
 import PendingIcon from "../assets/iconsV2/clock-solid-full.svg?react"
 import CompleteIcon from "../assets/iconsV2/check-solid-full.svg?react"
 import MissedIcon from "../assets/iconsV2/xmark-solid-full.svg?react"
-
+import ProgressIcon from "../assets/iconsV2/spinner-solid-full.svg?react"
+import arrowDown from "../assets/iconsV2/arrowDown.svg?react"
+import arrowUp from "../assets/iconsV2/arrowUp.svg?react"
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
@@ -34,13 +36,19 @@ const SVGIcons = {
     arrowTurn: {
         right: ArrowTurnRight,
     },
+    arrow:{
+        up: arrowUp,
+        down: arrowDown,
+    },
     plus: PlusIcon,
     status:{
         completed: CompleteIcon,
         pending: PendingIcon,
         missed: MissedIcon,
+        progress : ProgressIcon,
     }
 }
+
 const myImage = {
     defaultUser: defaultUser
 }
