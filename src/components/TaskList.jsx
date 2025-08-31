@@ -654,13 +654,13 @@ function TaskList({
 
                       {/* Metadatos derecha */}
                       <div className="flex items-center justify-between w-full">
-                        <div className="col-span-10 flex flex-col justify-between h-4/5  w-full ">
+                        <div className="col-span-10 flex flex-col justify-between h-4/5  w-[100px] md:w-full">
                           <div className="w-full">
-                            <span className="col-span-5 text-sm md:text-md lg:text-lg font-semibold text-[var(--textColor)] ">
+                            <span className="capitalize col-span-5 text-sm  font-semibold text-[var(--textColor)] ">
                               {task.taskName}
                             </span>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 ">
                             {/* status */}
                             <div
                               className={
@@ -708,7 +708,7 @@ function TaskList({
 
                             {/* time left */}
                             {task.completeBy && (
-                              <div className="">
+                              <div className="hidden md:block">
                                 <span className={tailwindClass.badge.green}>
                                   {getTimeLeft(task.completeBy)}
                                 </span>
@@ -730,48 +730,48 @@ function TaskList({
                               )}
                             </div>
                           </div>
-                        </div>
-                        <div className="h-full flex items-end ">
-                          {/* Toggle subtasks button */}
-                          {hasSubs && (
-                            <div className="col-span-12 flex justify-end pr-2 pb-2 h-full items-end">
-                              <button
-                                type="button"
-                                className="text-xs text-slate-600 hover:text-slate-800 flex items-center gap-1 md:whitespace-nowrap"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleExpand(task.id);
-                                }}
-                                title={
-                                  isExpanded
+                          <div className="h-full flex items-end ">
+                            {/* Toggle subtasks button */}
+                            {hasSubs && (
+                              <div className="col-span-12 flex justify-end pr-2 pb-2 h-full items-end">
+                                <button
+                                  type="button"
+                                  className="text-xs text-[var(--textColor)] hover:text-slate-600 flex items-center gap-1 whitespace-nowrap mt-2"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleExpand(task.id);
+                                  }}
+                                  title={
+                                    isExpanded
+                                      ? "Hiden sub-task"
+                                      : "Show sub-task"
+                                  }
+                                >
+                                  {isExpanded
                                     ? "Hiden sub-task"
-                                    : "Show sub-task"
-                                }
-                              >
-                                {isExpanded
-                                  ? "Hiden sub-task"
-                                  : "Show sub-task"}
+                                    : "Show sub-task"}
 
-                                {SVGIcons?.arrow && SVGIcons.arrow.down ? (
-                                  <SVGIcons.arrow.down
-                                    className={
-                                      (isExpanded ? "rotate-180 " : "") +
-                                      "transition-transform duration-200"
-                                    }
-                                  />
-                                ) : (
-                                  <span
-                                    className={
-                                      (isExpanded ? "rotate-180 " : "") +
-                                      "transition-transform duration-200"
-                                    }
-                                  >
-                                    ▾
-                                  </span>
-                                )}
-                              </button>
-                            </div>
-                          )}
+                                  {SVGIcons?.arrow && SVGIcons.arrow.down ? (
+                                    <SVGIcons.arrow.down
+                                      className={
+                                        (isExpanded ? "rotate-180 " : "") +
+                                        "transition-transform duration-200"
+                                      }
+                                    />
+                                  ) : (
+                                    <span
+                                      className={
+                                        (isExpanded ? "rotate-180 " : "") +
+                                        "transition-transform duration-200"
+                                      }
+                                    >
+                                      ▾
+                                    </span>
+                                  )}
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
 
                         {/* assignedTo */}

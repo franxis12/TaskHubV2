@@ -3,9 +3,9 @@ const darkAndLight = "inline-block h-5 w-5 align-[-2px] text-[var(--textColor)] 
 const iconsWhite = "inline-block h-5 w-5 align-[-2px] text-white w-10 h-7";
 const iconsBlack = "inline-block h-5 w-5 align-[-2px] text-black w-10 h-7";
 
-const badgeGreen = "p-1 px-2 rounded-3xl whitespace-nowrap text-[var(--greenMain)] bg-[var(--green-trasparent)] border border-[var(--greenMain) font-bold text-[12px]";
-const badgeYellow = "px-1 rounded-3xl whitespace-nowrap text-[var(--yellow)] bg-[var(--yellow-trasparent)] border border-[var(--yellow) font-bold text-[12px]";
-const badgeOrange = "px-1 rounded-3xl whitespace-nowrap text-[var(--orange)] bg-[var(--orange-trasparent)] border border-[var(--orange) font-bold text-[12px]";
+const badgeGreen = " px-2 rounded-3xl whitespace-nowrap text-[var(--greenMain)] bg-[var(--green-trasparent)] border border-[var(--greenMain) font-bold text-[12px]";
+const badgeYellow = " rounded-3xl whitespace-nowrap text-[var(--yellow)] bg-[var(--yellow-trasparent)] border border-[var(--yellow) font-bold text-[12px]";
+const badgeOrange = " rounded-3xl whitespace-nowrap text-[var(--orange)] bg-[var(--orange-trasparent)] border border-[var(--orange) font-bold text-[12px]";
 const stsBadge = "rounded-lg border border-slate-700/50 flex items-center overflow-hidden pr-1 min-w-25 gap-1 h-6"
 const stsBadgeChildren_1 = "bg-black text-white h-full flex items-center justify-center w-7"
 const stsBadgeChildren_2 = " text-[var(--textColor)] capitalize font-semibold text-xs"
