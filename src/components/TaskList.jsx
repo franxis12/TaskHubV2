@@ -708,7 +708,7 @@ function TaskList({
 
                             {/* time left */}
                             {task.completeBy && (
-                              <div className="">
+                              <div className="hidden md:block">
                                 <span className={tailwindClass.badge.green}>
                                   {getTimeLeft(task.completeBy)}
                                 </span>
