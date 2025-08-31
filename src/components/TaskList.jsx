@@ -103,12 +103,11 @@ function TaskList({
     return false;
   };
 
-  const assignees = useMemo(
+  /*const assignees = useMemo(
     () =>
       Object.entries(userMap).map(([uid, info]) => ({ uid, name: info.name })),
     [userMap]
-  );
-  console.log(assignees);
+  );*/
 
   const filteredTasks = useMemo(() => {
     const text = filters.search.trim().toLowerCase();
@@ -315,7 +314,6 @@ function TaskList({
     });
   };
 
-  console.log(currentTask);
   return (
     <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
       {/* Toolbar */}
@@ -345,6 +343,7 @@ function TaskList({
       </div>
 
       <div className="grid grid-cols-12   gap-2 grid-flow-row-dense  col-span-2">
+        {/*Mover las tareas asignadas a un componente separado */}
         <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-x-hidden">
           <div className="flex flex-col gap-2 col-span-12 ">
             {/*<<<<---- Container for task assigned Task   */}
