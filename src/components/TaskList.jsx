@@ -21,21 +21,17 @@ import TeamMembers from "../components/TeamMembers";
 
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
-import { SVGIcons } from "../importFiles/imports";
+import { myImage, SVGIcons } from "../importFiles/imports";
 import { tailwindClass } from "../importFiles/tailwindStyles";
 
-import samplePhoto from "../assets/sample.png";
 import highImportantIcon from "../assets/icons/HImportan.png";
 import lowImportantIcon from "../assets/icons/LImportant.png";
 import mediumImportantIcon from "../assets/icons/MImportant.png";
-import SubIcon from "../assets/iconsV2/arrow-turn-right-solid-full.svg?react";
 
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 
-import Personal from "../assets/icons/personal.svg";
-import Public from "../assets/icons/public.svg";
 import note from "../assets/icons/note.svg";
 
 import completeIcon from "../assets/icons/complete.svg";
@@ -239,7 +235,7 @@ function TaskList({
       snapshot.forEach((d) => {
         map[d.id] = {
           name: `${d.data().firstName || ""} ${d.data().lastName || ""}`.trim(),
-          photo: d.data().photo || samplePhoto,
+          photo: d.data().photo || myImage.defaultUser,
         };
       });
       setUserMap(map);
@@ -349,8 +345,8 @@ function TaskList({
       </div>
 
       <div className="grid grid-cols-12   gap-2 grid-flow-row-dense  col-span-2">
-        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-hidden">
-          <div className="flex flex-col gap-2 col-span-12 overflow-hidden ">
+        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-x-hidden">
+          <div className="flex flex-col gap-2 col-span-12 ">
             {/*<<<<---- Container for task assigned Task   */}
             <div className="col-span-12 divTitle max-h-20 h-12 shadowBottom bg-[var(--bg-color-component)] ">
               <h3 className="font-semibold ml-3 mt-2 w-full">Assigned to me</h3>
@@ -589,9 +585,13 @@ function TaskList({
                 const isSelected = actionTaskId === task.id;
                 const isEditing = editTask === task.id;
                 const isExpanded = expandedTaskIds.has(task.id);
-                const hasSubs = Array.isArray(task.subTasks) && task.subTasks.length > 0;
+                const hasSubs =
+                  Array.isArray(task.subTasks) && task.subTasks.length > 0;
                 const openExtras =
-                  isSelected || isEditing || deleteTaskId === task.id || (isExpanded && hasSubs);
+                  isSelected ||
+                  isEditing ||
+                  deleteTaskId === task.id ||
+                  (isExpanded && hasSubs);
                 const totalSubs = Array.isArray(task.subTasks)
                   ? task.subTasks.length
                   : 0;
@@ -608,7 +608,7 @@ function TaskList({
                       if (editTask) return;
                       setActionTaskId(task.id);
                       setCurrentTask(task);
-                      toggleExpand(task.id);
+                      // toggleExpand ahora se controla desde el botón dedicado
                     }}
                     className={[
                       " grid grid-cols-12 rounded-3xl m-2 px-2 border border-slate-500/30  ",
@@ -654,7 +654,7 @@ function TaskList({
 
                       {/* Metadatos derecha */}
                       <div className="flex items-center justify-between w-full">
-                        <div className="col-span-10 flex flex-col justify-between h-4/5  w-full">
+                        <div className="col-span-10 flex flex-col justify-between h-4/5  w-full ">
                           <div className="w-full">
                             <span className="col-span-5 text-sm md:text-md lg:text-lg font-semibold text-[var(--textColor)] ">
                               {task.taskName}
@@ -684,7 +684,12 @@ function TaskList({
                                 ) : task.status === "missed" ? (
                                   <SVGIcons.status.missed />
                                 ) : task.status === "progress" ? (
-                                  <SVGIcons.status.progress className="animate-spin transition-all " />
+                                  SVGIcons?.status &&
+                                  SVGIcons.status.progress ? (
+                                    <SVGIcons.status.progress className="animate-spin transition-all " />
+                                  ) : (
+                                    <SVGIcons.question className="animate-spin transition-all " />
+                                  )
                                 ) : (
                                   <SVGIcons.question />
                                 )}
@@ -726,11 +731,56 @@ function TaskList({
                             </div>
                           </div>
                         </div>
+                        <div className="h-full flex items-end ">
+                          {/* Toggle subtasks button */}
+                          {hasSubs && (
+                            <div className="col-span-12 flex justify-end pr-2 pb-2 h-full items-end">
+                              <button
+                                type="button"
+                                className="text-xs text-slate-600 hover:text-slate-800 flex items-center gap-1 md:whitespace-nowrap"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleExpand(task.id);
+                                }}
+                                title={
+                                  isExpanded
+                                    ? "Hiden sub-task"
+                                    : "Show sub-task"
+                                }
+                              >
+                                {isExpanded
+                                  ? "Hiden sub-task"
+                                  : "Show sub-task"}
+
+                                {SVGIcons?.arrow && SVGIcons.arrow.down ? (
+                                  <SVGIcons.arrow.down
+                                    className={
+                                      (isExpanded ? "rotate-180 " : "") +
+                                      "transition-transform duration-200"
+                                    }
+                                  />
+                                ) : (
+                                  <span
+                                    className={
+                                      (isExpanded ? "rotate-180 " : "") +
+                                      "transition-transform duration-200"
+                                    }
+                                  >
+                                    ▾
+                                  </span>
+                                )}
+                              </button>
+                            </div>
+                          )}
+                        </div>
 
                         {/* assignedTo */}
                         <div className="w-20 flex flex-col items-center justify-center">
                           <img
-                            src={userMap[task.assignedTo]?.photo || samplePhoto}
+                            src={
+                              userMap[task.assignedTo]?.photo ||
+                              myImage.defaultUser
+                            }
                             className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
                             alt="Assignee"
                           />
@@ -749,319 +799,326 @@ function TaskList({
                           : "max-h-0 opacity-0 mt-0 pointer-events-none")
                       }
                     >
-                    {actionTaskId === task.id && (
-                      <div className="flex col-span-12 pb-3 pl-2 gap-1  w-full border-t-1 pt-1 border-slate-500/50 ">
-                        {/* Botones de estado para la tarea seleccionada */}
-                        <div className="flex flex-wrap items-center gap-2 w-full  ">
-                          {canChangeStatus(currentTask) ? (
-                            currentTask.status === "missed" ? (
-                              <span className="text-sm font-medium text-rose-700">
-                                This task can no longer be changed in status.
-                              </span>
+                      {actionTaskId === task.id && (
+                        <div className="flex col-span-12 pb-3 pl-2 gap-1  w-full border-t-1 pt-1 border-slate-500/50 ">
+                          {/* Botones de estado para la tarea seleccionada */}
+                          <div className="flex flex-wrap items-center gap-2 w-full  ">
+                            {canChangeStatus(currentTask) ? (
+                              currentTask.status === "missed" ? (
+                                <span className="text-sm font-medium text-rose-700">
+                                  This task can no longer be changed in status.
+                                </span>
+                              ) : (
+                                <>
+                                  {currentTask.status === "pending" && (
+                                    <Button
+                                      btnName="Start"
+                                      btnType={"yellow"}
+                                      classNameExtra={""}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        updateTaskStatus(
+                                          currentTask,
+                                          "progress"
+                                        );
+                                      }}
+                                    />
+                                  )}
+
+                                  {(currentTask.status === "pending" ||
+                                    currentTask.status === "progress") && (
+                                    <Button
+                                      btnName="Complete"
+                                      btnType={"green"}
+                                      classNameExtra={""}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        updateTaskStatus(
+                                          currentTask,
+                                          "completed"
+                                        );
+                                      }}
+                                    />
+                                  )}
+
+                                  {currentTask.status !== "pending" && (
+                                    <Button
+                                      btnName="Set Pending"
+                                      btnType={"yellow"}
+                                      classNameExtra={""}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        updateTaskStatus(
+                                          currentTask,
+                                          "pending"
+                                        );
+                                      }}
+                                    />
+                                  )}
+                                </>
+                              )
                             ) : (
-                              <>
-                                {currentTask.status === "pending" && (
-                                  <Button
-                                    btnName="Start"
-                                    btnType={"yellow"}
-                                    classNameExtra={""}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      updateTaskStatus(currentTask, "progress");
-                                    }}
-                                  />
-                                )}
+                              <span className="text-sm text-slate-700">
+                                Only the assignee or an admin can change the
+                                status.
+                              </span>
+                            )}
 
-                                {(currentTask.status === "pending" ||
-                                  currentTask.status === "progress") && (
-                                  <Button
-                                    btnName="Complete"
-                                    btnType={"green"}
-                                    classNameExtra={""}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      updateTaskStatus(
-                                        currentTask,
-                                        "completed"
-                                      );
-                                    }}
-                                  />
-                                )}
-
-                                {currentTask.status !== "pending" && (
-                                  <Button
-                                    btnName="Set Pending"
-                                    btnType={"yellow"}
-                                    classNameExtra={""}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      updateTaskStatus(currentTask, "pending");
-                                    }}
-                                  />
-                                )}
-                              </>
-                            )
-                          ) : (
-                            <span className="text-sm text-slate-700">
-                              Only the assignee or an admin can change the
-                              status.
-                            </span>
-                          )}
-
-                          {(user?.role === "admin" ||
-                            (user?.role === "member" &&
-                              currentTask.type === "personal")) && (
-                            <Button
-                              btnName={
-                                editTask === currentTask.id
-                                  ? "Close Editor"
-                                  : "Edit"
-                              }
-                              btnType={"orange"}
-                              classNameExtra={""}
-                              type="button"
-                              className={btnGhost}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (editTask === currentTask.id)
-                                  setEditTask("");
-                                else {
-                                  setEditTask(currentTask.id);
-                                  setActionTaskId("");
+                            {(user?.role === "admin" ||
+                              (user?.role === "member" &&
+                                currentTask.type === "personal")) && (
+                              <Button
+                                btnName={
+                                  editTask === currentTask.id
+                                    ? "Close Editor"
+                                    : "Edit"
                                 }
-                              }}
-                            />
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Subtasks expandibles + acciones */}
-                    {isExpanded &&
-                      Array.isArray(task.subTasks) &&
-                      task.subTasks.length > 0 && (
-                        <div className="w-full px-2 pb-3 col-span-12">
-                          <ul className="space-y-1">
-                            {task.subTasks.map((st, idx) => {
-                              const canChangeSub =
-                                user?.role === "admin" ||
-                                st.assignedTo === user?.uid;
-
-                              const updateSubtaskStatus = async (
-                                newStatus,
-                                e
-                              ) => {
-                                e?.stopPropagation?.();
-                                try {
-                                  if (st.status === "missed") {
-                                    alert(
-                                      'Las subtareas "missed" no se pueden cambiar.'
-                                    );
-                                    return;
+                                btnType={"orange"}
+                                classNameExtra={""}
+                                type="button"
+                                className={btnGhost}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (editTask === currentTask.id)
+                                    setEditTask("");
+                                  else {
+                                    setEditTask(currentTask.id);
+                                    setActionTaskId("");
                                   }
-                                  const ref = doc(db, "tasks", task.id);
-                                  const updated = [...task.subTasks];
-                                  updated[idx] = {
-                                    ...updated[idx],
-                                    status: newStatus,
-                                  };
-                                  await updateDoc(ref, { subTasks: updated });
-                                } catch (err) {
-                                  console.error(
-                                    "Error al actualizar subtask:",
-                                    err
-                                  );
-                                  alert(
-                                    "No se pudo cambiar el estado de la subtask."
-                                  );
-                                }
-                              };
-
-                              return (
-                                <li
-                                  key={`${task.id}-${idx}`}
-                                  className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <div className="min-w-0 flex-1">
-                                    <div className="font-medium truncate">
-                                      {idx + 1}. {st.name}
-                                    </div>
-                                    <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
-                                      <span>Prioridad: {st.priority}</span>
-                                      {st.completeBy && (
-                                        <span>• Límite: {st.completeBy}</span>
-                                      )}
-                                      {st.notes && (
-                                        <span>• Notas: {st.notes}</span>
-                                      )}
-                                      {st.assignedTo && (
-                                        <>
-                                          <span>• Asignado:</span>
-                                          <span className="inline-flex items-center gap-1">
-                                            <img
-                                              src={
-                                                userMap[st.assignedTo]?.photo ||
-                                                samplePhoto
-                                              }
-                                              alt="assignee"
-                                              className="h-4 w-4 rounded-full border"
-                                            />
-                                            {userMap[st.assignedTo]?.name ||
-                                              "?"}
-                                          </span>
-                                        </>
-                                      )}
-                                      {st.status && (
-                                        <span className="capitalize">
-                                          • Estado: {st.status}
-                                        </span>
-                                      )}
-                                    </div>
-                                  </div>
-
-                                  {/* Acciones subtarea */}
-                                  <div className="flex flex-wrap items-center gap-2">
-                                    {canChangeSub ? (
-                                      st.status === "missed" ? (
-                                        <span className="text-xs font-medium text-rose-700">
-                                          Esta subtask no se puede cambiar.
-                                        </span>
-                                      ) : (
-                                        <>
-                                          {st.status === "pending" && (
-                                            <Button
-                                              btnName="Start"
-                                              btnType={"yellow"}
-                                              classNameExtra={""}
-                                              onClick={(e) =>
-                                                updateSubtaskStatus(
-                                                  "progress",
-                                                  e
-                                                )
-                                              }
-                                            />
-                                          )}
-
-                                          {(st.status === "pending" ||
-                                            st.status === "progress") && (
-                                            <Button
-                                              btnName="Complete"
-                                              btnType={"green"}
-                                              classNameExtra={""}
-                                              onClick={(e) =>
-                                                updateSubtaskStatus(
-                                                  "completed",
-                                                  e
-                                                )
-                                              }
-                                            />
-                                          )}
-
-                                          {st.status !== "pending" && (
-                                            <Button
-                                              btnName="Set Pending"
-                                              btnType={"yellow"}
-                                              classNameExtra={""}
-                                              onClick={(e) =>
-                                                updateSubtaskStatus(
-                                                  "pending",
-                                                  e
-                                                )
-                                              }
-                                            />
-                                          )}
-                                        </>
-                                      )
-                                    ) : (
-                                      <span className="text-xs text-slate-500">
-                                        No puedes cambiar el estado
-                                      </span>
-                                    )}
-                                  </div>
-                                </li>
-                              );
-                            })}
-                          </ul>
+                                }}
+                              />
+                            )}
+                          </div>
                         </div>
                       )}
 
-                    {/* Confirm delete */}
-                    {deleteTaskId === task.id && (
-                      <div className="mx-2 mb-3 w-[calc(100%-1rem)] rounded-lg border border-slate-200 bg-white p-3 text-slate-800 shadow-sm">
-                        <h3 className="mb-2 text-sm font-medium">
-                          Seguro que quieren eliminar la tarea
-                        </h3>
-                        <div className="flex gap-2">
-                          <button
-                            className={btnPrimary}
-                            onClick={async (e) => {
-                              e.stopPropagation();
-                              try {
-                                if (task.status === "progress") {
-                                  alert(
-                                    "No puedes eliminar una tarea en progreso."
-                                  );
-                                  setDeleteTaskId(null);
-                                  return;
-                                }
-                                const isAdmin = user?.role === "admin";
-                                const isMyPersonal =
-                                  task.type === "personal" &&
-                                  task.createdBy === user.uid;
-                                if (!isAdmin && !isMyPersonal) {
-                                  alert(
-                                    "No tienes permiso para eliminar esta tarea."
-                                  );
-                                  setDeleteTaskId(null);
-                                  return;
-                                }
-                                await deleteDoc(doc(db, "tasks", task.id));
-                                setDeleteTaskId(null);
-                                setEditTask("");
-                              } catch (err) {
-                                console.error(
-                                  "Error al eliminar la tarea:",
-                                  err
-                                );
-                                alert(
-                                  "No se pudo eliminar. Revisa la consola."
-                                );
-                              }
-                            }}
-                          >
-                            Delete
-                          </button>
-                          <button
-                            className={btnOutline}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeleteTaskId(null);
-                            }}
-                          >
-                            Keep
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                      {/* Subtasks expandibles + acciones */}
+                      {isExpanded &&
+                        Array.isArray(task.subTasks) &&
+                        task.subTasks.length > 0 && (
+                          <div className="w-full px-2 pb-3 col-span-12">
+                            <ul className="space-y-1">
+                              {task.subTasks.map((st, idx) => {
+                                const canChangeSub =
+                                  user?.role === "admin" ||
+                                  st.assignedTo === user?.uid;
 
-                    {/* Editor */}
-                    {editTask === task.id && (
-                      <div className="w-full px-2 pb-3 col-span-12">
-                        <TaskEditor
-                          task={task}
-                          user={user}
-                          userMap={userMap}
-                          priorityIcons={priorityIcons}
-                          statusIcon={statusIcon}
-                          statusIconImg={statusIconImg}
-                          calendarIcon={calendarIcon}
-                          titleIcon={titleIcon}
-                          onClose={() => setEditTask("")}
-                          onDelete={() => setDeleteTaskId(task.id)}
-                        />
-                      </div>
-                    )}
+                                const updateSubtaskStatus = async (
+                                  newStatus,
+                                  e
+                                ) => {
+                                  e?.stopPropagation?.();
+                                  try {
+                                    if (st.status === "missed") {
+                                      alert(
+                                        'Las subtareas "missed" no se pueden cambiar.'
+                                      );
+                                      return;
+                                    }
+                                    const ref = doc(db, "tasks", task.id);
+                                    const updated = [...task.subTasks];
+                                    updated[idx] = {
+                                      ...updated[idx],
+                                      status: newStatus,
+                                    };
+                                    await updateDoc(ref, { subTasks: updated });
+                                  } catch (err) {
+                                    console.error(
+                                      "Error al actualizar subtask:",
+                                      err
+                                    );
+                                    alert(
+                                      "No se pudo cambiar el estado de la subtask."
+                                    );
+                                  }
+                                };
+
+                                return (
+                                  <li
+                                    key={`${task.id}-${idx}`}
+                                    className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <div className="min-w-0 flex-1">
+                                      <div className="font-medium truncate">
+                                        {idx + 1}. {st.name}
+                                      </div>
+                                      <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
+                                        <span>Prioridad: {st.priority}</span>
+                                        {st.completeBy && (
+                                          <span>• Límite: {st.completeBy}</span>
+                                        )}
+                                        {st.notes && (
+                                          <span>• Notas: {st.notes}</span>
+                                        )}
+                                        {st.assignedTo && (
+                                          <>
+                                            <span>• Asignado:</span>
+                                            <span className="inline-flex items-center gap-1">
+                                              <img
+                                                src={
+                                                  userMap[st.assignedTo]
+                                                    ?.photo ||
+                                                  myImage.defaultUser
+                                                }
+                                                alt="assignee"
+                                                className="h-4 w-4 rounded-full border"
+                                              />
+                                              {userMap[st.assignedTo]?.name ||
+                                                "?"}
+                                            </span>
+                                          </>
+                                        )}
+                                        {st.status && (
+                                          <span className="capitalize">
+                                            • Estado: {st.status}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+
+                                    {/* Acciones subtarea */}
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      {canChangeSub ? (
+                                        st.status === "missed" ? (
+                                          <span className="text-xs font-medium text-rose-700">
+                                            Esta subtask no se puede cambiar.
+                                          </span>
+                                        ) : (
+                                          <>
+                                            {st.status === "pending" && (
+                                              <Button
+                                                btnName="Start"
+                                                btnType={"yellow"}
+                                                classNameExtra={""}
+                                                onClick={(e) =>
+                                                  updateSubtaskStatus(
+                                                    "progress",
+                                                    e
+                                                  )
+                                                }
+                                              />
+                                            )}
+
+                                            {(st.status === "pending" ||
+                                              st.status === "progress") && (
+                                              <Button
+                                                btnName="Complete"
+                                                btnType={"green"}
+                                                classNameExtra={""}
+                                                onClick={(e) =>
+                                                  updateSubtaskStatus(
+                                                    "completed",
+                                                    e
+                                                  )
+                                                }
+                                              />
+                                            )}
+
+                                            {st.status !== "pending" && (
+                                              <Button
+                                                btnName="Set Pending"
+                                                btnType={"yellow"}
+                                                classNameExtra={""}
+                                                onClick={(e) =>
+                                                  updateSubtaskStatus(
+                                                    "pending",
+                                                    e
+                                                  )
+                                                }
+                                              />
+                                            )}
+                                          </>
+                                        )
+                                      ) : (
+                                        <span className="text-xs text-slate-500">
+                                          No puedes cambiar el estado
+                                        </span>
+                                      )}
+                                    </div>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </div>
+                        )}
+
+                      {/* Confirm delete */}
+                      {deleteTaskId === task.id && (
+                        <div className="mx-2 mb-3 w-[calc(100%-1rem)] rounded-lg border border-slate-200 bg-white p-3 text-slate-800 shadow-sm">
+                          <h3 className="mb-2 text-sm font-medium">
+                            Seguro que quieren eliminar la tarea
+                          </h3>
+                          <div className="flex gap-2">
+                            <button
+                              className={btnPrimary}
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                try {
+                                  if (task.status === "progress") {
+                                    alert(
+                                      "No puedes eliminar una tarea en progreso."
+                                    );
+                                    setDeleteTaskId(null);
+                                    return;
+                                  }
+                                  const isAdmin = user?.role === "admin";
+                                  const isMyPersonal =
+                                    task.type === "personal" &&
+                                    task.createdBy === user.uid;
+                                  if (!isAdmin && !isMyPersonal) {
+                                    alert(
+                                      "No tienes permiso para eliminar esta tarea."
+                                    );
+                                    setDeleteTaskId(null);
+                                    return;
+                                  }
+                                  await deleteDoc(doc(db, "tasks", task.id));
+                                  setDeleteTaskId(null);
+                                  setEditTask("");
+                                } catch (err) {
+                                  console.error(
+                                    "Error al eliminar la tarea:",
+                                    err
+                                  );
+                                  alert(
+                                    "No se pudo eliminar. Revisa la consola."
+                                  );
+                                }
+                              }}
+                            >
+                              Delete
+                            </button>
+                            <button
+                              className={btnOutline}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteTaskId(null);
+                              }}
+                            >
+                              Keep
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Editor */}
+                      {editTask === task.id && (
+                        <div className="w-full px-2 pb-3 col-span-12">
+                          <TaskEditor
+                            task={task}
+                            user={user}
+                            userMap={userMap}
+                            priorityIcons={priorityIcons}
+                            statusIcon={statusIcon}
+                            statusIconImg={statusIconImg}
+                            calendarIcon={calendarIcon}
+                            titleIcon={titleIcon}
+                            onClose={() => setEditTask("")}
+                            onDelete={() => setDeleteTaskId(task.id)}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
