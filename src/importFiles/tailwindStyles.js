@@ -1,17 +1,34 @@
 const inputs = "h-16px";
-const icons = "mr-2 inline-block h-5 w-5 align-[-2px] text-[var(--textColor)]";
-const badgeGreen = "px-1 rounded-3xl whitespace-nowrap text-[var(--greenMain)] bg-[var(--green-trasparent)] border border-[var(--greenMain) font-bold text-[12px]";
+const darkAndLight = "inline-block h-5 w-5 align-[-2px] text-[var(--textColor)] w-10 h-7";
+const iconsWhite = "inline-block h-5 w-5 align-[-2px] text-white w-10 h-7";
+const iconsBlack = "inline-block h-5 w-5 align-[-2px] text-black w-10 h-7";
+
+const badgeGreen = "p-1 px-2 rounded-3xl whitespace-nowrap text-[var(--greenMain)] bg-[var(--green-trasparent)] border border-[var(--greenMain) font-bold text-[12px]";
 const badgeYellow = "px-1 rounded-3xl whitespace-nowrap text-[var(--yellow)] bg-[var(--yellow-trasparent)] border border-[var(--yellow) font-bold text-[12px]";
-const baggeOrange = "px-1 rounded-3xl whitespace-nowrap text-[var(--orange)] bg-[var(--orange-trasparent)] border border-[var(--orange) font-bold text-[12px]";
+const badgeOrange = "px-1 rounded-3xl whitespace-nowrap text-[var(--orange)] bg-[var(--orange-trasparent)] border border-[var(--orange) font-bold text-[12px]";
+const stsBadge = "rounded-lg border border-slate-700/50 flex items-center overflow-hidden pr-1 min-w-25 gap-1 h-6"
+const stsBadgeChildren_1 = "bg-black text-white h-full flex items-center justify-center w-7"
+const stsBadgeChildren_2 = " text-[var(--textColor)] capitalize font-semibold text-xs"
 
 const tailwindClass = {
     inputs: inputs,
-    icons: icons,
+    icons: darkAndLight,
+    icon: {
+    DarkLigt: darkAndLight,
+    dark: iconsBlack,
+    light: iconsWhite,
+    },
+
     badge: {
         green: badgeGreen,
         yellow: badgeYellow,
-        orange: baggeOrange
+        orange: badgeOrange
+    },
+    status: {
+        parent: stsBadge,
+        children1: stsBadgeChildren_1,
+        children2: stsBadgeChildren_2,
     },
 }
 
-export {inputs, tailwindClass};//
+export {tailwindClass};

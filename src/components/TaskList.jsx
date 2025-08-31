@@ -112,6 +112,7 @@ function TaskList({
       Object.entries(userMap).map(([uid, info]) => ({ uid, name: info.name })),
     [userMap]
   );
+  console.log(assignees);
 
   const filteredTasks = useMemo(() => {
     const text = filters.search.trim().toLowerCase();
@@ -635,7 +636,7 @@ function TaskList({
             )}
           </div>
 
-          {/*Task Filters */}
+          {/*Task Filters 
           <div
             className="mb-4 w-full col-span-3"
             onClick={() => setEditTask("")}
@@ -646,7 +647,7 @@ function TaskList({
               assignees={assignees}
               currentUserId={user?.uid}
             />
-          </div>
+          </div>*/}
 
           <div className=" col-span-3 p-2">
             {/* Estados vacíos / aprobación */}
@@ -687,34 +688,40 @@ function TaskList({
                       toggleExpand(task.id);
                     }}
                     className={[
-                      " grid grid-cols-12 rounded-3xl m-2 px-2",
+                      " grid grid-cols-12 rounded-3xl m-2 px-2 border border-slate-500/30",
                       isEditing
                         ? "ring-2 ring-slate-400 shadow-sm bg-amber-50"
                         : isSelected
-                        ? " shadow-xl  scale-101 transition-transform  bg-indigo-100"
+                        ? " shadow-xl  scale-101 transition-transform  bg-[var(--green-trasparent)]/30"
                         : "",
                     ].join(" ")}
                   >
-                    <div className="grid grid-cols-12  col-span-12 bg-amber-200 max-h-25">
+                    <div className="flex col-span-12  max-h-25 min-h-22 ">
                       {/* Nombre y tipo */}
-                      <div className="px-2 text-lg font-semibold text-slate-800  col-span-7 grid grid-cols-7 bg-blue-300">
-                        <span className="col-span-1">
-                          {" "}
+                      <div className="flex items-center px-2 text-lg  font-semibold text-slate-800  w-20  ">
+                        <div className="flex flex-col items-center justify-center  bg-white pt-1 rounded-2xl overflow-hidden border border-slate-700/20 mr-1">
                           {task.type === "public" ? (
-                            <SVGIcons.public className={tailwindClass.icons} />
+                            <SVGIcons.public
+                              className={tailwindClass.icon.dark}
+                            />
                           ) : (
                             <SVGIcons.personal
-                              className={tailwindClass.icons}
+                              className={tailwindClass.icon.dark}
                             />
                           )}
-                        </span>
-                        <div className="bg-black p-2 px-5 text-white rounded-lg text-xs w-5 col-span-1">
-                          {/* progreso subtasks dinámico */}
-                          {task.subTasks.length === 0
-                            ? "M"
-                            : doneSubs + "/" + totalSubs}
+                          <div className="bg-black p-1 px-5 text-white rounded-b-lg text-xs flex items-center justify-center  ">
+                            {/* progreso subtasks dinámico */}
+                            {task.subTasks.length === 0
+                              ? "M"
+                              : doneSubs + "/" + totalSubs}
+                          </div>
                         </div>
-                        <span className="col-span-5">{task.taskName}</span>
+                        {/*<div>
+                          <span className="col-span-5 text-xs">
+                            {task.taskName}
+                          </span>
+                        </div>*/}
+
                         {/*<span className="col-span-1">
                           {task.notes && (
                             <SVGIcons.note className="text-[var(--orange)]" />
@@ -723,54 +730,85 @@ function TaskList({
                       </div>
 
                       {/* Metadatos derecha */}
-                      <div className="col-span-5 grid grid-cols-5 bg-green-400">
-                        {/* completeBy */}
-                        <div className="col-span-1 font-semibold">
-                          <span className={tailwindClass.badge.green}>
-                            {task.completeBy}
-                          </span>
-                        </div>
+                      <div className="flex items-center justify-between w-full">
+                        <div className="col-span-10 flex flex-col justify-between h-4/5  w-full">
+                          <div className="w-full">
+                            <span className="col-span-5 text-sm md:text-md lg:text-lg font-semibold text-[var(--textColor)] ">
+                              {task.taskName}
+                            </span>
+                          </div>
+                          <div className="flex gap-2">
+                            {/* status */}
+                            <div
+                              className={
+                                tailwindClass.status.parent +
+                                (task.status === "completed"
+                                  ? " bg-[var(--green-trasparent)]"
+                                  : task.status === "pending"
+                                  ? " bg-[var(--yellow-trasparent)]"
+                                  : task.status === "missed"
+                                  ? " bg-[var(--orange-trasparent)]"
+                                  : "")
+                              }
+                            >
+                              <div className={tailwindClass.status.children1}>
+                                {task.status === "completed" ? (
+                                  <SVGIcons.status.completed />
+                                ) : task.status === "pending" ? (
+                                  <SVGIcons.status.pending />
+                                ) : task.status === "missed" ? (
+                                  <SVGIcons.status.missed />
+                                ) : (
+                                  <SVGIcons.status.question />
+                                )}
+                              </div>
+                              <span className={tailwindClass.status.children2}>
+                                {task.status}
+                              </span>
+                            </div>
 
-                        {/* time left */}
-                        <div className="col-span-1">
-                          <span className="text-lg font-semibold text-emerald-600">
-                            {getTimeLeft(task.completeBy)}
-                          </span>
+                            {/* completeBy 
+                            <div className="col-span-1 font-semibold">
+                              <span className="text-slate-500 font-medium text-xs">
+                                {task.completeBy}
+                              </span>
+                            </div>*/}
+
+                            {/* time left */}
+                            {task.completeBy && (
+                              <div className="">
+                                <span className={tailwindClass.badge.green}>
+                                  {getTimeLeft(task.completeBy)}
+                                </span>
+                              </div>
+                            )}
+
+                            {/* priority */}
+                            <div
+                              className={`col-span-1  w-10 h- flex items-center justify-center rounded-3xl `}
+                            >
+                              {task.priority === "high" ? (
+                                <SVGIcons.priority.high className="text-[var(--orange)] text-lg" />
+                              ) : task.priority === "medium" ? (
+                                <SVGIcons.priority.med className="text-[var(--yellow)]" />
+                              ) : task.priority === "low" ? (
+                                <SVGIcons.priority.low className="text-[var(--greenMain)]" />
+                              ) : (
+                                <SVGIcons.question />
+                              )}
+                            </div>
+                          </div>
                         </div>
 
                         {/* assignedTo */}
-                        <div className="col-span-1">
+                        <div className="w-20 flex flex-col items-center justify-center">
                           <img
                             src={userMap[task.assignedTo]?.photo || samplePhoto}
                             className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
                             alt="Assignee"
                           />
-                          <span className="text-sm font-semibold text-slate-700 col-span-1">
+                          <span className="font-semibold text-[var(--textColor)] col-span-1 text-center text-xs">
                             {userMap[task.assignedTo]?.name ?? "Unassigned"}
-                          </span>
-                        </div>
-
-                        {/* priority */}
-                        <div className="col-span-1">
-                          <img
-                            src={priorityIcons[task.priority] || ""}
-                            className="h-5 w-5"
-                            alt="Priority"
-                          />
-                          <span className="text-sm font-semibold text-slate-700 capitalize">
-                            {task.priority}
-                          </span>
-                        </div>
-
-                        {/* status */}
-                        <div className="col-span-1 ">
-                          <img
-                            src={statusIcon[task.status] || ""}
-                            className="h-5 w-5"
-                            alt="Status"
-                          />
-                          <span className="text-sm font-semibold text-slate-700 capitalize">
-                            {task.status}
                           </span>
                         </div>
                       </div>
