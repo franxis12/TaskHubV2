@@ -318,6 +318,8 @@ function TaskList({
       return next;
     });
   };
+
+  console.log(currentTask);
   return (
     <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
       {/* Toolbar */}
@@ -348,13 +350,13 @@ function TaskList({
 
       <div className="grid grid-cols-12   gap-2 grid-flow-row-dense  col-span-2">
         <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-hidden">
-          <div className="flex flex-col gap-2 col-span-12  ">
+          <div className="flex flex-col gap-2 col-span-12 overflow-hidden ">
             {/*<<<<---- Container for task assigned Task   */}
             <div className="col-span-12 divTitle max-h-20 h-12 shadowBottom bg-[var(--bg-color-component)] ">
               <h3 className="font-semibold ml-3 mt-2 w-full">Assigned to me</h3>
             </div>
 
-            <div className=" col-span-12 grid grid-cols-12 min-h-50 p-2">
+            <div className=" col-span-12 grid grid-cols-12 min-h-15 p-2">
               {assignedItems.length === 0 ? (
                 <div className="col-span-12 rounded-xl border bg-[var(--componentsBG)]">
                   {/*Pending*/}
@@ -389,7 +391,7 @@ function TaskList({
                   return (
                     <div
                       key={item.id}
-                      className="grid grid-cols-12 min-h-17 rounded-3xl col-span-12 border dark:border-slate-200/20 border-slate-300 mt-1 cursor-pointer hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
+                      className="transform-gpu will-change-transform  max-h-18 [backface-visibility:hidden]  grid grid-cols-12 min-h-17 rounded-3xl col-span-12 border dark:border-slate-200/20 border-slate-300 mt-1 cursor-pointer hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
                       onClick={() => {
                         const parentTask = item.task;
                         setActionTaskId(parentTask.id);
@@ -528,7 +530,7 @@ function TaskList({
           />
         </Container>
 
-        <Container className="col-span-12 md:col-span-12 lg:col-span-8 ">
+        <Container className="col-span-12 md:col-span-12 lg:col-span-8 transition-height duration-500 ease-in-out ">
           {/*<<<<---- Container for all task */}
           <div className="flex items-center justify-between col-span-3 p-2 shadowBottom divTitle  ">
             <h3 className="font-semibold ml-3 ">All Tasks</h3>
@@ -552,88 +554,6 @@ function TaskList({
                 </div>
               </div>
             )}*/}
-
-            {currentTask.length !== 0 && (
-              <div className="flex gap-1 ">
-                {/* Botones de estado para la tarea seleccionada */}
-                <div className="flex flex-wrap items-center gap-2 ">
-                  {canChangeStatus(currentTask) ? (
-                    currentTask.status === "missed" ? (
-                      <span className="text-sm font-medium text-rose-700">
-                        This task can no longer be changed in status.
-                      </span>
-                    ) : (
-                      <>
-                        {currentTask.status === "pending" && (
-                          <Button
-                            btnName="Start"
-                            btnType={"yellow"}
-                            classNameExtra={""}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              updateTaskStatus(currentTask, "progress");
-                            }}
-                          />
-                        )}
-
-                        {(currentTask.status === "pending" ||
-                          currentTask.status === "progress") && (
-                          <Button
-                            btnName="Complete"
-                            btnType={"green"}
-                            classNameExtra={""}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              updateTaskStatus(currentTask, "completed");
-                            }}
-                          />
-                        )}
-
-                        {currentTask.status !== "pending" && (
-                          <Button
-                            btnName="Set Pending"
-                            btnType={"yellow"}
-                            classNameExtra={""}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              updateTaskStatus(currentTask, "pending");
-                            }}
-                          />
-                        )}
-                      </>
-                    )
-                  ) : (
-                    <span className="text-sm text-slate-700">
-                      Only the assignee or an admin can change the status.
-                    </span>
-                  )}
-
-                  {(user?.role === "admin" ||
-                    (user?.role === "member" &&
-                      currentTask.type === "personal")) && (
-                    <Button
-                      btnName={
-                        editTask === currentTask.id ? "Close Editor" : "Edit"
-                      }
-                      btnType={"orange"}
-                      classNameExtra={""}
-                      type="button"
-                      className={btnGhost}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (editTask === currentTask.id) setEditTask("");
-                        else {
-                          setEditTask(currentTask.id);
-                          setActionTaskId("");
-                        }
-                      }}
-                    />
-                  )}
-                </div>
-
-                <Button btnName="Delete" btnType={"edit"} classNameExtra={""} />
-              </div>
-            )}
           </div>
 
           {/*Task Filters 
@@ -649,7 +569,7 @@ function TaskList({
             />
           </div>*/}
 
-          <div className=" col-span-3 p-2">
+          <div className=" col-span-3 p-2  ">
             {/* Estados vacíos / aprobación */}
             {user?.pendingApproval ? (
               <div className="my-6 w-full text-center">
@@ -669,6 +589,9 @@ function TaskList({
                 const isSelected = actionTaskId === task.id;
                 const isEditing = editTask === task.id;
                 const isExpanded = expandedTaskIds.has(task.id);
+                const hasSubs = Array.isArray(task.subTasks) && task.subTasks.length > 0;
+                const openExtras =
+                  isSelected || isEditing || deleteTaskId === task.id || (isExpanded && hasSubs);
                 const totalSubs = Array.isArray(task.subTasks)
                   ? task.subTasks.length
                   : 0;
@@ -688,7 +611,7 @@ function TaskList({
                       toggleExpand(task.id);
                     }}
                     className={[
-                      " grid grid-cols-12 rounded-3xl m-2 px-2 border border-slate-500/30",
+                      " grid grid-cols-12 rounded-3xl m-2 px-2 border border-slate-500/30  ",
                       isEditing
                         ? "ring-2 ring-slate-400 shadow-sm bg-amber-50"
                         : isSelected
@@ -748,6 +671,8 @@ function TaskList({
                                   ? " bg-[var(--yellow-trasparent)]"
                                   : task.status === "missed"
                                   ? " bg-[var(--orange-trasparent)]"
+                                  : task.status === "progress"
+                                  ? "shadow-lg transition-all animate-pulse shadow-blue-600 bg-blue-300 "
                                   : "")
                               }
                             >
@@ -758,8 +683,10 @@ function TaskList({
                                   <SVGIcons.status.pending />
                                 ) : task.status === "missed" ? (
                                   <SVGIcons.status.missed />
+                                ) : task.status === "progress" ? (
+                                  <SVGIcons.status.progress className="animate-spin transition-all " />
                                 ) : (
-                                  <SVGIcons.status.question />
+                                  <SVGIcons.question />
                                 )}
                               </div>
                               <span className={tailwindClass.status.children2}>
@@ -813,6 +740,101 @@ function TaskList({
                         </div>
                       </div>
                     </div>
+
+                    <div
+                      className={
+                        `col-span-12 overflow-hidden transition-all duration-300 ease-in-out ` +
+                        (openExtras
+                          ? "max-h-[1200px] opacity-100 mt-1 pointer-events-auto"
+                          : "max-h-0 opacity-0 mt-0 pointer-events-none")
+                      }
+                    >
+                    {actionTaskId === task.id && (
+                      <div className="flex col-span-12 pb-3 pl-2 gap-1  w-full border-t-1 pt-1 border-slate-500/50 ">
+                        {/* Botones de estado para la tarea seleccionada */}
+                        <div className="flex flex-wrap items-center gap-2 w-full  ">
+                          {canChangeStatus(currentTask) ? (
+                            currentTask.status === "missed" ? (
+                              <span className="text-sm font-medium text-rose-700">
+                                This task can no longer be changed in status.
+                              </span>
+                            ) : (
+                              <>
+                                {currentTask.status === "pending" && (
+                                  <Button
+                                    btnName="Start"
+                                    btnType={"yellow"}
+                                    classNameExtra={""}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      updateTaskStatus(currentTask, "progress");
+                                    }}
+                                  />
+                                )}
+
+                                {(currentTask.status === "pending" ||
+                                  currentTask.status === "progress") && (
+                                  <Button
+                                    btnName="Complete"
+                                    btnType={"green"}
+                                    classNameExtra={""}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      updateTaskStatus(
+                                        currentTask,
+                                        "completed"
+                                      );
+                                    }}
+                                  />
+                                )}
+
+                                {currentTask.status !== "pending" && (
+                                  <Button
+                                    btnName="Set Pending"
+                                    btnType={"yellow"}
+                                    classNameExtra={""}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      updateTaskStatus(currentTask, "pending");
+                                    }}
+                                  />
+                                )}
+                              </>
+                            )
+                          ) : (
+                            <span className="text-sm text-slate-700">
+                              Only the assignee or an admin can change the
+                              status.
+                            </span>
+                          )}
+
+                          {(user?.role === "admin" ||
+                            (user?.role === "member" &&
+                              currentTask.type === "personal")) && (
+                            <Button
+                              btnName={
+                                editTask === currentTask.id
+                                  ? "Close Editor"
+                                  : "Edit"
+                              }
+                              btnType={"orange"}
+                              classNameExtra={""}
+                              type="button"
+                              className={btnGhost}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (editTask === currentTask.id)
+                                  setEditTask("");
+                                else {
+                                  setEditTask(currentTask.id);
+                                  setActionTaskId("");
+                                }
+                              }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Subtasks expandibles + acciones */}
                     {isExpanded &&
@@ -1040,6 +1062,7 @@ function TaskList({
                         />
                       </div>
                     )}
+                    </div>
                   </div>
                 );
               })
