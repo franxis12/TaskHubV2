@@ -14,7 +14,7 @@ function StatusBadge({ task }) {
           : task.status === "missed"
           ? " bg-[var(--orange-trasparent)]"
           : task.status === "progress"
-          ? "shadow-lg transition-all animate-pulse shadow-blue-600 bg-blue-300 "
+          ? "transition-all animate-pulse shadow-blue-600 bg-blue-300 "
           : "")
       }
     >
@@ -29,7 +29,7 @@ function StatusBadge({ task }) {
           SVGIcons?.status && SVGIcons.status.progress ? (
             <SVGIcons.status.progress className="animate-spin transition-all " />
           ) : (
-            <SVGIcons.question className="animate-spin transition-all " />
+            <SVGIcons.question />
           )
         ) : (
           <SVGIcons.question />

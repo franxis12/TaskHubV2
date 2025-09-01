@@ -23,7 +23,7 @@ import Container from "../Utils/Container";
 import AssignedToMe from "./AssignedToMe";
 import AllTasks from "./AllTasks";
 import Button from "../Utils/Button";
-import { myImage, SVGIcons } from "../importFiles/imports";
+import { myImage } from "../importFiles/imports";
 import { tailwindClass } from "../importFiles/tailwindStyles";
 
 import highImportantIcon from "../assets/icons/HImportan.png";
@@ -274,7 +274,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm }) {
 
   // Time left label
   function getTimeLeft(completeByValue) {
-    if (!completeByValue) return "-";
+    if (!completeByValue) return "Unlimited";
     const due = dayjs(completeByValue).endOf("day");
     const now = dayjs();
 

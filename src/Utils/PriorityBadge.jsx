@@ -27,7 +27,7 @@ function PriorityBadge({ task }) {
           <SVGIcons.question />
         )}
       </div>
-      <spa className={tailwindClass.priority.children2}>{task.priority}</spa>
+      <span className={tailwindClass.priority.children2}>{task.priority}</span>
     </div>
   );
 }

@@ -94,25 +94,11 @@ function AllTasks({
                 />
 
                 <div className="flex items-center justify-between w-full">
-                  <div className="col-span-10 flex flex-col justify-between h-4/5  w-full">
+                  <div className="col-span-10 flex flex-col justify-between h-4/5 ">
                     <div className="w-full">
                       <span className="col-span-5 text-sm md:text-md lg:text-lg font-semibold text-[var(--textColor)] ">
                         {task.taskName}
                       </span>
-                    </div>
-                    <div className="flex gap-2 ">
-                      {/* status */}
-                      <StatusBadge task={task} />
-
-                      {/* time left */}
-                      <TimeBadge
-                        task={task}
-                        tailwindClass={tailwindClass}
-                        getTimeLeft={getTimeLeft}
-                      />
-
-                      {/* priority */}
-                      <PriorityBadge task={task} />
                     </div>
 
                     <div className="h-full flex items-end ">
@@ -153,19 +139,35 @@ function AllTasks({
                       )}
                     </div>
                   </div>
+                  <div className="flex">
+                    <div className="flex  flex-col  h-full items-center justify-center mr-1">
+                      {/* status */}
+                      <StatusBadge task={task} />
 
-                  {/* assignedTo */}
-                  <div className="w-20 flex flex-col items-center justify-center">
-                    <img
-                      src={
-                        userMap[task.assignedTo]?.photo || myImage.defaultUser
-                      }
-                      className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
-                      alt="Assignee"
-                    />
-                    <span className="font-semibold text-[var(--textColor)] col-span-1 text-center text-xs">
-                      {userMap[task.assignedTo]?.name ?? "Unassigned"}
-                    </span>
+                      {/* time left */}
+                      <TimeBadge
+                        task={task}
+                        tailwindClass={tailwindClass}
+                        getTimeLeft={getTimeLeft}
+                      />
+
+                      {/* priority */}
+                      <PriorityBadge task={task} />
+                    </div>
+
+                    {/* assignedTo */}
+                    <div className="w-20 flex flex-col items-center justify-center">
+                      <img
+                        src={
+                          userMap[task.assignedTo]?.photo || myImage.defaultUser
+                        }
+                        className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
+                        alt="Assignee"
+                      />
+                      <span className="font-semibold text-[var(--textColor)] col-span-1 text-center text-xs">
+                        {userMap[task.assignedTo]?.name ?? "Unassigned"}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
