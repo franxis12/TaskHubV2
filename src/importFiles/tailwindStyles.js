@@ -7,11 +7,11 @@ const badgeGreen = " px-2 rounded-3xl whitespace-nowrap text-[var(--greenMain)] 
 const badgeYellow = " rounded-3xl whitespace-nowrap text-[var(--yellow)] bg-[var(--yellow-trasparent)] border border-[var(--yellow) font-bold text-[12px]";
 const badgeOrange = " rounded-3xl whitespace-nowrap text-[var(--orange)] bg-[var(--orange-trasparent)] border border-[var(--orange) font-bold text-[12px]";
 
-const stsBadge = "rounded-t-lg border border-slate-700/50 flex items-center overflow-hidden pr-1 min-w-25  min-h-6 gap-1 "
+const stsBadge = "rounded-t-2xl border border-slate-700/50 flex items-center overflow-hidden pr-1 min-w-25  min-h-6 gap-1 "
 const stsBadgeChildren_1 = "bg-black text-white self-stretch flex items-center justify-center w-7"
 const stsBadgeChildren_2 = " text-[var(--textColor)] capitalize font-semibold text-xs"
 
-const priorBadge = "rounded-b-lg border border-slate-700/50 flex items-center overflow-hidden pr-1 min-w-25  min-h-6 gap-1 h-6"
+const priorBadge = "rounded-b-2xl border border-slate-700/50 flex items-center overflow-hidden pr-1 min-w-25  min-h-6 gap-1 h-6"
 const priorBadgeChildren_1 = "bg-black text-white h-full flex items-center justify-center w-7"
 const priorBadgeChildren_2 = " text-[var(--textColor)] capitalize font-semibold text-xs"
 

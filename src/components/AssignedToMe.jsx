@@ -59,22 +59,24 @@ function AssignedToMe({
                       : task.name
                   }
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex  items-center justify-between w-full  p-2">
                     {/* Izquierda: tipo + badge + nombres */}
 
-                    <div className=" col-span-8 flex items-center justify-start h-full text-xs font-semibold text-slate-800  ">
+                    <div className=" flex items-center w-full h-full   text-xs font-semibold text-slate-800   ">
                       <IconBadge tailwindClass={tailwindClass} task={task} />
 
                       {/* nombres */}
-                      <div className=" w-full">
+                      <div className="  ">
                         {task.kind === "subtask" ? (
                           <>
                             <div className="text-[var(--textColor)]">
-                              <span className="font-semibold">
+                              <span className="font-semibold opacity-80 text-slate-500">
                                 {task.parentName}
                               </span>
-                              <span className="mx-1 opacity-60">→</span>
-                              <span className="opacity-80">{task.name}</span>
+                              <div className="flex">
+                                <SVGIcons.arrowTurn.right className="w-4 mr-1 ml-3" />
+                                <span className="">{task.name}</span>
+                              </div>
                             </div>
                             <div className="text-[11px] text-slate-500">
                               Subtask assigned to you
@@ -83,7 +85,9 @@ function AssignedToMe({
                         ) : (
                           <>
                             <div className="text-[var(--textColor)]">
-                              <span className="font-semibold">{task.name}</span>
+                              <span className="font-semibold capitalize">
+                                {task.name}
+                              </span>
                             </div>
                             <div className="text-[11px] text-slate-500">
                               Main task assigned to you
@@ -92,15 +96,16 @@ function AssignedToMe({
                         )}
                       </div>
                     </div>
+                    <div className="w-40  overflow-hidden ">
+                      {/* Status */}
+                      <StatusBadge task={task} />
 
-                    {/* Centro: chips (tiempo restante + estado) */}
-                    <TimeBadge task={task} getTimeLeft={getTimeLeft} />
+                      {/* Centro: chips (tiempo restante + estado) */}
+                      <TimeBadge task={task} getTimeLeft={getTimeLeft} />
 
-                    {/* prioridad */}
-                    <PriorityBadge task={task} />
-
-                    {/* Status */}
-                    <StatusBadge task={task} />
+                      {/* prioridad */}
+                      <PriorityBadge task={task} />
+                    </div>
                   </div>
                 </div>
               );
