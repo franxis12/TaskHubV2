@@ -16,6 +16,7 @@ import MissedIcon from "../assets/iconsV2/xmark-solid-full.svg?react"
 import ProgressIcon from "../assets/iconsV2/spinner-solid-full.svg?react"
 import arrowDown from "../assets/iconsV2/arrowDown.svg?react"
 import arrowUp from "../assets/iconsV2/arrowUp.svg?react"
+import timeLeft from "../assets/iconsV2/stopwatch-20-solid-full.svg?react"
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
@@ -46,7 +47,9 @@ const SVGIcons = {
         pending: PendingIcon,
         missed: MissedIcon,
         progress : ProgressIcon,
-    }
+    },
+    timeLeft: timeLeft,
+    
 }
 
 const myImage = {
