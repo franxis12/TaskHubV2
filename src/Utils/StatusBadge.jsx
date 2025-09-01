@@ -1,7 +1,8 @@
 import React from "react";
 import { SVGIcons } from "../importFiles/imports";
+import { tailwindClass } from "../importFiles/tailwindStyles";
 
-function StatusBadge({ tailwindClass, task }) {
+function StatusBadge({ task }) {
   return (
     <div
       className={

@@ -102,7 +102,7 @@ function AllTasks({
                     </div>
                     <div className="flex gap-2 ">
                       {/* status */}
-                      <StatusBadge tailwindClass={tailwindClass} task={task} />
+                      <StatusBadge task={task} />
 
                       {/* time left */}
                       <TimeBadge
@@ -113,19 +113,6 @@ function AllTasks({
 
                       {/* priority */}
                       <PriorityBadge task={task} />
-                      <div
-                        className={`col-span-1  w-10 h- flex items-center justify-center rounded-3xl `}
-                      >
-                        {task.priority === "high" ? (
-                          <SVGIcons.priority.high className="text-[var(--orange)] text-lg" />
-                        ) : task.priority === "medium" ? (
-                          <SVGIcons.priority.med className="text-[var(--yellow)]" />
-                        ) : task.priority === "low" ? (
-                          <SVGIcons.priority.low className="text-[var(--greenMain)]" />
-                        ) : (
-                          <SVGIcons.question />
-                        )}
-                      </div>
                     </div>
 
                     <div className="h-full flex items-end ">

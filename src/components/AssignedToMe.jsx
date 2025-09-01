@@ -47,7 +47,6 @@ function AssignedToMe({
                     const parentTask = task.task;
                     setActionTaskId?.(parentTask.id);
                     setCurrentTask?.(parentTask);
-                    // si es subtask, aseguro expandir el padre
                     setExpandedTaskIds?.((prev) => {
                       const next = new Set(prev);
                       next.add(parentTask.id);
@@ -95,17 +94,13 @@ function AssignedToMe({
                     </div>
 
                     {/* Centro: chips (tiempo restante + estado) */}
-                    <TimeBadge
-                      task={task}
-                      tailwindClass={tailwindClass}
-                      getTimeLeft={getTimeLeft}
-                    />
+                    <TimeBadge task={task} getTimeLeft={getTimeLeft} />
 
                     {/* prioridad */}
                     <PriorityBadge task={task} />
 
                     {/* Status */}
-                    <StatusBadge task={task} tailwindClass={tailwindClass} />
+                    <StatusBadge task={task} />
                   </div>
                 </div>
               );

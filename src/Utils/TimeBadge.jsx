@@ -1,6 +1,7 @@
 import React from "react";
+import { tailwindClass } from "../importFiles/tailwindStyles";
 
-function TimeBadge({ task, tailwindClass, getTimeLeft }) {
+function TimeBadge({ task, getTimeLeft }) {
   return (
     <>
       {task.completeBy && (
