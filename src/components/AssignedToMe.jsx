@@ -70,12 +70,12 @@ function AssignedToMe({
                         {task.kind === "subtask" ? (
                           <>
                             <div className="text-[var(--textColor)]">
-                              <span className="font-semibold opacity-80 text-slate-500">
+                              <span className="font-semibold opacity-80 text-slate-500 text-[10px]">
                                 {task.parentName}
                               </span>
                               <div className="flex">
                                 <SVGIcons.arrowTurn.right className="w-4 mr-1 ml-3" />
-                                <span className="">{task.name}</span>
+                                <span className="text-md">{task.name}</span>
                               </div>
                             </div>
                             <div className="text-[11px] text-slate-500">

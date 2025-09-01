@@ -9,7 +9,7 @@ const badgeOrange = " rounded-3xl whitespace-nowrap text-[var(--orange)] bg-[var
 
 const stsBadge = "rounded-t-2xl border border-slate-700/50 flex items-center overflow-hidden pr-1 min-w-25  min-h-6 gap-1 "
 const stsBadgeChildren_1 = "bg-black text-white self-stretch flex items-center justify-center w-7"
-const stsBadgeChildren_2 = " text-[var(--textColor)] capitalize font-semibold text-xs"
+const stsBadgeChildren_2 = " text-[var(--textColor)] capitalize font-semibold text-xs text-[10px] "
 
 const priorBadge = "rounded-b-2xl border border-slate-700/50 flex items-center overflow-hidden pr-1 min-w-25  min-h-6 gap-1 h-6"
 const priorBadgeChildren_1 = "bg-black text-white h-full flex items-center justify-center w-7"
