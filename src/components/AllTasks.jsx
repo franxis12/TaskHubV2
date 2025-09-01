@@ -7,6 +7,7 @@ import { db } from "../auth/firebaseConfig";
 import IconBadge from "../Utils/IconBadge";
 import StatusBadge from "../Utils/StatusBadge";
 import TimeBadge from "../Utils/TimeBadge";
+import PriorityBadge from "../Utils/PriorityBadge";
 
 function AllTasks({
   user,
@@ -111,6 +112,7 @@ function AllTasks({
                       />
 
                       {/* priority */}
+                      <PriorityBadge task={task} />
                       <div
                         className={`col-span-1  w-10 h- flex items-center justify-center rounded-3xl `}
                       >

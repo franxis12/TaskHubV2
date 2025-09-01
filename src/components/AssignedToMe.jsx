@@ -5,6 +5,7 @@ import IconBadge from "../Utils/IconBadge";
 import { tailwindClass } from "../importFiles/tailwindStyles";
 import TimeBadge from "../Utils/TimeBadge";
 import StatusBadge from "../Utils/StatusBadge";
+import PriorityBadge from "../Utils/PriorityBadge";
 
 function AssignedToMe({
   assignedItems = [],
@@ -30,10 +31,10 @@ function AssignedToMe({
               </h3>
             </div>
           ) : (
-            assignedItems.map((item) => {
+            assignedItems.map((task) => {
               return (
                 <div
-                  key={item.id}
+                  key={task.id}
                   className="transform-gpu 
                   will-change-transform  
                   [backface-visibility:hidden]  
@@ -43,7 +44,7 @@ function AssignedToMe({
                   border-slate-300 mb-1 mx-1 cursor-pointer 
                   hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
                   onClick={() => {
-                    const parentTask = item.task;
+                    const parentTask = task.task;
                     setActionTaskId?.(parentTask.id);
                     setCurrentTask?.(parentTask);
                     // si es subtask, aseguro expandir el padre
@@ -54,27 +55,27 @@ function AssignedToMe({
                     });
                   }}
                   title={
-                    item.kind === "subtask"
-                      ? `${item.parentName} → ${item.name}`
-                      : item.name
+                    task.kind === "subtask"
+                      ? `${task.parentName} → ${task.name}`
+                      : task.name
                   }
                 >
                   <div className="flex items-center justify-between">
                     {/* Izquierda: tipo + badge + nombres */}
 
                     <div className=" col-span-8 flex items-center justify-start h-full text-xs font-semibold text-slate-800  ">
-                      <IconBadge tailwindClass={tailwindClass} task={item} />
+                      <IconBadge tailwindClass={tailwindClass} task={task} />
 
                       {/* nombres */}
                       <div className=" w-full">
-                        {item.kind === "subtask" ? (
+                        {task.kind === "subtask" ? (
                           <>
                             <div className="text-[var(--textColor)]">
                               <span className="font-semibold">
-                                {item.parentName}
+                                {task.parentName}
                               </span>
                               <span className="mx-1 opacity-60">→</span>
-                              <span className="opacity-80">{item.name}</span>
+                              <span className="opacity-80">{task.name}</span>
                             </div>
                             <div className="text-[11px] text-slate-500">
                               Subtask assigned to you
@@ -83,7 +84,7 @@ function AssignedToMe({
                         ) : (
                           <>
                             <div className="text-[var(--textColor)]">
-                              <span className="font-semibold">{item.name}</span>
+                              <span className="font-semibold">{task.name}</span>
                             </div>
                             <div className="text-[11px] text-slate-500">
                               Main task assigned to you
@@ -95,27 +96,16 @@ function AssignedToMe({
 
                     {/* Centro: chips (tiempo restante + estado) */}
                     <TimeBadge
-                      task={item}
+                      task={task}
                       tailwindClass={tailwindClass}
                       getTimeLeft={getTimeLeft}
                     />
 
                     {/* prioridad */}
-                    <div className="flex flex-col items-center justify-center w-10 ">
-                      {item.priority === "high" ? (
-                        <SVGIcons.priority.high className="text-[var(--orange)]" />
-                      ) : item.priority === "medium" ? (
-                        <SVGIcons.priority.med className="text-[var(--yellow)]" />
-                      ) : item.priority === "low" ? (
-                        <SVGIcons.priority.low className="text-[var(--green)]" />
-                      ) : (
-                        <SVGIcons.question />
-                      )}
-                      <span className="text-[11px] font-semibold text-[var(--textColor)] capitalize">
-                        {item.priority}
-                      </span>
-                      <StatusBadge task={item} tailwindClass={tailwindClass} />
-                    </div>
+                    <PriorityBadge task={task} />
+
+                    {/* Status */}
+                    <StatusBadge task={task} tailwindClass={tailwindClass} />
                   </div>
                 </div>
               );
