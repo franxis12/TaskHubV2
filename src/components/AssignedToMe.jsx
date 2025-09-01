@@ -1,6 +1,8 @@
 // src/components/AssignedToMe.jsx
 import React from "react";
 import { SVGIcons } from "../importFiles/imports";
+import IconBadge from "../Utils/IconBadge";
+import { tailwindClass } from "../importFiles/tailwindStyles";
 
 function AssignedToMe({
   assignedItems = [],
@@ -27,12 +29,6 @@ function AssignedToMe({
             </div>
           ) : (
             assignedItems.map((item) => {
-              // badge: número de subtask o 'M' para la principal
-              const badgeText =
-                item.kind === "subtask" && typeof item.subtaskIndex === "number"
-                  ? item.subtaskIndex + 1
-                  : "M";
-
               // chip tiempo restante
               const timeLeft = getTimeLeft?.(item.completeBy);
               const timeChipClass =
@@ -51,7 +47,14 @@ function AssignedToMe({
               return (
                 <div
                   key={item.id}
-                  className="transform-gpu will-change-transform  max-h-18 [backface-visibility:hidden]  grid grid-cols-12 min-h-17 rounded-3xl col-span-12 border dark:border-slate-200/20 border-slate-300 mt-1 cursor-pointer hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
+                  className="transform-gpu 
+                  will-change-transform  
+                [backface-visibility:hidden]  
+                  flex items-center justify-between
+                  min-h-20 rounded-3xl col-span-12 
+                  border dark:border-slate-200/20 
+                  border-slate-300 mb-1 mx-1 cursor-pointer 
+                  hover:scale-102 hover:bg-[var(--green-trasparent)]/30 transition"
                   onClick={() => {
                     const parentTask = item.task;
                     setActionTaskId?.(parentTask.id);
@@ -69,37 +72,14 @@ function AssignedToMe({
                       : item.name
                   }
                 >
-                  <div className="grid col-span-12 grid-cols-12 my-2 max-h-8 px-2  mb-2">
+                  <div className="flex items-center justify-between">
                     {/* Izquierda: tipo + badge + nombres */}
-                    <div className=" col-span-8 flex items-center justify-start h-full px-2 text-xs font-semibold text-slate-800 ">
-                      {item.type === "public" ? (
-                        <SVGIcons.public
-                          className="text-[var(--textColor)] mr-2 inline-block h-5 w-5 align-[-2px] "
-                          alt="Task type"
-                        />
-                      ) : (
-                        <SVGIcons.personal
-                          className="text-[var(--textColor)] mr-2 inline-block h-5 w-5 align-[-2px] "
-                          alt="Task type"
-                        />
-                      )}
 
-                      <div
-                        className={[
-                          " p-1 px-3 rounded-lg text-[10px] min-w-8 text-center border ",
-                          "bg-black text-white w-8",
-                        ].join(" ")}
-                        aria-label={
-                          item.kind === "subtask"
-                            ? `Subtask #${badgeText}`
-                            : "Main task"
-                        }
-                      >
-                        {badgeText}
-                      </div>
+                    <div className=" col-span-8 flex items-center justify-start h-full text-xs font-semibold text-slate-800  ">
+                      <IconBadge tailwindClass={tailwindClass} task={item} />
 
                       {/* nombres */}
-                      <div className="ml-2">
+                      <div className=" w-full">
                         {item.kind === "subtask" ? (
                           <>
                             <div className="text-[var(--textColor)]">

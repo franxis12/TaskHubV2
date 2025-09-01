@@ -4,6 +4,7 @@ import { SVGIcons, myImage } from "../importFiles/imports";
 import TaskEditor from "../components/TaskEditor";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
+import IconBadge from "../Utils/IconBadge";
 
 function AllTasks({
   user,
@@ -50,14 +51,18 @@ function AllTasks({
           const isSelected = actionTaskId === task.id;
           const isEditing = editTask === task.id;
           const isExpanded = expandedTaskIds.has(task.id);
-          const hasSubs = Array.isArray(task.subTasks) && task.subTasks.length > 0;
+          const hasSubs =
+            Array.isArray(task.subTasks) && task.subTasks.length > 0;
           const totalSubs = hasSubs ? task.subTasks.length : 0;
           const doneSubs = hasSubs
             ? task.subTasks.filter((s) => s.status === "completed").length
             : 0;
 
           const openExtras =
-            isSelected || isEditing || deleteTaskId === task.id || (isExpanded && hasSubs);
+            isSelected ||
+            isEditing ||
+            deleteTaskId === task.id ||
+            (isExpanded && hasSubs);
 
           return (
             <div
@@ -78,19 +83,12 @@ function AllTasks({
               ].join(" ")}
             >
               <div className="flex col-span-12  max-h-25 min-h-22 ">
-                {/* Nombre y tipo */}
-                <div className="flex items-center px-2 text-lg  font-semibold text-slate-800  w-20  ">
-                  <div className="flex flex-col items-center justify-center  bg-white pt-1 rounded-2xl overflow-hidden border border-slate-700/20 mr-1">
-                    {task.type === "public" ? (
-                      <SVGIcons.public className={tailwindClass.icon.dark} />
-                    ) : (
-                      <SVGIcons.personal className={tailwindClass.icon.dark} />
-                    )}
-                    <div className="bg-black p-1 px-5 text-white rounded-b-lg text-xs flex items-center justify-center  ">
-                      {task.subTasks.length === 0 ? "M" : doneSubs + "/" + totalSubs}
-                    </div>
-                  </div>
-                </div>
+                <IconBadge
+                  task={task}
+                  tailwindClass={tailwindClass}
+                  doneSubs={doneSubs}
+                  totalSubs={totalSubs}
+                />
 
                 <div className="flex items-center justify-between w-full">
                   <div className="col-span-10 flex flex-col justify-between h-4/5  w-full">
@@ -147,7 +145,9 @@ function AllTasks({
                       )}
 
                       {/* priority */}
-                      <div className={`col-span-1  w-10 h- flex items-center justify-center rounded-3xl `}>
+                      <div
+                        className={`col-span-1  w-10 h- flex items-center justify-center rounded-3xl `}
+                      >
                         {task.priority === "high" ? (
                           <SVGIcons.priority.high className="text-[var(--orange)] text-lg" />
                         ) : task.priority === "medium" ? (
@@ -171,15 +171,27 @@ function AllTasks({
                               e.stopPropagation();
                               toggleExpand(task.id);
                             }}
-                            title={isExpanded ? "Hiden sub-task" : "Show sub-task"}
+                            title={
+                              isExpanded ? "Hiden sub-task" : "Show sub-task"
+                            }
                           >
                             {isExpanded ? "Hiden sub-task" : "Show sub-task"}
                             {SVGIcons?.arrow && SVGIcons.arrow.down ? (
                               <SVGIcons.arrow.down
-                                className={(isExpanded ? "rotate-180 " : "") + "transition-transform duration-200"}
+                                className={
+                                  (isExpanded ? "rotate-180 " : "") +
+                                  "transition-transform duration-200"
+                                }
                               />
                             ) : (
-                              <span className={(isExpanded ? "rotate-180 " : "") + "transition-transform duration-200"}>▾</span>
+                              <span
+                                className={
+                                  (isExpanded ? "rotate-180 " : "") +
+                                  "transition-transform duration-200"
+                                }
+                              >
+                                ▾
+                              </span>
                             )}
                           </button>
                         </div>
@@ -190,7 +202,9 @@ function AllTasks({
                   {/* assignedTo */}
                   <div className="w-20 flex flex-col items-center justify-center">
                     <img
-                      src={userMap[task.assignedTo]?.photo || myImage.defaultUser}
+                      src={
+                        userMap[task.assignedTo]?.photo || myImage.defaultUser
+                      }
                       className="h-9 w-9 rounded-full border-2 border-blue-500 object-cover"
                       alt="Assignee"
                     />
@@ -233,7 +247,8 @@ function AllTasks({
                               </button>
                             )}
 
-                            {(currentTask.status === "pending" || currentTask.status === "progress") && (
+                            {(currentTask.status === "pending" ||
+                              currentTask.status === "progress") && (
                               <button
                                 className="inline-flex items-center gap-2 rounded-md bg-teal px-3 py-2 text-sm font-medium text-white"
                                 onClick={(e) => {
@@ -264,7 +279,9 @@ function AllTasks({
                         </span>
                       )}
 
-                      {(user?.role === "admin" || (user?.role === "member" && currentTask.type === "personal")) && (
+                      {(user?.role === "admin" ||
+                        (user?.role === "member" &&
+                          currentTask.type === "personal")) && (
                         <button
                           type="button"
                           className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
@@ -277,7 +294,9 @@ function AllTasks({
                             }
                           }}
                         >
-                          {editTask === currentTask.id ? "Close Editor" : "Edit"}
+                          {editTask === currentTask.id
+                            ? "Close Editor"
+                            : "Edit"}
                         </button>
                       )}
                     </div>
@@ -285,92 +304,119 @@ function AllTasks({
                 )}
 
                 {/* Subtasks expandibles + acciones */}
-                {isExpanded && Array.isArray(task.subTasks) && task.subTasks.length > 0 && (
-                  <div className="w-full px-2 pb-3 col-span-12">
-                    <ul className="space-y-1">
-                      {task.subTasks.map((st, idx) => {
-                        const canChangeSub = user?.role === "admin" || st.assignedTo === user?.uid;
+                {isExpanded &&
+                  Array.isArray(task.subTasks) &&
+                  task.subTasks.length > 0 && (
+                    <div className="w-full px-2 pb-3 col-span-12">
+                      <ul className="space-y-1">
+                        {task.subTasks.map((st, idx) => {
+                          const canChangeSub =
+                            user?.role === "admin" ||
+                            st.assignedTo === user?.uid;
 
-                        const updateSubtaskStatus = async (newStatus, e) => {
-                          e?.stopPropagation?.();
-                          try {
-                            if (st.status === "missed") {
-                              alert('Las subtareas "missed" no se pueden cambiar.');
-                              return;
+                          const updateSubtaskStatus = async (newStatus, e) => {
+                            e?.stopPropagation?.();
+                            try {
+                              if (st.status === "missed") {
+                                alert(
+                                  'Las subtareas "missed" no se pueden cambiar.'
+                                );
+                                return;
+                              }
+                              const ref = doc(db, "tasks", task.id);
+                              const updated = [...task.subTasks];
+                              updated[idx] = {
+                                ...updated[idx],
+                                status: newStatus,
+                              };
+                              await updateDoc(ref, { subTasks: updated });
+                            } catch (err) {
+                              console.error(
+                                "Error al actualizar subtask:",
+                                err
+                              );
+                              alert(
+                                "No se pudo cambiar el estado de la subtask."
+                              );
                             }
-                            const ref = doc(db, "tasks", task.id);
-                            const updated = [...task.subTasks];
-                            updated[idx] = { ...updated[idx], status: newStatus };
-                            await updateDoc(ref, { subTasks: updated });
-                          } catch (err) {
-                            console.error("Error al actualizar subtask:", err);
-                            alert("No se pudo cambiar el estado de la subtask.");
-                          }
-                        };
+                          };
 
-                        return (
-                          <li
-                            key={`${task.id}-${idx}`}
-                            className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
-                          >
-                            <div className="flex items-center gap-3">
-                              <span className="font-medium">{st.name || `Subtask ${idx + 1}`}</span>
-                              <span className="rounded-full border px-2 py-0.5 bg-white text-xs">
-                                {st.priority || "medium"}
-                              </span>
-                              {st.completeBy && (
-                                <span className="rounded-full border px-2 py-0.5 bg-white text-xs">
-                                  {st.completeBy}
+                          return (
+                            <li
+                              key={`${task.id}-${idx}`}
+                              className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="font-medium">
+                                  {st.name || `Subtask ${idx + 1}`}
                                 </span>
-                              )}
-                            </div>
+                                <span className="rounded-full border px-2 py-0.5 bg-white text-xs">
+                                  {st.priority || "medium"}
+                                </span>
+                                {st.completeBy && (
+                                  <span className="rounded-full border px-2 py-0.5 bg-white text-xs">
+                                    {st.completeBy}
+                                  </span>
+                                )}
+                              </div>
 
-                            <div className="flex items-center gap-2">
-                              <span className="rounded-full border px-2 py-0.5 bg-white text-xs capitalize">
-                                {st.status || "pending"}
-                              </span>
-                              {canChangeSub ? (
-                                <>
-                                  {st.status === "pending" && (
-                                    <button
-                                      className="inline-flex items-center gap-2 rounded-md bg-yellow px-2 py-1 text-xs font-medium text-white"
-                                      onClick={(e) => updateSubtaskStatus("progress", e)}
-                                    >
-                                      Start
-                                    </button>
-                                  )}
-                                  {(st.status === "pending" || st.status === "progress") && (
-                                    <button
-                                      className="inline-flex items-center gap-2 rounded-md bg-teal px-2 py-1 text-xs font-medium text-white"
-                                      onClick={(e) => updateSubtaskStatus("completed", e)}
-                                    >
-                                      Complete
-                                    </button>
-                                  )}
-                                  {st.status !== "pending" && (
-                                    <button
-                                      className="inline-flex items-center gap-2 rounded-md bg-yellow px-2 py-1 text-xs font-medium text-white"
-                                      onClick={(e) => updateSubtaskStatus("pending", e)}
-                                    >
-                                      Set Pending
-                                    </button>
-                                  )}
-                                </>
-                              ) : (
-                                <span className="text-xs text-slate-500">No puedes cambiar el estado</span>
-                              )}
-                            </div>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
+                              <div className="flex items-center gap-2">
+                                <span className="rounded-full border px-2 py-0.5 bg-white text-xs capitalize">
+                                  {st.status || "pending"}
+                                </span>
+                                {canChangeSub ? (
+                                  <>
+                                    {st.status === "pending" && (
+                                      <button
+                                        className="inline-flex items-center gap-2 rounded-md bg-yellow px-2 py-1 text-xs font-medium text-white"
+                                        onClick={(e) =>
+                                          updateSubtaskStatus("progress", e)
+                                        }
+                                      >
+                                        Start
+                                      </button>
+                                    )}
+                                    {(st.status === "pending" ||
+                                      st.status === "progress") && (
+                                      <button
+                                        className="inline-flex items-center gap-2 rounded-md bg-teal px-2 py-1 text-xs font-medium text-white"
+                                        onClick={(e) =>
+                                          updateSubtaskStatus("completed", e)
+                                        }
+                                      >
+                                        Complete
+                                      </button>
+                                    )}
+                                    {st.status !== "pending" && (
+                                      <button
+                                        className="inline-flex items-center gap-2 rounded-md bg-yellow px-2 py-1 text-xs font-medium text-white"
+                                        onClick={(e) =>
+                                          updateSubtaskStatus("pending", e)
+                                        }
+                                      >
+                                        Set Pending
+                                      </button>
+                                    )}
+                                  </>
+                                ) : (
+                                  <span className="text-xs text-slate-500">
+                                    No puedes cambiar el estado
+                                  </span>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
 
                 {/* Confirm delete */}
                 {deleteTaskId === task.id && (
                   <div className="mx-2 mb-3 w-[calc(100%-1rem)] rounded-lg border border-slate-200 bg-white p-3 text-slate-800 shadow-sm">
-                    <h3 className="mb-2 text-sm font-medium">Seguro que quieren eliminar la tarea</h3>
+                    <h3 className="mb-2 text-sm font-medium">
+                      Seguro que quieren eliminar la tarea
+                    </h3>
                     <div className="flex gap-2">
                       <button
                         className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800"
@@ -378,14 +424,20 @@ function AllTasks({
                           e.stopPropagation();
                           try {
                             if (task.status === "progress") {
-                              alert("No puedes eliminar una tarea en progreso.");
+                              alert(
+                                "No puedes eliminar una tarea en progreso."
+                              );
                               setDeleteTaskId(null);
                               return;
                             }
                             const isAdmin = user?.role === "admin";
-                            const isMyPersonal = task.type === "personal" && task.createdBy === user.uid;
+                            const isMyPersonal =
+                              task.type === "personal" &&
+                              task.createdBy === user.uid;
                             if (!isAdmin && !isMyPersonal) {
-                              alert("No tienes permiso para eliminar esta tarea.");
+                              alert(
+                                "No tienes permiso para eliminar esta tarea."
+                              );
                               setDeleteTaskId(null);
                               return;
                             }
@@ -440,4 +492,3 @@ function AllTasks({
 }
 
 export default AllTasks;
-
