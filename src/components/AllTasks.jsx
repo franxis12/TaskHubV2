@@ -6,6 +6,7 @@ import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import IconBadge from "../Utils/IconBadge";
 import StatusBadge from "../Utils/StatusBadge";
+import TimeBadge from "../Utils/TimeBadge";
 
 function AllTasks({
   user,
@@ -99,17 +100,15 @@ function AllTasks({
                       </span>
                     </div>
                     <div className="flex gap-2 ">
-                      {/* status nkjnk*/}
+                      {/* status */}
                       <StatusBadge tailwindClass={tailwindClass} task={task} />
 
                       {/* time left */}
-                      {task.completeBy && (
-                        <div className="hidden md:block">
-                          <span className={tailwindClass.badge.green}>
-                            {getTimeLeft(task.completeBy)}
-                          </span>
-                        </div>
-                      )}
+                      <TimeBadge
+                        task={task}
+                        tailwindClass={tailwindClass}
+                        getTimeLeft={getTimeLeft}
+                      />
 
                       {/* priority */}
                       <div

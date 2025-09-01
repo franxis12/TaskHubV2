@@ -3,6 +3,7 @@ import React from "react";
 import { SVGIcons } from "../importFiles/imports";
 import IconBadge from "../Utils/IconBadge";
 import { tailwindClass } from "../importFiles/tailwindStyles";
+import TimeBadge from "../Utils/TimeBadge";
 
 function AssignedToMe({
   assignedItems = [],
@@ -29,27 +30,12 @@ function AssignedToMe({
             </div>
           ) : (
             assignedItems.map((item) => {
-              // chip tiempo restante
-              const timeLeft = getTimeLeft?.(item.completeBy);
-              const timeChipClass =
-                timeLeft === "Overdue"
-                  ? "bg-orange-trasparent text-orange border-orange-2"
-                  : "bg-teal-trasparent text-teal border-teal-2";
-
-              // chip de estado
-              const statusChipClass =
-                item.status === "missed"
-                  ? "bg-orange-trasparent text-orange border-orange-2"
-                  : item.status === "pending"
-                  ? "bg-yellow-trasparent text-yellow border-Yellow-2"
-                  : "bg-teal-trasparent text-teal border-teal-2";
-
               return (
                 <div
                   key={item.id}
                   className="transform-gpu 
                   will-change-transform  
-                [backface-visibility:hidden]  
+                  [backface-visibility:hidden]  
                   flex items-center justify-between
                   min-h-20 rounded-3xl col-span-12 
                   border dark:border-slate-200/20 
@@ -107,24 +93,11 @@ function AssignedToMe({
                     </div>
 
                     {/* Centro: chips (tiempo restante + estado) */}
-                    <div className="col-span-3 flex items-center justify-center gap-2">
-                      {item.completeBy && (
-                        <span
-                          className={`text-[11px] font-semibold border rounded-3xl px-2 py-[2px] ${timeChipClass}`}
-                        >
-                          {timeLeft}
-                        </span>
-                      )}
-
-                      <span
-                        className={[
-                          "text-[11px] font-semibold capitalize border rounded-3xl px-2 py-[2px]",
-                          statusChipClass,
-                        ].join(" ")}
-                      >
-                        {item.status}
-                      </span>
-                    </div>
+                    <TimeBadge
+                      task={item}
+                      tailwindClass={tailwindClass}
+                      getTimeLeft={getTimeLeft}
+                    />
 
                     {/* prioridad */}
                     <div className="flex flex-col items-center justify-center w-10 ">
