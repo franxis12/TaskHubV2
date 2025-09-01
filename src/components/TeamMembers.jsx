@@ -3,8 +3,10 @@ import React, { useEffect, useMemo, useState, useContext } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import { UserContext } from "../context/UserContext";
+import { myImage } from "../importFiles/imports";
+import { tailwindClass } from "../importFiles/tailwindStyles";
 
-import samplePhoto from "../assets/sample.png";
+//import samplePhoto from "../assets/sample.png";
 
 function TeamMembers({ tasks = [], onMemberClick }) {
   const { user } = useContext(UserContext);
@@ -28,7 +30,7 @@ function TeamMembers({ tasks = [], onMemberClick }) {
         return {
           uid: d.id,
           name,
-          photo: data.photo || samplePhoto,
+          photo: data.photo || myImage.defaultUser,
           role: data.role || "member",
           email: data.email || "",
         };
@@ -68,7 +70,7 @@ function TeamMembers({ tasks = [], onMemberClick }) {
       </div>
 
       {/* Lista */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-row  gap-2 md:flex-col">
         {loading ? (
           <div className="w-full flex items-center justify-center h-full">
             <h3 className="text-lg font-medium text-slate-700">
@@ -89,12 +91,12 @@ function TeamMembers({ tasks = [], onMemberClick }) {
                 key={m.uid}
                 type="button"
                 onClick={() => onMemberClick?.(m.uid)}
-                className="w-full rounded-xl border  p-3 text-left hover:shadow-sm transition-shadow"
+                className="w-45 h-55 rounded-3xl border border-slate-600/40  p-3 text-left hover:shadow-sm transition-shadow flex flex-wrap"
                 title={m.email || m.name}
               >
                 <div className="flex items-center gap-3">
                   <img
-                    src={m.photo || samplePhoto}
+                    src={m.photo || myImage.defaultUser}
                     alt={m.name}
                     className="h-12 w-12 rounded-full border-2 border-blue-500 object-cover"
                   />
@@ -102,7 +104,13 @@ function TeamMembers({ tasks = [], onMemberClick }) {
                     <div className="text-sm font-semibold text-slate-800 truncate">
                       {m.name}
                     </div>
-                    <div className="text-xs text-slate-500 capitalize truncate">
+                    <div
+                      className={
+                        m.role === "admin"
+                          ? tailwindClass.accountType.admin
+                          : tailwindClass.accountType.member
+                      }
+                    >
                       {m.role}
                     </div>
                   </div>

@@ -345,7 +345,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm }) {
           <TaskEstadistic />
         </Container>
 
-        <Container className="row-span-2 lg:col-span-4 col-span-12">
+        <Container className="row-span-2 lg:col-span-4 col-span-12 flex ">
           <TeamMembers
             tasks={tasks} // opcional, para mostrar conteos
             onMemberClick={(uid) => {
