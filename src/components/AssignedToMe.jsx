@@ -4,6 +4,7 @@ import { SVGIcons } from "../importFiles/imports";
 import IconBadge from "../Utils/IconBadge";
 import { tailwindClass } from "../importFiles/tailwindStyles";
 import TimeBadge from "../Utils/TimeBadge";
+import StatusBadge from "../Utils/StatusBadge";
 
 function AssignedToMe({
   assignedItems = [],
@@ -113,6 +114,7 @@ function AssignedToMe({
                       <span className="text-[11px] font-semibold text-[var(--textColor)] capitalize">
                         {item.priority}
                       </span>
+                      <StatusBadge task={item} tailwindClass={tailwindClass} />
                     </div>
                   </div>
                 </div>
