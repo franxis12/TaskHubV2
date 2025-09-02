@@ -22,7 +22,7 @@ function MemberMiniStats({ memberId, scope = "public" }) {
   const { completed, pending, missed } = useMemo(() => {
     const s = userStats || {};
     const company = s.company || {}; // { completed, pending, missed }
-    const personal = s.personal || {}; // opcional
+    const personal = s.personal || {}; // opcional//
 
     const toNum = (v) => Number(v || 0);
     if (scope === "public") {
@@ -58,7 +58,7 @@ function MemberMiniStats({ memberId, scope = "public" }) {
     <div className=" flex items-end h-3/4 md:h-full  gap-2 w-full max-w-30 ">
       {/* Completed (teal) */}
       <div className="flex flex-col items-center justify-end h-full w-full min-w-4">
-        <span className="text-[10px] font-bold text-[var(--greenMain)]">
+        <span className="text-[10px] font-bold text-[var(--greenMain)] ">
           {completed}
         </span>
         <div
