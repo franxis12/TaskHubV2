@@ -1,32 +1,23 @@
 // src/components/TopBar.jsx
 import React, { useContext, useEffect, useMemo, useState } from "react";
-import TaskEstadistic from "./TaskEstadistic";
 import { UserContext } from "../context/UserContext";
 import { NavLink } from "react-router-dom";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
-import logoFallback from "../assets/LOGO.svg";
-import samplePhoto from "../assets/sample.png";
-import OpenMenu from "../assets/iconsV2/bars-solid-full.svg?react";
-import CloseMenu from "../assets/iconsV2/ellipsis-vertical-solid-full.svg?react";
+import { myImage, SVGIcons } from "../importFiles/imports";
+import { tailwindClass } from "../importFiles/tailwindStyles";
 
-// Recibir props correctamente
 function TopBar({ expanded, setExpanded }) {
   const { user } = useContext(UserContext);
-  const [logoUrl, setLogoUrl] = useState(logoFallback);
+  const [logoUrl, setLogoUrl] = useState("");
 
   // (Opcional) Tienes este mismo efecto duplicado; deja solo uno.
   useEffect(() => {
     if (!user?.companyId) {
-      setLogoUrl(logoFallback);
       return;
     }
     const ref = doc(db, "companies", user.companyId);
-    const unsub = onSnapshot(
-      ref,
-      (snap) => setLogoUrl(snap.data()?.logo || logoFallback),
-      () => setLogoUrl(logoFallback)
-    );
+    const unsub = onSnapshot(ref, (snap) => setLogoUrl(snap.data()?.logo));
     return () => unsub();
   }, [user?.companyId]);
 
@@ -40,10 +31,8 @@ function TopBar({ expanded, setExpanded }) {
     const base =
       "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium";
     const palette = {
-      admin: "bg-orange-trasparent border-orange-2 text-orange",
-      manager: "bg-amber-500 text-amber-700 border-amber-200",
-      member: "bg-teal-trasparent border-teal-2 text-teal",
-      guest: "bg-red-500 text-red-600 border-red-200",
+      admin: tailwindClass.accountType.admin,
+      member: tailwindClass.accountType.member,
     };
     return `${base} ${
       palette[r] || "bg-slate-100 text-slate-700 border-slate-200"
@@ -61,25 +50,27 @@ function TopBar({ expanded, setExpanded }) {
           title={expanded ? "Collapse" : "Expand"}
         >
           {expanded ? (
-            <CloseMenu className="w-6 h-6" />
+            <SVGIcons.menu.close className="w-6 h-6" />
           ) : (
-            <OpenMenu className="w-6 h-6" />
+            <SVGIcons.menu.open className="w-6 h-6" />
           )}
         </button>
 
-        <div className="flex h-full w-auto items-end gap-2">
-          <img
-            src={logoUrl || logoFallback}
-            alt="Company logo"
-            className="object-contain h-10 rounded-md"
-          />
-          <span
-            className="block text-xs text-slate-500"
-            title={"Company ID: " + user?.companyId}
-          >
-            {user?.companyId || "No companyId assigned"}
-          </span>
-        </div>
+        {logoUrl && (
+          <div className="flex h-full w-auto items-end gap-2">
+            <img
+              src={logoUrl}
+              alt="Company logo"
+              className="object-contain h-10 rounded-md"
+            />
+            <span
+              className="block text-xs text-slate-500"
+              title={"Company ID: " + user?.companyId}
+            >
+              {user?.companyId || "No companyId assigned"}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-3 p-3 w-2/6 justify-end">
@@ -89,7 +80,7 @@ function TopBar({ expanded, setExpanded }) {
         </div>
         <img
           className="h-9 w-9 rounded-full object-cover border-2 ring-1 ring-slate-200"
-          src={user?.photo || samplePhoto}
+          src={user?.photo || myImage.defaultUser}
           alt="Avatar"
         />
         {/* Logout (desktop) */}

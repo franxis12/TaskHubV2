@@ -17,9 +17,12 @@ import ProgressIcon from "../assets/iconsV2/spinner-solid-full.svg?react"
 import arrowDown from "../assets/iconsV2/arrowDown.svg?react"
 import arrowUp from "../assets/iconsV2/arrowUp.svg?react"
 import timeLeft from "../assets/iconsV2/stopwatch-20-solid-full.svg?react"
+import openIcon from "../assets/iconsV2/bars-solid-full.svg?react";
+import closeIcon from "../assets/iconsV2/ellipsis-vertical-solid-full.svg?react";
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
+
 
 
 const SVGIcons = {
@@ -49,6 +52,10 @@ const SVGIcons = {
         progress : ProgressIcon,
     },
     timeLeft: timeLeft,
+    menu:{
+        open:openIcon,
+        close: closeIcon,
+    },
     
 }
 

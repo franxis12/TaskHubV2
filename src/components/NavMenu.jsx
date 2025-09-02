@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 //import { doc, onSnapshot } from "firebase/firestore";
 //import { db } from "../firebaseConfig";
-//import logoFallback from "../assets/LOGO.svg";
 import Button from "../Utils/Button";
+import TempButton from "../Utils/TempButton";
 import LogoExpand from "../assets/LogoExpand.svg?react";
 import Logo from "../assets/LOGO.svg?react";
+import { SVGIcons } from "../importFiles/imports";
 
 function NavMenu({ expanded, setExpanded }) {
   const { user, logout } = useContext(UserContext);
@@ -18,19 +19,17 @@ function NavMenu({ expanded, setExpanded }) {
     navigate("/");
   }
 
-  // Estado mobile inicial sin causar parpadeo
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 700
   );
 
-  // Transiciones desactivadas en el primer render (evita "pestañeo")
+  // transition false to prevent flashing Screen
   const [transitionsOn, setTransitionsOn] = useState(false);
   useEffect(() => {
     const id = setTimeout(() => setTransitionsOn(true), 0);
     return () => clearTimeout(id);
   }, []);
 
-  // Resize: solo actuamos cuando CRUZAMOS el umbral (sin tocar el primer render)
   const prevIsMobile = useRef(isMobile);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -43,7 +42,6 @@ function NavMenu({ expanded, setExpanded }) {
       if (next !== prevIsMobile.current) {
         prevIsMobile.current = next;
         setIsMobile(next);
-        // En mobile cerramos; en desktop abrimos (solo cuando cruzamos el umbral)
         setExpanded(next ? false : true);
       }
     };
@@ -53,7 +51,7 @@ function NavMenu({ expanded, setExpanded }) {
       clearTimeout(t);
       t = setTimeout(() => {
         raf = requestAnimationFrame(handle);
-      }, 120); // debounce suave
+      }, 120);
     };
 
     window.addEventListener("resize", onResize);
@@ -64,9 +62,8 @@ function NavMenu({ expanded, setExpanded }) {
     };
   }, [setExpanded]);
 
-  // Clases de tamaño
-  const MOBILE_WIDTH = "w-56 p-2"; // más angosto en mobile (11rem)
-  const DESKTOP_EXPANDED = "w-40 p-3"; // respeta tu ancho desktop
+  const MOBILE_WIDTH = "w-56 p-2";
+  const DESKTOP_EXPANDED = "w-40 p-3";
   const DESKTOP_COLLAPSED = "w-16 p-2";
 
   const baseAside = `
@@ -93,7 +90,7 @@ function NavMenu({ expanded, setExpanded }) {
 
   return (
     <>
-      {/* Backdrop en mobile cuando está abierto */}
+      {/* Backdrop mobile when menu open */}
       {isMobile && expanded && (
         <div
           className="fixed inset-0 z-30 bg-black/30"
@@ -134,11 +131,11 @@ function NavMenu({ expanded, setExpanded }) {
               </button>
             )}
 
-            <div className="flex flex-col h-11 items-start gap-3 mb-2  ">
+            <div className="flex flex-col h-11 w-full items-start gap-3 mb-2  ">
               <Logo className="object-contain h-10 w-8" />
 
               {!expanded && (
-                <span className="sr-only">
+                <span className="sr-only ">
                   {user?.companyId || "No companyId assigned"}
                 </span>
               )}
@@ -170,6 +167,10 @@ function NavMenu({ expanded, setExpanded }) {
               classNameExtra={expanded ? "justify-start" : "justify-center"}
               btnType={"primary"}
             />
+
+            <TempButton icon={SVGIcons.calendar} color={"green"}>
+              Green
+            </TempButton>
           </nav>
         </div>
 
