@@ -1,10 +1,12 @@
 // src/components/TeamMembers.jsx
-import React, { useEffect, useMemo, useState, useContext } from "react";
+//import { useMemo } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import { UserContext } from "../context/UserContext";
-
-import samplePhoto from "../assets/sample.png";
+import { myImage } from "../importFiles/imports";
+import { tailwindClass } from "../importFiles/tailwindStyles";
+import MemberMiniStats from "./MemberMiniStats";
 
 function TeamMembers({ tasks = [], onMemberClick }) {
   const { user } = useContext(UserContext);
@@ -28,7 +30,7 @@ function TeamMembers({ tasks = [], onMemberClick }) {
         return {
           uid: d.id,
           name,
-          photo: data.photo || samplePhoto,
+          photo: data.photo || myImage.defaultUser,
           role: data.role || "member",
           email: data.email || "",
         };
@@ -40,7 +42,7 @@ function TeamMembers({ tasks = [], onMemberClick }) {
   }, [user]);
 
   // Map de conteos si recibimos tasks como prop
-  const assignedMap = useMemo(() => {
+  /*const assignedMap = useMemo(() => {
     if (!Array.isArray(tasks) || tasks.length === 0) return {};
     const map = {};
     for (const t of tasks) {
@@ -58,7 +60,9 @@ function TeamMembers({ tasks = [], onMemberClick }) {
       }
     }
     return map;
-  }, [tasks]);
+  }, [tasks]);*/
+
+  // (Estadísticas por miembro movidas a MemberMiniStats)
 
   return (
     <div className="flex flex-col p-2 col-span-3">
@@ -68,7 +72,7 @@ function TeamMembers({ tasks = [], onMemberClick }) {
       </div>
 
       {/* Lista */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-row  gap-2 md:flex-col ">
         {loading ? (
           <div className="w-full flex items-center justify-center h-full">
             <h3 className="text-lg font-medium text-slate-700">
@@ -83,32 +87,38 @@ function TeamMembers({ tasks = [], onMemberClick }) {
           </div>
         ) : (
           members.map((m) => {
-            const counts = assignedMap[m.uid] || { tasks: 0, subtasks: 0 };
+            //const counts = assignedMap[m.uid] || { tasks: 0, subtasks: 0 };
             return (
               <button
                 key={m.uid}
                 type="button"
                 onClick={() => onMemberClick?.(m.uid)}
-                className="w-full rounded-xl border  p-3 text-left hover:shadow-sm transition-shadow"
+                className="w-45  md:w-full h-55 md:h-25 rounded-3xl border border-slate-600/40  p-2 text-left hover:shadow-sm transition-shadow flex flex-wrap justify-between"
                 title={m.email || m.name}
               >
                 <div className="flex items-center gap-3">
                   <img
-                    src={m.photo || samplePhoto}
+                    src={m.photo || myImage.defaultUser}
                     alt={m.name}
                     className="h-12 w-12 rounded-full border-2 border-blue-500 object-cover"
                   />
                   <div className="min-w-0">
-                    <div className="text-sm font-semibold text-slate-800 truncate">
+                    <div className="text-sm font-semibold text-[var(--textColor)] truncate">
                       {m.name}
                     </div>
-                    <div className="text-xs text-slate-500 capitalize truncate">
+                    <div
+                      className={
+                        m.role === "admin"
+                          ? tailwindClass.accountType.admin
+                          : tailwindClass.accountType.member
+                      }
+                    >
                       {m.role}
                     </div>
                   </div>
                 </div>
 
-                {/* Métricas simples (solo si llegan tasks) */}
+                {/* Métricas simples (solo si llegan tasks) 
                 {Array.isArray(tasks) && tasks.length > 0 && (
                   <div className="mt-2 flex items-center gap-3 text-xs text-slate-600">
                     <span className="rounded-full border px-2 py-0.5 bg-white">
@@ -118,7 +128,14 @@ function TeamMembers({ tasks = [], onMemberClick }) {
                       Sub-tasks: <b>{counts.subtasks}</b>
                     </span>
                   </div>
-                )}
+                )}*/}
+                {/* Mini barras (componente separado) */}
+                <MemberMiniStats
+                  tasks={tasks}
+                  memberId={m.uid}
+                  scope="public"
+                  includeSubtasks={true}
+                />
               </button>
             );
           })

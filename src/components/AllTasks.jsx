@@ -107,7 +107,7 @@ function AllTasks({
                         <div className="col-span-12 flex justify-end pr-2 pb-2 h-full items-end">
                           <button
                             type="button"
-                            className="text-xs text-[var(--textColor)] hover:text-slate-600 flex items-center gap-1 whitespace-nowrap mt-2"
+                            className=" text-[10px] md:text-xs text-[var(--textColor)] hover:text-slate-600 flex items-center gap-1 lg:whitespace-nowrap mt-2 "
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleExpand(task.id);

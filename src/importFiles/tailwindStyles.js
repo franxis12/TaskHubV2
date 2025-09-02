@@ -19,6 +19,10 @@ const timeBadge = "border border-slate-700/50 flex items-center overflow-hidden 
 const timeBadgeChildren_1 = "bg-black text-white h-full flex items-center justify-center w-7"
 const timeBadgeChildren_2 = " text-[var(--textColor)] capitalize font-semibold text-xs"
 
+const adminBadge = "w-18 boder border-1 border- border-[var(--greenMain)] bg-[var(--green-trasparent)] text-xs rounded-3xl flex items-center justify-center whitespace-nowrap font-semibold text-[var(--greenMain)]"
+const memberBadge = "w-18 border border-1 border-[var(--orange)] bg-[var(--orange-trasparent)] text-xs rounded-3xl flex items-center justify-center whitespace-nowrap font-semibold text-[var(--orange)]"
+
+
 const tailwindClass = {
     inputs: inputs,
     icon: {
@@ -45,6 +49,10 @@ const tailwindClass = {
         parent: timeBadge,
         children1: timeBadgeChildren_1,
         children2: timeBadgeChildren_2,
+    },
+    accountType:{
+        admin: adminBadge,
+        member: memberBadge,
     },
 
     
