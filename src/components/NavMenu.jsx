@@ -70,7 +70,7 @@ function NavMenu({ expanded, setExpanded }) {
   const DESKTOP_COLLAPSED = "w-16 p-2";
 
   const baseAside = `
-    h-screen ml-1 rounded-2xl shrink-0 bg-white
+    h-screen ml-1 rounded-2xl shrink-0 bg-[var(--bg-color-component)]
     flex flex-col justify-between overflow-y-auto overflow-x-hidden
     ${
       transitionsOn
@@ -135,11 +135,8 @@ function NavMenu({ expanded, setExpanded }) {
             )}
 
             <div className="flex flex-col h-11 items-start gap-3 mb-2  ">
-              {expanded ? (
-                <LogoExpand className="object-contain h-12 w-32" />
-              ) : (
-                <Logo className="object-contain h-10 w-8" />
-              )}
+              <Logo className="object-contain h-10 w-8" />
+
               {!expanded && (
                 <span className="sr-only">
                   {user?.companyId || "No companyId assigned"}

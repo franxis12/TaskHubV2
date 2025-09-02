@@ -51,8 +51,8 @@ function TopBar({ expanded, setExpanded }) {
   }, [user?.role]);
 
   return (
-    <div className="bg-color flex items-center justify-between">
-      <div className="flex gap-5">
+    <div className="bg-[var(--bg-color-component)] flex items-center justify-between max-h-20">
+      <div className="flex gap-5 w-full ">
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
@@ -67,19 +67,22 @@ function TopBar({ expanded, setExpanded }) {
           )}
         </button>
 
-        <div className="flex flex-col h-10 items-end">
+        <div className="flex h-full w-auto items-end gap-2">
           <img
             src={logoUrl || logoFallback}
             alt="Company logo"
-            className="object-contain h-8 w-25 rounded-md"
+            className="object-contain h-10 rounded-md"
           />
-          <span className="block text-xs text-slate-500">
+          <span
+            className="block text-xs text-slate-500"
+            title={"Company ID: " + user?.companyId}
+          >
             {user?.companyId || "No companyId assigned"}
           </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 p-3">
+      <div className="flex items-center gap-3 p-3 w-2/6 justify-end">
         <div className="flex flex-col items-end leading-tight">
           <span className="text-sm font-medium tx-color">{userName}</span>
           {user?.role && <span className={roleBadgeClasses}>{user.role}</span>}
