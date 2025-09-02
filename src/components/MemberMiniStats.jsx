@@ -55,7 +55,7 @@ function MemberMiniStats({ memberId, scope = "public" }) {
   };
 
   return (
-    <div className=" flex items-end h-full gap-2 w-full max-w-30 ">
+    <div className=" flex items-end h-3/4 md:h-full  gap-2 w-full max-w-30 ">
       {/* Completed (teal) */}
       <div className="flex flex-col items-center justify-end h-full w-full min-w-4">
         <span className="text-[10px] font-bold text-[var(--greenMain)]">

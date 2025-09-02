@@ -93,7 +93,7 @@ function TeamMembers({ tasks = [], onMemberClick }) {
                 key={m.uid}
                 type="button"
                 onClick={() => onMemberClick?.(m.uid)}
-                className="w-45  md:w-full h-55 md:h-25 rounded-3xl border border-slate-600/40  p-3 text-left hover:shadow-sm transition-shadow flex flex-wrap justify-between"
+                className="w-45  md:w-full h-55 md:h-25 rounded-3xl border border-slate-600/40  p-2 text-left hover:shadow-sm transition-shadow flex flex-wrap justify-between"
                 title={m.email || m.name}
               >
                 <div className="flex items-center gap-3">
