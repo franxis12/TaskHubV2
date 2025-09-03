@@ -30,6 +30,7 @@ import addPersonal from "../assets/iconsV2/AddPersonal-icon.svg?react";
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
+import logo from "../assets/LOGO.svg?react";
 
 
 
@@ -77,8 +78,10 @@ const SVGIcons = {
 }
 
 const myImage = {
-    defaultUser: defaultUser
+    defaultUser: defaultUser,
+    logo: logo,
 }
+
 
 
 

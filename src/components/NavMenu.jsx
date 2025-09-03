@@ -7,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 //import { db } from "../firebaseConfig";
 import Button from "../Utils/Button";
 import LogoExpand from "../assets/LogoExpand.svg?react";
-import Logo from "../assets/LOGO.svg?react";
-import { SVGIcons } from "../importFiles/imports";
+import { SVGIcons, myImage } from "../importFiles/imports";
 
 function NavMenu({ expanded, setExpanded }) {
   const { user, logout } = useContext(UserContext);
@@ -122,21 +121,9 @@ function NavMenu({ expanded, setExpanded }) {
       >
         {/* Encabezado: logo + cerrar en mobile */}
         <div className="flex flex-col gap-4">
-          <div className="relative border-b-1">
-            {isMobile && expanded && (
-              <button
-                type="button"
-                onClick={() => setExpanded(false)}
-                className="absolute -right-3 top-3 btn btn-xs btn-ghost border border-base-300 rounded-full z-50"
-                aria-label="Cerrar menú"
-                title="Cerrar"
-              >
-                ×
-              </button>
-            )}
-
+          <div className="relative border-b-1 flex">
             <div className="flex flex-col h-11 w-full items-start gap-3 mb-2  ">
-              <Logo className="object-contain h-10 w-8" />
+              <img src={myImage.logo} className="object-contain h-10 w-8" />
 
               {!expanded && (
                 <span className="sr-only ">
@@ -144,6 +131,17 @@ function NavMenu({ expanded, setExpanded }) {
                 </span>
               )}
             </div>
+            {isMobile && expanded && (
+              <Button
+                iconSize={4}
+                type="button"
+                onClick={() => setExpanded(false)}
+                className="absolute -right-3 top-3 btn btn-xs btn-ghost border border-base-300 rounded-full z-50"
+                ariaLabel="Close menu"
+                icon={SVGIcons.x}
+                title="Cerrar"
+              />
+            )}
           </div>
 
           {/* Menú */}
