@@ -10,6 +10,7 @@ function Button({
   id,
   type,
   title,
+  iconSize,
 }) {
   const SVGIcon = icon;
   const colorPick = {
@@ -26,6 +27,7 @@ function Button({
     autoInverse:
       "bg-[var(--textColorInverse)] text-[var(--textColor)] border-1 border-[var(--textColor)] hover:bg-[var(--textColor)] hover:text-[var(--textColorInverse)] hover:border-[var(--textColorInverse)]",
     auto: "bg-[var(--textColor)] text-[var(--textColorInverse)] border-1 border-[var(--textColorInverse)] hover:bg-[var(--textColorInverse)] hover:text-[var(--textColor)] hover:border-[var(--textColor)]",
+    disable: "cursor-not-allowed",
   };
   const positionSelected = {
     center: "justify-center",
@@ -33,8 +35,18 @@ function Button({
     left: "justify-start",
   };
 
+  const iconSizePick = {
+    5: "w-5 h-5",
+    6: "w-6 h-6",
+    7: "w-7 h-7",
+    8: "w-8 h-8",
+    9: "w-9 h-9",
+    10: "w-10 h-10",
+  };
+
   const btnColor = colorPick[color];
   const justify = positionSelected[position];
+  const iconSizeSelected = iconSizePick[iconSize];
 
   return (
     <>
@@ -50,7 +62,13 @@ function Button({
             : "border-1 border-slate-500/20 hover:bg-black/25"
         }`}
       >
-        {icon && <SVGIcon className={` w-5 h-5`} />}
+        {icon && (
+          <SVGIcon
+            className={
+              iconSizeSelected !== undefined ? iconSizeSelected : "w-5 h-5"
+            }
+          />
+        )}
         {children}
       </button>
     </>

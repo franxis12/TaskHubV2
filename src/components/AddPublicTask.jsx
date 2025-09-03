@@ -335,12 +335,13 @@ function AddPublicTask({ accion }) {
                     >
                       Copy from main
                     </button>
-                    <button
+
+                    <Button
+                      iconSize={"5"}
+                      color="yellow"
                       onClick={() => setSubTaskMenu(false)}
-                      className="btn-danger  h-7 font-bold "
-                    >
-                      X
-                    </button>
+                      icon={SVGIcons.x}
+                    />
                   </div>
                 </div>
 
@@ -387,15 +388,16 @@ function AddPublicTask({ accion }) {
                       ))}
                     </select>
                   </div>
-                  <button
+
+                  <Button
+                    color="green"
                     type="button"
                     onClick={handleAddSubTask}
-                    className="btn-green"
                     disabled={!stName.trim() || subTasks.length >= 10}
-                    title="Agregar sub-task"
+                    title="Add sub-task"
                   >
                     Add Sub-task
-                  </button>
+                  </Button>
                 </div>
                 <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
                   <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
@@ -453,9 +455,9 @@ function AddPublicTask({ accion }) {
                           type="button"
                           onClick={() => handleRemoveSubTask(idx)}
                           className="text-xs text-slate-600 hover:text-rose-600"
-                          title="Eliminar"
+                          title="Delete"
                         >
-                          Eliminar
+                          Delete
                         </button>
                       </li>
                     ))}
@@ -464,7 +466,6 @@ function AddPublicTask({ accion }) {
               </div>
             ) : (
               <div className="flex items-center gap-4 rounded-2xl border border-slate-200 p-3 bg-white/50">
-                {/*overflow de subtask arreglar*/}
                 <div
                   onClick={() => setSubTaskMenu(true)}
                   className=" flex flex-col h-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
@@ -522,7 +523,7 @@ function AddPublicTask({ accion }) {
                 disabled={
                   submitting || !taskName.trim() || user?.role !== "admin"
                 }
-                color={user?.role !== "admin" ? "disable " : "green"}
+                color={user?.role !== "admin" ? "disable" : "green"}
                 title={
                   user?.role !== "admin"
                     ? "Only admin can create public tasks."

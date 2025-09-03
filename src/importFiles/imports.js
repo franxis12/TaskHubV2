@@ -61,6 +61,7 @@ const SVGIcons = {
         missed: MissedIcon,
         progress : ProgressIcon,
     },
+    x: MissedIcon,
     timeLeft: timeLeft,
     menu:{
         open:openIcon,
