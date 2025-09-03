@@ -1,6 +1,6 @@
 import React from "react";
 
-function TempButton({ children, icon, onClick, disabled, color }) {
+function TempButton({ children, icon, onClick, disabled, color, position }) {
   const SVGIcon = icon;
   const colorPick = {
     orange:
@@ -8,23 +8,33 @@ function TempButton({ children, icon, onClick, disabled, color }) {
     yellow:
       "bg-[var(--yellow)] text-white border-2 border-[var(--yellow)] hover:bg-[var(--yellow-trasparent)]/50 ",
     green:
-      "bg-[var(--greenMain)] text-white border-2 border-[var(--greenMain)] hover:bg-[var(--green-trasparent)]/50 ",
-    white: "bg-white text-black border-2 border-black hover:bg-white/25 ",
-    black: "bg-black text-white",
-    autoInverse: "bg-[var(--textColorInverse)]",
-    auto: "bg-[var(--textColor)] tex-[var(--textColorInverse)]",
+      "bg-[var(--greenMain)] text-white hover:text-[var(--greenMain)] border-2 border-[var(--greenMain)] hover:bg-[var(--green-trasparent)]/50 ",
+    white:
+      "bg-white text-black border-1 border-black hover:bg-black hover:text-white hover:border-white ",
+    black:
+      "bg-black text-white border-1 border-white hover:bg-white hover:text-black hover:border-black",
+    autoInverse:
+      "bg-[var(--textColorInverse)] text-[var(--textColor)] border-1 border-[var(--textColor)] hover:bg-[var(--textColor)] hover:text-[var(--textColorInverse)] hover:border-[var(--textColorInverse)]",
+    auto: "bg-[var(--textColor)] text-[var(--textColorInverse)] border-1 border-[var(--textColorInverse)] hover:bg-[var(--textColorInverse)] hover:text-[var(--textColor)] hover:border-[var(--textColor)]",
+  };
+  const positionSelected = {
+    center: "justify-center",
+    right: "justify-end",
+    left: "justify-start",
   };
 
   const btnColor = colorPick[color];
-  console.log(btnColor);
+  const justify = positionSelected[position];
 
   return (
     <>
       <button
         onClick={onClick}
         disabled={disabled}
-        className={`flex items-center justify-center  text-xs gap-2 rounded-2xl h-9 hover:font-semibold ${
-          btnColor !== undefined ? btnColor : "border hover:bg-white/50"
+        className={`flex items-center ${justify}  text-xs gap-2 px-2 rounded-xl h-11 hover:font-semibold justify-center ${
+          btnColor !== undefined
+            ? btnColor
+            : "border-1 border-slate-500/20 hover:bg-black/25"
         }`}
       >
         {icon && <SVGIcon className={` w-5 h-5`} />}

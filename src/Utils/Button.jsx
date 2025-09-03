@@ -1,89 +1,47 @@
 import React from "react";
-import settingIcon from "../assets/iconsV2/gear-solid-full.svg?react";
-import infoIcon from "../assets/iconsV2/circle-info-solid-full.svg?react";
-import homeIcon from "../assets/iconsV2/house-solid-full.svg?react";
-import userIcon from "../assets/iconsV2/user-solid-full.svg?react";
-import addPersonal from "../assets/iconsV2/AddPersonal-icon.svg?react"; //**//
-import addPublic from "../assets/iconsV2/addPublic-Icon.svg?react"; //**//
 
-import "../styles/button.css";
-
-function Button({
-  onClick,
-  btnName,
-  classNameExtra,
-  iconPicked,
-  hasIcon,
-  btnType,
-  disabled,
-}) {
-  const iconPick = {
-    setting: settingIcon,
-    info: infoIcon,
-    dashboard: homeIcon,
-    user: userIcon,
-    addPersonal: addPersonal,
-    addPublic: addPublic,
-  };
-  const buttonType = {
-    primary: "btn-prima border",
-    secondary: "btn-second text-4xl",
-    danger: "btn-danger",
+function Button({ children, icon, onClick, disabled, color, position }) {
+  const SVGIcon = icon;
+  const colorPick = {
     orange:
-      "btn-orange bg-orange text-white min-w-20 items-center justify-center",
-    green: "btn-gree bg-teal  text-white min-w-20 items-center justify-center",
+      "bg-[var(--orange)] text-white hover:text-[var(--orange)] border-2 border-[var(--orange)] hover:bg-[var(--orange-trasparent)]/50 ",
     yellow:
-      "btn-yellow bg-yellow text-white min-w-20 items-center justify-center",
-    edit: "btn-edit bg-white text-white min-w-20 items-center justify-center",
-    icon: "icon", //Pending
-    link: "link", //Pending
+      "bg-[var(--yellow)] text-white hover:text-[var(--yellow)] border-2 border-[var(--yellow)] hover:bg-[var(--yellow-trasparent)]/50 ",
+    green:
+      "bg-[var(--greenMain)] text-white hover:text-[var(--greenMain)] border-2 border-[var(--greenMain)] hover:bg-[var(--green-trasparent)]/50 ",
+    white:
+      "bg-white text-black border-1 border-black hover:bg-black hover:text-white hover:border-white ",
+    black:
+      "bg-black text-white border-1 border-white hover:bg-white hover:text-black hover:border-black",
+    autoInverse:
+      "bg-[var(--textColorInverse)] text-[var(--textColor)] border-1 border-[var(--textColor)] hover:bg-[var(--textColor)] hover:text-[var(--textColorInverse)] hover:border-[var(--textColorInverse)]",
+    auto: "bg-[var(--textColor)] text-[var(--textColorInverse)] border-1 border-[var(--textColorInverse)] hover:bg-[var(--textColorInverse)] hover:text-[var(--textColor)] hover:border-[var(--textColor)]",
+  };
+  const positionSelected = {
+    center: "justify-center",
+    right: "justify-end",
+    left: "justify-start",
   };
 
-  const btnSelected = buttonType[btnType];
-  const IconComponent = iconPick[iconPicked];
+  const btnColor = colorPick[color];
+  const justify = positionSelected[position];
 
   return (
     <>
       <button
         onClick={onClick}
         disabled={disabled}
-        className={`${btnSelected} ${classNameExtra} text-3xl `}
+        className={`flex items-center ${justify}  text-xs gap-2 px-2 rounded-xl h-11 hover:font-semibold justify-center ${
+          btnColor !== undefined
+            ? btnColor
+            : "border-1 border-slate-500/20 hover:bg-black/25"
+        }`}
       >
-        {hasIcon && <IconComponent className={`iconColor w-10 h-5 m-1  `} />}{" "}
-        {/*Pending create .iconColor class for dinamyc color changed*/}
-        {btnName}
+        {icon && <SVGIcon className={` w-5 h-5`} />}
+        {children}
       </button>
     </>
   );
 }
 
 export default Button;
-/*Este boton necesita las siguientes dependencias para funcionar correctamente
-  1. npm i -D vite-plugin-svgr con esto ahora podras usar los iconos como componentes 
-  2. Edita el vite.config.js y importa vite-plugin-svgr.
-       Ejemplo:    import { defineConfig } from "vite";
-                   import react from "@vitejs/plugin-react";
-                   import svgr from "vite-plugin-svgr";   <-- ***** Esta linea ***** )
-
-                   export default defineConfig({
-                   plugins: [
-                     react(),
-                     svgr({    <-- ***** Deste aqui ***** )
-                       svgrOptions: {
-                         // 1) Si un path trae #000, reemplázalo
-                         replaceAttrValues: { "#000": "currentColor", "#000000": "currentColor", black: "currentColor" },
-                         // 2) Además, agrega fill="currentColor" al <svg>
-                         svgProps: { fill: "currentColor" },
-                       },
-                     }),        <-- ***** Hasta aqui ***** )
-                   ],
-                   });
-   3. En tu css agrega las clases .btn y btn-primary y ajustalas a tu preferencia.
-  
-                   
-                    
-
-
-
-
-*/

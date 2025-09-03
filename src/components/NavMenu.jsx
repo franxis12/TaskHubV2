@@ -18,6 +18,11 @@ function NavMenu({ expanded, setExpanded }) {
     logout();
     navigate("/");
   }
+  const [selectedTap, setSelectedTap] = useState("dashboard");
+
+  const handleTap = (tap) => {
+    setSelectedTap(tap);
+  };
 
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 700
@@ -143,49 +148,54 @@ function NavMenu({ expanded, setExpanded }) {
           </div>
 
           {/* Menú */}
-          <nav className="w-full  flex flex-col ">
+          <nav className="w-full  flex flex-col  gap-1">
             <Button
-              btnName={expanded && "Dashboard"}
-              hasIcon
-              iconPicked={"dashboard"}
-              classNameExtra={
-                expanded ? "justify-start selected" : "justify-center selected"
-              } //Selected class for selected pages
-              btnType={"primary"}
-            />
-            <Button
-              btnName={expanded && "Team"}
-              hasIcon
-              iconPicked={"user"}
-              classNameExtra={expanded ? "justify-start" : "justify-center"}
-              btnType={"primary"}
-            />
-            <Button
-              btnName={expanded && "Stats"}
-              hasIcon
-              iconPicked={"info"}
-              classNameExtra={expanded ? "justify-start" : "justify-center"}
-              btnType={"primary"}
-            />
+              onClick={() => handleTap("dashboard")}
+              icon={SVGIcons.home}
+              color={selectedTap === "dashboard" ? "auto" : ""}
+              position={"center"}
+            >
+              {expanded ? "Dashboard" : ""}
+            </Button>
 
-            <TempButton icon={SVGIcons.calendar} color={"green"}>
-              Green
-            </TempButton>
+            <Button
+              onClick={() => handleTap("team")}
+              icon={SVGIcons.team}
+              color={selectedTap === "team" ? "auto" : ""}
+              position={"center"}
+            >
+              {expanded ? "Team" : ""}
+            </Button>
+
+            <Button
+              onClick={() => handleTap("stats")}
+              icon={SVGIcons.stast}
+              color={selectedTap === "stats" ? "auto" : ""}
+              position={"center"}
+            >
+              {expanded ? "Stats" : ""}
+            </Button>
           </nav>
         </div>
 
         {/* Footer */}
-        <div className="w-full ">
+        <div className="w-full flex flex-col gap-1">
           <Button
-            btnName={expanded && "Logout"}
-            hasIcon
-            iconPicked={"setting"}
-            classNameExtra={
-              expanded ? "justify-start w-full" : "justify-center w-full"
-            }
-            btnType={"primary"}
+            onClick={() => handleTap("setting")}
+            icon={SVGIcons.setting}
+            color={selectedTap === "setting" ? "auto" : ""}
+            position={"center"}
+          >
+            {expanded ? "Setting" : ""}
+          </Button>
+          <Button
+            color={"orange"}
             onClick={handleLogout}
-          />
+            icon={SVGIcons.logout}
+            position={"center"}
+          >
+            {expanded ? "Logout" : ""}
+          </Button>
         </div>
       </aside>
     </>

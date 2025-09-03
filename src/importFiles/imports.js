@@ -19,6 +19,16 @@ import arrowUp from "../assets/iconsV2/arrowUp.svg?react"
 import timeLeft from "../assets/iconsV2/stopwatch-20-solid-full.svg?react"
 import openIcon from "../assets/iconsV2/bars-solid-full.svg?react";
 import closeIcon from "../assets/iconsV2/ellipsis-vertical-solid-full.svg?react";
+import home from "../assets/iconsV2/house-solid-full.svg?react";
+import teams from "../assets/iconsV2/people-group-solid-full.svg?react";
+import stats from "../assets/iconsV2/chart-simple-solid-full.svg?react";
+import logout from "../assets/iconsV2/right-from-bracket-solid-full.svg?react";
+import setting from "../assets/iconsV2/gears-solid-full.svg?react";
+
+
+
+
+
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
@@ -56,6 +66,12 @@ const SVGIcons = {
         open:openIcon,
         close: closeIcon,
     },
+    home: home,
+    team: teams,
+    stast: stats,
+    logout: logout,
+    setting: setting,
+
     
 }
 
