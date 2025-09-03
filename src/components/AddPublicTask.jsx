@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { UserContext } from "../context/UserContext";
 import { SVGIcons, myImage } from "../importFiles/imports";
+import Button from "../Utils/Button";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -513,54 +514,34 @@ function AddPublicTask({ accion }) {
               </div>
             )}
 
-            {/* Acciones */}
+            {/* Actions */}
             <div className="flex items-center gap-2">
-              <button
-                id="create-public-task"
-                type="submit"
-                className={
-                  user?.role !== "admin" ? "btn-disable " : "btn-green"
-                }
+              <Button
+                id={"create-public-task"}
+                type={"submit"}
                 disabled={
                   submitting || !taskName.trim() || user?.role !== "admin"
                 }
+                color={user?.role !== "admin" ? "disable " : "green"}
                 title={
                   user?.role !== "admin"
-                    ? "Solo los administradores pueden crear tareas públicas"
-                    : "Cmd/Ctrl + Enter para crear"
+                    ? "Only admin can create public tasks."
+                    : "Cmd/Ctrl + Enter to create"
                 }
               >
                 {submitting ? (
                   <span className="inline-flex items-center gap-2">
-                    <svg
-                      className="h-4 w-4 animate-spin"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      />
-                    </svg>
-                    Creando...
+                    <SVGIcons.status.progress className="h-4 w-4 animate-spin" />
+                    Creating...
                   </span>
                 ) : (
                   "Created task"
                 )}
-              </button>
+              </Button>
 
-              <button type="button" onClick={accion} className="btn-danger">
+              <Button onClick={accion} color={"orange"} position={"center"}>
                 Cancel
-              </button>
+              </Button>
             </div>
           </form>
         </div>

@@ -24,10 +24,8 @@ import teams from "../assets/iconsV2/people-group-solid-full.svg?react";
 import stats from "../assets/iconsV2/chart-simple-solid-full.svg?react";
 import logout from "../assets/iconsV2/right-from-bracket-solid-full.svg?react";
 import setting from "../assets/iconsV2/gears-solid-full.svg?react";
-
-
-
-
+import addPublic from "../assets/iconsV2/addPublic-Icon.svg?react";
+import addPersonal from "../assets/iconsV2/AddPersonal-icon.svg?react";
 
 
 //Images
@@ -38,6 +36,8 @@ import defaultUser from "../assets/default/default-userImg.jpg"
 const SVGIcons = {
     public: PublicIcon,
     personal: PersonalIcon,
+    addPublic: addPublic,
+    addPersonal: addPersonal,
     calendar: CalendarIcon,
     priority:{
         low: LowIcon,

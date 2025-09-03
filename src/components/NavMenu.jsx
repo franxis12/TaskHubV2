@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 //import { doc, onSnapshot } from "firebase/firestore";
 //import { db } from "../firebaseConfig";
 import Button from "../Utils/Button";
-import TempButton from "../Utils/TempButton";
 import LogoExpand from "../assets/LogoExpand.svg?react";
 import Logo from "../assets/LOGO.svg?react";
 import { SVGIcons } from "../importFiles/imports";

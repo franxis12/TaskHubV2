@@ -1,6 +1,16 @@
 import React from "react";
 
-function Button({ children, icon, onClick, disabled, color, position }) {
+function Button({
+  children,
+  icon,
+  onClick,
+  disabled,
+  color,
+  position,
+  id,
+  type,
+  title,
+}) {
   const SVGIcon = icon;
   const colorPick = {
     orange:
@@ -29,9 +39,12 @@ function Button({ children, icon, onClick, disabled, color, position }) {
   return (
     <>
       <button
+        id={id}
+        type={type}
         onClick={onClick}
         disabled={disabled}
-        className={`flex items-center ${justify}  text-xs gap-2 px-2 rounded-xl h-11 hover:font-semibold justify-center ${
+        title={title}
+        className={`flex items-center ${justify}  text-sm gap-2 px-3 rounded-xl h-11 hover:font-semibold justify-center ${
           btnColor !== undefined
             ? btnColor
             : "border-1 border-slate-500/20 hover:bg-black/25"
@@ -45,3 +58,24 @@ function Button({ children, icon, onClick, disabled, color, position }) {
 }
 
 export default Button;
+/*Este boton necesita las siguientes dependencias para funcionar correctamente
+  1. npm i -D vite-plugin-svgr con esto ahora podras usar los iconos como componentes 
+  2. Edita el vite.config.js y importa vite-plugin-svgr.
+       Ejemplo:    import { defineConfig } from "vite";
+                   import react from "@vitejs/plugin-react";
+                   import svgr from "vite-plugin-svgr";   <-- ***** Esta linea ***** )
+
+                   export default defineConfig({
+                   plugins: [
+                     react(),
+                     svgr({    <-- ***** Deste aqui ***** )
+                       svgrOptions: {
+                         // 1) Si un path trae #000, reemplázalo
+                         replaceAttrValues: { "#000": "currentColor", "#000000": "currentColor", black: "currentColor" },
+                         // 2) Además, agrega fill="currentColor" al <svg>
+                         svgProps: { fill: "currentColor" },
+                       },
+                     }),        <-- ***** Hasta aqui ***** )
+                   ],
+                   });
+   3. En tu css agrega las clases .btn y btn-primary y ajustalas a tu preferencia.*/

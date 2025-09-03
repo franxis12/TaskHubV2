@@ -23,7 +23,7 @@ import Container from "../Utils/Container";
 import AssignedToMe from "./AssignedToMe";
 import AllTasks from "./AllTasks";
 import Button from "../Utils/Button";
-import { myImage } from "../importFiles/imports";
+import { myImage, SVGIcons } from "../importFiles/imports";
 import { tailwindClass } from "../importFiles/tailwindStyles";
 
 import highImportantIcon from "../assets/icons/HImportan.png";
@@ -311,21 +311,21 @@ function TaskList({ setShowPublicForm, setShowPersonalForm }) {
           {/*Add task buttons*/}
           <div className="flex gap-1 border-r pr-2">
             <Button
-              btnName={"Public task"}
-              hasIcon
-              iconPicked={"addPublic"}
-              classNameExtra={"justify-start border"}
-              btnType={"secondary"}
+              icon={SVGIcons.addPublic}
+              color="auto"
+              position={"center"}
               onClick={() => setShowPublicForm((s) => !s)}
-            />
+            >
+              Public Task
+            </Button>
             <Button
-              btnName={"Personal task"}
-              hasIcon
-              iconPicked={"addPersonal"}
-              classNameExtra={"justify-start border"}
-              btnType={"secondary"}
+              icon={SVGIcons.addPersonal}
+              color="auto"
+              position={"center"}
               onClick={() => setShowPersonalForm((s) => !s)}
-            />
+            >
+              Personal Task
+            </Button>
           </div>
         </div>
       </div>
