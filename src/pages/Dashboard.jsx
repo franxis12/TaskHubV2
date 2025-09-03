@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import TopBar from "../components/TopBar";
-//import "../styles/dashboard.css";
 import TaskList from "../components/TaskList";
 import NavMenu from "../components/NavMenu";
-import { useContext } from "react";
-import { UserContext } from "../context/UserContext";
 import AddPublicTask from "../components/AddPublicTask";
 import PersonalTaskForm from "../components/PersonalTaskForm";
 
 function Dashboard() {
-  const navigate = useNavigate();
   const isMobileInit = typeof window !== "undefined" && window.innerWidth < 700;
   const [expanded, setExpanded] = useState(!isMobileInit);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
@@ -28,10 +23,10 @@ function Dashboard() {
           setShowPersonalForm={setShowPersonalForm}
         />
       </div>
+
       {showPublicForm && (
         <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
       )}
-      {/* PersonalTask Fo/rm */}
       {showPersonalForm && (
         <PersonalTaskForm
           onClose={() => setShowPersonalForm(false)}

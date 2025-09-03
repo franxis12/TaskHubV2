@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 //import { doc, onSnapshot } from "firebase/firestore";
 //import { db } from "../firebaseConfig";
-//import logoFallback from "../assets/LOGO.svg";
 import Button from "../Utils/Button";
 import LogoExpand from "../assets/LogoExpand.svg?react";
 import Logo from "../assets/LOGO.svg?react";
+import { SVGIcons } from "../importFiles/imports";
 
 function NavMenu({ expanded, setExpanded }) {
   const { user, logout } = useContext(UserContext);
@@ -17,20 +17,23 @@ function NavMenu({ expanded, setExpanded }) {
     logout();
     navigate("/");
   }
+  const [selectedTap, setSelectedTap] = useState("dashboard");
 
-  // Estado mobile inicial sin causar parpadeo
+  const handleTap = (tap) => {
+    setSelectedTap(tap);
+  };
+
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 700
   );
 
-  // Transiciones desactivadas en el primer render (evita "pestañeo")
+  // transition false to prevent flashing Screen
   const [transitionsOn, setTransitionsOn] = useState(false);
   useEffect(() => {
     const id = setTimeout(() => setTransitionsOn(true), 0);
     return () => clearTimeout(id);
   }, []);
 
-  // Resize: solo actuamos cuando CRUZAMOS el umbral (sin tocar el primer render)
   const prevIsMobile = useRef(isMobile);
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -43,7 +46,6 @@ function NavMenu({ expanded, setExpanded }) {
       if (next !== prevIsMobile.current) {
         prevIsMobile.current = next;
         setIsMobile(next);
-        // En mobile cerramos; en desktop abrimos (solo cuando cruzamos el umbral)
         setExpanded(next ? false : true);
       }
     };
@@ -53,7 +55,7 @@ function NavMenu({ expanded, setExpanded }) {
       clearTimeout(t);
       t = setTimeout(() => {
         raf = requestAnimationFrame(handle);
-      }, 120); // debounce suave
+      }, 120);
     };
 
     window.addEventListener("resize", onResize);
@@ -64,13 +66,12 @@ function NavMenu({ expanded, setExpanded }) {
     };
   }, [setExpanded]);
 
-  // Clases de tamaño
-  const MOBILE_WIDTH = "w-56 p-2"; // más angosto en mobile (11rem)
-  const DESKTOP_EXPANDED = "w-40 p-3"; // respeta tu ancho desktop
+  const MOBILE_WIDTH = "w-56 p-2";
+  const DESKTOP_EXPANDED = "w-40 p-3";
   const DESKTOP_COLLAPSED = "w-16 p-2";
 
   const baseAside = `
-    h-screen ml-1 rounded-2xl shrink-0 bg-white
+    h-screen ml-1 rounded-2xl shrink-0 bg-[var(--bg-color-component)]
     flex flex-col justify-between overflow-y-auto overflow-x-hidden
     ${
       transitionsOn
@@ -93,7 +94,7 @@ function NavMenu({ expanded, setExpanded }) {
 
   return (
     <>
-      {/* Backdrop en mobile cuando está abierto */}
+      {/* Backdrop mobile when menu open */}
       {isMobile && expanded && (
         <div
           className="fixed inset-0 z-30 bg-black/30"
@@ -134,14 +135,11 @@ function NavMenu({ expanded, setExpanded }) {
               </button>
             )}
 
-            <div className="flex flex-col h-11 items-start gap-3 mb-2  ">
-              {expanded ? (
-                <LogoExpand className="object-contain h-12 w-32" />
-              ) : (
-                <Logo className="object-contain h-10 w-8" />
-              )}
+            <div className="flex flex-col h-11 w-full items-start gap-3 mb-2  ">
+              <Logo className="object-contain h-10 w-8" />
+
               {!expanded && (
-                <span className="sr-only">
+                <span className="sr-only ">
                   {user?.companyId || "No companyId assigned"}
                 </span>
               )}
@@ -149,45 +147,54 @@ function NavMenu({ expanded, setExpanded }) {
           </div>
 
           {/* Menú */}
-          <nav className="w-full  flex flex-col ">
+          <nav className="w-full  flex flex-col  gap-1">
             <Button
-              btnName={expanded && "Dashboard"}
-              hasIcon
-              iconPicked={"dashboard"}
-              classNameExtra={
-                expanded ? "justify-start selected" : "justify-center selected"
-              } //Selected class for selected pages
-              btnType={"primary"}
-            />
+              onClick={() => handleTap("dashboard")}
+              icon={SVGIcons.home}
+              color={selectedTap === "dashboard" ? "auto" : ""}
+              position={"center"}
+            >
+              {expanded ? "Dashboard" : ""}
+            </Button>
+
             <Button
-              btnName={expanded && "Team"}
-              hasIcon
-              iconPicked={"user"}
-              classNameExtra={expanded ? "justify-start" : "justify-center"}
-              btnType={"primary"}
-            />
+              onClick={() => handleTap("team")}
+              icon={SVGIcons.team}
+              color={selectedTap === "team" ? "auto" : ""}
+              position={"center"}
+            >
+              {expanded ? "Team" : ""}
+            </Button>
+
             <Button
-              btnName={expanded && "Stats"}
-              hasIcon
-              iconPicked={"info"}
-              classNameExtra={expanded ? "justify-start" : "justify-center"}
-              btnType={"primary"}
-            />
+              onClick={() => handleTap("stats")}
+              icon={SVGIcons.stast}
+              color={selectedTap === "stats" ? "auto" : ""}
+              position={"center"}
+            >
+              {expanded ? "Stats" : ""}
+            </Button>
           </nav>
         </div>
 
         {/* Footer */}
-        <div className="w-full ">
+        <div className="w-full flex flex-col gap-1">
           <Button
-            btnName={expanded && "Logout"}
-            hasIcon
-            iconPicked={"setting"}
-            classNameExtra={
-              expanded ? "justify-start w-full" : "justify-center w-full"
-            }
-            btnType={"primary"}
+            onClick={() => handleTap("setting")}
+            icon={SVGIcons.setting}
+            color={selectedTap === "setting" ? "auto" : ""}
+            position={"center"}
+          >
+            {expanded ? "Setting" : ""}
+          </Button>
+          <Button
+            color={"orange"}
             onClick={handleLogout}
-          />
+            icon={SVGIcons.logout}
+            position={"center"}
+          >
+            {expanded ? "Logout" : ""}
+          </Button>
         </div>
       </aside>
     </>

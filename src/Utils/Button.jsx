@@ -1,57 +1,75 @@
 import React from "react";
-import settingIcon from "../assets/iconsV2/gear-solid-full.svg?react";
-import infoIcon from "../assets/iconsV2/circle-info-solid-full.svg?react";
-import homeIcon from "../assets/iconsV2/house-solid-full.svg?react";
-import userIcon from "../assets/iconsV2/user-solid-full.svg?react";
-import addPersonal from "../assets/iconsV2/AddPersonal-icon.svg?react"; //**//
-import addPublic from "../assets/iconsV2/addPublic-Icon.svg?react"; //**//
-
-import "../styles/button.css";
 
 function Button({
+  children,
+  icon,
   onClick,
-  btnName,
-  classNameExtra,
-  iconPicked,
-  hasIcon,
-  btnType,
   disabled,
+  color,
+  position,
+  id,
+  type,
+  title,
+  iconSize,
 }) {
-  const iconPick = {
-    setting: settingIcon,
-    info: infoIcon,
-    dashboard: homeIcon,
-    user: userIcon,
-    addPersonal: addPersonal,
-    addPublic: addPublic,
-  };
-  const buttonType = {
-    primary: "btn-prima border",
-    secondary: "btn-second text-4xl",
-    danger: "btn-danger",
+  const SVGIcon = icon;
+  const colorPick = {
     orange:
-      "btn-orange bg-orange text-white min-w-20 items-center justify-center",
-    green: "btn-gree bg-teal  text-white min-w-20 items-center justify-center",
+      "bg-[var(--orange)] text-white hover:text-[var(--orange)] border-2 border-[var(--orange)] hover:bg-[var(--orange-trasparent)]/50 ",
     yellow:
-      "btn-yellow bg-yellow text-white min-w-20 items-center justify-center",
-    edit: "btn-edit bg-white text-white min-w-20 items-center justify-center",
-    icon: "icon", //Pending
-    link: "link", //Pending
+      "bg-[var(--yellow)] text-white hover:text-[var(--yellow)] border-2 border-[var(--yellow)] hover:bg-[var(--yellow-trasparent)]/50 ",
+    green:
+      "bg-[var(--greenMain)] text-white hover:text-[var(--greenMain)] border-2 border-[var(--greenMain)] hover:bg-[var(--green-trasparent)]/50 ",
+    white:
+      "bg-white text-black border-1 border-black hover:bg-black hover:text-white hover:border-white ",
+    black:
+      "bg-black text-white border-1 border-white hover:bg-white hover:text-black hover:border-black",
+    autoInverse:
+      "bg-[var(--textColorInverse)] text-[var(--textColor)] border-1 border-[var(--textColor)] hover:bg-[var(--textColor)] hover:text-[var(--textColorInverse)] hover:border-[var(--textColorInverse)]",
+    auto: "bg-[var(--textColor)] text-[var(--textColorInverse)] border-1 border-[var(--textColorInverse)] hover:bg-[var(--textColorInverse)] hover:text-[var(--textColor)] hover:border-[var(--textColor)]",
+    disable: "cursor-not-allowed",
+  };
+  const positionSelected = {
+    center: "justify-center",
+    right: "justify-end",
+    left: "justify-start",
   };
 
-  const btnSelected = buttonType[btnType];
-  const IconComponent = iconPick[iconPicked];
+  const iconSizePick = {
+    5: "w-5 h-5",
+    6: "w-6 h-6",
+    7: "w-7 h-7",
+    8: "w-8 h-8",
+    9: "w-9 h-9",
+    10: "w-10 h-10",
+  };
+
+  const btnColor = colorPick[color];
+  const justify = positionSelected[position];
+  const iconSizeSelected = iconSizePick[iconSize];
 
   return (
     <>
       <button
+        id={id}
+        type={type}
         onClick={onClick}
         disabled={disabled}
-        className={`${btnSelected} ${classNameExtra} text-3xl `}
+        title={title}
+        className={`flex items-center ${justify}  text-sm gap-2 px-3 rounded-xl h-11 hover:font-semibold justify-center ${
+          btnColor !== undefined
+            ? btnColor
+            : "border-1 border-slate-500/20 hover:bg-black/25"
+        }`}
       >
-        {hasIcon && <IconComponent className={`iconColor w-10 h-5 m-1  `} />}{" "}
-        {/*Pending create .iconColor class for dinamyc color changed*/}
-        {btnName}
+        {icon && (
+          <SVGIcon
+            className={
+              iconSizeSelected !== undefined ? iconSizeSelected : "w-5 h-5"
+            }
+          />
+        )}
+        {children}
       </button>
     </>
   );
@@ -78,12 +96,4 @@ export default Button;
                      }),        <-- ***** Hasta aqui ***** )
                    ],
                    });
-   3. En tu css agrega las clases .btn y btn-primary y ajustalas a tu preferencia.
-  
-                   
-                    
-
-
-
-
-*/
+   3. En tu css agrega las clases .btn y btn-primary y ajustalas a tu preferencia.*/
