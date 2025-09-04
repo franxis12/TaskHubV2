@@ -7,13 +7,21 @@ import PersonalTaskForm from "../components/PersonalTaskForm";
 
 function Dashboard() {
   const isMobileInit = typeof window !== "undefined" && window.innerWidth < 700;
-  const [expanded, setExpanded] = useState(!isMobileInit);
+  const [expanded, setExpanded] = useState(isMobileInit);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
   const [showPublicForm, setShowPublicForm] = useState(false);
+  const [tap, setTap] = useState("dashboard");
+  const [chatVisivility, setChatVisivility] = useState(!isMobileInit);
+  console.log(tap);
 
   return (
     <div className="bg-pages w-screen h-screen flex">
-      <NavMenu expanded={expanded} setExpanded={setExpanded} />
+      <NavMenu
+        expanded={expanded}
+        setExpanded={setExpanded}
+        tap={tap}
+        setTap={setTap}
+      />
       <div className="w-screen mainSection">
         <TopBar expanded={expanded} setExpanded={setExpanded} />
         <TaskList
@@ -21,6 +29,10 @@ function Dashboard() {
           setShowPublicForm={setShowPublicForm}
           showPersonalForm={showPersonalForm}
           setShowPersonalForm={setShowPersonalForm}
+          tap={tap}
+          setTap={setTap}
+          chatVisivility={chatVisivility}
+          setChatVisivility={setChatVisivility}
         />
       </div>
 

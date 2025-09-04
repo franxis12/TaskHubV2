@@ -1,5 +1,5 @@
 // src/components/TaskList.jsx
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, { useState, useEffect, useContext, useMemo, use } from "react";
 import { UserContext } from "../context/UserContext";
 import {
   doc,
@@ -45,7 +45,7 @@ const calendarIcon = pendingIcon;
 const titleIcon = note;
 const statusIconImg = progressIcon;
 
-function TaskList({ setShowPublicForm, setShowPersonalForm }) {
+function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
   const { user } = useContext(UserContext);
 
   // Data
@@ -59,6 +59,21 @@ function TaskList({ setShowPublicForm, setShowPersonalForm }) {
   const [deleteTaskId, setDeleteTaskId] = useState(null);
   const [actionTaskId, setActionTaskId] = useState("");
   const [expandedTaskIds, setExpandedTaskIds] = useState(new Set());
+  const mobile = window.innerWidth < 700;
+  const [chatVisivility, setChatVisivility] = useState(!mobile);
+
+  const handleChatVisivility = () => {
+    if ((mobile && tap === "dashboard") || (!mobile && tap === "dashboard")) {
+      setChatVisivility(false);
+    } else if (mobile && tap === "team") {
+      setChatVisivility(false);
+    } else if (!mobile && tap === "team") {
+      setChatVisivility(true);
+    }
+  };
+  useEffect(() => {
+    setChatVisivility(mobile);
+  }, [mobile]);
 
   const [userMap, setUserMap] = useState({});
   const [filters, setFilters] = useState({
@@ -331,36 +346,96 @@ function TaskList({ setShowPublicForm, setShowPersonalForm }) {
       </div>
 
       <div className="grid grid-cols-12   gap-2 grid-flow-row-dense  col-span-2">
-        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-x-hidden">
-          <AssignedToMe
-            assignedItems={assignedItems}
-            getTimeLeft={getTimeLeft}
-            setActionTaskId={setActionTaskId}
-            setCurrentTask={setCurrentTask}
-            setExpandedTaskIds={setExpandedTaskIds}
-          />
-        </Container>
+        {(tap === "assigned" || tap === "dashboard") && (
+          <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-x-hidden">
+            <AssignedToMe
+              assignedItems={assignedItems}
+              getTimeLeft={getTimeLeft}
+              setActionTaskId={setActionTaskId}
+              setCurrentTask={setCurrentTask}
+              setExpandedTaskIds={setExpandedTaskIds}
+            />
+          </Container>
+        )}
 
-        <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12">
-          <TaskEstadistic />
-        </Container>
+        {(tap === "stats" || tap === "dashboard") && (
+          <Container
+            className={`max-h-100   grid-cols-12  ${
+              tap === "stats"
+                ? " lg:col-sapn-12 "
+                : " col-span-12 md:col-span-6 lg:col-span-4 "
+            } col-span-6`}
+          >
+            <TaskEstadistic />
+          </Container>
+        )}
 
-        <Container className="row-span-2 lg:col-span-4 col-span-12 flex ">
-          <TeamMembers
-            tasks={tasks} // opcional, para mostrar conteos
-            onMemberClick={(uid) => {
-              // opcional: filtra por asignado usando tus filtros existentes
-              setFilters((f) => ({ ...f, assignedTo: uid }));
-            }}
-          />
-        </Container>
+        {(tap === "team" || tap === "dashboard") && (
+          <Container
+            className={`row-span-2 ${
+              tap === "team" ? "lg:col-span-12 h-[83vh]" : "lg:col-span-4"
+            } col-span-12 flex`}
+          >
+            <div
+              className={`flex w-full justify-between ${
+                tap === "team" ? "" : ""
+              }`}
+            >
+              <div className={tap === "team" ? "w-4/5  " : "w-full "}>
+                <Button
+                  icon={SVGIcons.x}
+                  color={"orange"}
+                  onClick={() => setChatVisivility(!chatVisivility)}
+                />
+                <TeamMembers
+                  tasks={tasks} // opcional, para mostrar conteos
+                  onMemberClick={(uid) => {
+                    // opcional: filtra por asignado usando tus filtros existentes
+                    setFilters((f) => ({ ...f, assignedTo: uid }));
+                  }}
+                />
+              </div>
+              {tap === "team" && chatVisivility && (
+                <div className="bg-gray-300 rounded-3xl p-3 w-full h-full flex flex-col-reverse items-end  ">
+                  <div className="bg-white h-35 rounded-3xl w-fill shadow-2xl flex items-end">
+                    <textarea className="w-fit max-h-full min-h-full p-5 focus:outline-0 "></textarea>
+                    <Button color={"green"} icon={SVGIcons.home}>
+                      Send
+                    </Button>
+                  </div>
+                  <div className="h-20 w-full flex flex-col justify-end items-end  p-5">
+                    <div className="bg-green-300/50 w-50 h-min p-3 rounded-2xl flex flex-col justify-end  m-2">
+                      <label className="text-xs">Username</label>
+                      YourMessage
+                    </div>
+                  </div>
+                  <div className="h-20 w-full flex flex-col justify-start items-start  p-5">
+                    <div className="bg-blue-300/50 w-50 h-min p-3 rounded-2xl flex flex-col justify-start m-2">
+                      <label className="text-xs">Username</label>
+                      TeamMessage
+                    </div>
+                  </div>
 
-        <Container className="col-span-12 md:col-span-12 lg:col-span-8 transition-height duration-500 ease-in-out ">
-          {/*<<<<---- Container for all task */}
-          <div className="flex items-center justify-between col-span-3 p-2 shadowBottom divTitle  ">
-            <h3 className="font-semibold ml-3 ">All Tasks</h3>
+                  <div className="absolute top-36 ">
+                    <Button
+                      icon={SVGIcons.x}
+                      color={"orange"}
+                      onClick={() => setChatVisivility(!chatVisivility)}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </Container>
+        )}
 
-            {/* Acciones de la tarea seleccionada 
+        {(tap === "alltask" || tap === "dashboard") && (
+          <Container className="col-span-12 md:col-span-12 lg:col-span-8 transition-height duration-500 ease-in-out ">
+            {/*<<<<---- Container for all task */}
+            <div className="flex items-center justify-between col-span-3 p-2 shadowBottom divTitle  ">
+              <h3 className="font-semibold ml-3 ">All Tasks</h3>
+
+              {/* Acciones de la tarea seleccionada 
             {actionTaskId === currentTask.id && (
               <div className=" " onClick={(e) => e.stopPropagation()}>
                 <div className="mb-2 flex items-center justify-between">
@@ -379,9 +454,9 @@ function TaskList({ setShowPublicForm, setShowPersonalForm }) {
                 </div>
               </div>
             )}*/}
-          </div>
+            </div>
 
-          {/*Task Filters 
+            {/*Task Filters 
           <div
             className="mb-4 w-full col-span-3"
             onClick={() => setEditTask("")}
@@ -394,34 +469,47 @@ function TaskList({ setShowPublicForm, setShowPersonalForm }) {
             />
           </div>*/}
 
-          {/* All Tasks extracted component */}
-          <AllTasks
-            user={user}
-            filteredTasks={filteredTasks}
-            userMap={userMap}
-            tailwindClass={tailwindClass}
-            actionTaskId={actionTaskId}
-            currentTask={currentTask}
-            editTask={editTask}
-            deleteTaskId={deleteTaskId}
-            expandedTaskIds={expandedTaskIds}
-            setActionTaskId={setActionTaskId}
-            setCurrentTask={setCurrentTask}
-            setEditTask={setEditTask}
-            setDeleteTaskId={setDeleteTaskId}
-            toggleExpand={toggleExpand}
-            canChangeStatus={canChangeStatus}
-            updateTaskStatus={updateTaskStatus}
-            getTimeLeft={getTimeLeft}
-            priorityIcons={priorityIcons}
-            statusIcon={statusIcon}
-            statusIconImg={statusIconImg}
-            calendarIcon={calendarIcon}
-            titleIcon={titleIcon}
-          />
+            {/* All Tasks extracted component */}
+            <AllTasks
+              user={user}
+              filteredTasks={filteredTasks}
+              userMap={userMap}
+              tailwindClass={tailwindClass}
+              actionTaskId={actionTaskId}
+              currentTask={currentTask}
+              editTask={editTask}
+              deleteTaskId={deleteTaskId}
+              expandedTaskIds={expandedTaskIds}
+              setActionTaskId={setActionTaskId}
+              setCurrentTask={setCurrentTask}
+              setEditTask={setEditTask}
+              setDeleteTaskId={setDeleteTaskId}
+              toggleExpand={toggleExpand}
+              canChangeStatus={canChangeStatus}
+              updateTaskStatus={updateTaskStatus}
+              getTimeLeft={getTimeLeft}
+              priorityIcons={priorityIcons}
+              statusIcon={statusIcon}
+              statusIconImg={statusIconImg}
+              calendarIcon={calendarIcon}
+              titleIcon={titleIcon}
+            />
 
-          <div className="flex items-start justify-between col-span-3 p-2 shadowTopInset divTitle"></div>
-        </Container>
+            <div className="flex items-start justify-between col-span-3 p-2 shadowTopInset divTitle"></div>
+          </Container>
+        )}
+
+        {tap === "settings" && (
+          <Container
+            className={`row-span-2 ${
+              tap === "settings"
+                ? "lg:col-span-12 min-h-screen"
+                : "lg:col-span-4"
+            } col-span-12 flex items-center justify-center `}
+          >
+            <h1 className="font-extrabold text-5xl">Setting</h1>
+          </Container>
+        )}
       </div>
     </div>
   );

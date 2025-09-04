@@ -10,17 +10,16 @@ import LogoExpand from "../assets/LogoExpand.svg?react";
 import Logo from "../assets/LOGO.svg?react";
 import { SVGIcons } from "../importFiles/imports";
 
-function NavMenu({ expanded, setExpanded }) {
+function NavMenu({ expanded, setExpanded, tap, setTap }) {
   const { user, logout } = useContext(UserContext);
   const navigate = useNavigate();
   function handleLogout() {
     logout();
     navigate("/");
   }
-  const [selectedTap, setSelectedTap] = useState("dashboard");
 
-  const handleTap = (tap) => {
-    setSelectedTap(tap);
+  const handleTap = (tapSelect) => {
+    setTap(tapSelect);
   };
 
   const [isMobile, setIsMobile] = useState(
@@ -122,19 +121,7 @@ function NavMenu({ expanded, setExpanded }) {
       >
         {/* Encabezado: logo + cerrar en mobile */}
         <div className="flex flex-col gap-4">
-          <div className="relative border-b-1">
-            {isMobile && expanded && (
-              <button
-                type="button"
-                onClick={() => setExpanded(false)}
-                className="absolute -right-3 top-3 btn btn-xs btn-ghost border border-base-300 rounded-full z-50"
-                aria-label="Cerrar menú"
-                title="Cerrar"
-              >
-                ×
-              </button>
-            )}
-
+          <div className="relative border-b-1 flex">
             <div className="flex flex-col h-11 w-full items-start gap-3 mb-2  ">
               <Logo className="object-contain h-10 w-8" />
 
@@ -144,6 +131,17 @@ function NavMenu({ expanded, setExpanded }) {
                 </span>
               )}
             </div>
+            {isMobile && expanded && (
+              <Button
+                iconSize={4}
+                type="button"
+                onClick={() => setExpanded(false)}
+                className="absolute -right-3 top-3 btn btn-xs btn-ghost border border-base-300 rounded-full z-50"
+                ariaLabel="Close menu"
+                icon={SVGIcons.x}
+                title="Cerrar"
+              />
+            )}
           </div>
 
           {/* Menú */}
@@ -151,8 +149,8 @@ function NavMenu({ expanded, setExpanded }) {
             <Button
               onClick={() => handleTap("dashboard")}
               icon={SVGIcons.home}
-              color={selectedTap === "dashboard" ? "auto" : ""}
-              position={"center"}
+              color={tap === "dashboard" ? "auto" : ""}
+              position={expanded ? "left" : "center"}
             >
               {expanded ? "Dashboard" : ""}
             </Button>
@@ -160,8 +158,8 @@ function NavMenu({ expanded, setExpanded }) {
             <Button
               onClick={() => handleTap("team")}
               icon={SVGIcons.team}
-              color={selectedTap === "team" ? "auto" : ""}
-              position={"center"}
+              color={tap === "team" ? "auto" : ""}
+              position={expanded ? "left" : "center"}
             >
               {expanded ? "Team" : ""}
             </Button>
@@ -169,10 +167,27 @@ function NavMenu({ expanded, setExpanded }) {
             <Button
               onClick={() => handleTap("stats")}
               icon={SVGIcons.stast}
-              color={selectedTap === "stats" ? "auto" : ""}
-              position={"center"}
+              color={tap === "stats" ? "auto" : ""}
+              position={expanded ? "left" : "center"}
             >
               {expanded ? "Stats" : ""}
+            </Button>
+
+            <Button
+              onClick={() => handleTap("assigned")}
+              icon={SVGIcons.personal}
+              color={tap === "assigned" ? "auto" : ""}
+              position={expanded ? "left" : "center"}
+            >
+              {expanded ? "Assigned" : ""}
+            </Button>
+            <Button
+              onClick={() => handleTap("alltask")}
+              icon={SVGIcons.tasklist}
+              color={tap === "alltask" ? "auto" : ""}
+              position={expanded ? "left" : "center"}
+            >
+              {expanded ? "All Tasks" : ""}
             </Button>
           </nav>
         </div>
@@ -180,9 +195,9 @@ function NavMenu({ expanded, setExpanded }) {
         {/* Footer */}
         <div className="w-full flex flex-col gap-1">
           <Button
-            onClick={() => handleTap("setting")}
+            onClick={() => handleTap("settings")}
             icon={SVGIcons.setting}
-            color={selectedTap === "setting" ? "auto" : ""}
+            color={tap === "settings" ? "auto" : ""}
             position={"center"}
           >
             {expanded ? "Setting" : ""}
