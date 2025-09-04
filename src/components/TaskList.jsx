@@ -72,7 +72,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
     }
   };
   useEffect(() => {
-    setChatVisivility(mobile);
+    setChatVisivility(!mobile);
   }, [mobile]);
 
   const [userMap, setUserMap] = useState({});
@@ -378,10 +378,18 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
           >
             <div
               className={`flex w-full justify-between ${
-                tap === "team" ? "" : ""
+                tap === "team" ? "w-10" : ""
               }`}
             >
-              <div className={tap === "team" ? "w-4/5  " : "w-full "}>
+              <div
+                className={
+                  mobile && !chatVisivility
+                    ? "w-full bg-amber-500 "
+                    : mobile && chatVisivility
+                    ? "hidden"
+                    : "w-3/5"
+                }
+              >
                 <Button
                   icon={SVGIcons.x}
                   color={"orange"}
@@ -395,8 +403,13 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
                   }}
                 />
               </div>
-              {tap === "team" && chatVisivility && (
-                <div className="bg-gray-300 rounded-3xl p-3 w-full h-full flex flex-col-reverse items-end  ">
+
+              {chatVisivility && (
+                <div
+                  className={`bg-gray-300 rounded-3xl p-3 w-full h-full ${
+                    mobile && !chatVisivility ? "hidden" : "flex"
+                  } flex-col-reverse items-end  `}
+                >
                   <div className="bg-white h-35 rounded-3xl w-fill shadow-2xl flex items-end">
                     <textarea className="w-fit max-h-full min-h-full p-5 focus:outline-0 "></textarea>
                     <Button color={"green"} icon={SVGIcons.home}>

@@ -71,7 +71,7 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
 
   const baseAside = `
     h-screen ml-1 rounded-2xl shrink-0 bg-[var(--bg-color-component)]
-    flex flex-col justify-between overflow-y-auto overflow-x-hidden
+    flex flex-col justify-between  overflow-y-auto overflow-x-hidden
     ${
       transitionsOn
         ? "transition-all duration-300 ease-in-out"
@@ -102,21 +102,8 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
         />
       )}
 
-      {/* FAB en mobile cuando está cerrado */}
-      {isMobile && !expanded && (
-        <button
-          type="button"
-          onClick={() => setExpanded(true)}
-          className="fixed left-3 bottom-3 z-50 btn btn-primary btn-circle shadow-lg"
-          aria-label="Abrir menú"
-          title="Abrir menú"
-        >
-          ☰
-        </button>
-      )}
-
       <aside
-        className={`${baseAside} ${positionClass} ${widthClass} `}
+        className={`${baseAside} ${positionClass} ${widthClass}  `}
         aria-expanded={expanded}
       >
         {/* Encabezado: logo + cerrar en mobile */}
