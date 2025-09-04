@@ -1,5 +1,5 @@
 // src/components/TaskList.jsx
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, { useState, useEffect, useContext, useMemo, use } from "react";
 import { UserContext } from "../context/UserContext";
 import {
   doc,
@@ -59,6 +59,21 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
   const [deleteTaskId, setDeleteTaskId] = useState(null);
   const [actionTaskId, setActionTaskId] = useState("");
   const [expandedTaskIds, setExpandedTaskIds] = useState(new Set());
+  const mobile = window.innerWidth < 700;
+  const [chatVisivility, setChatVisivility] = useState(!mobile);
+
+  const handleChatVisivility = () => {
+    if ((mobile && tap === "dashboard") || (!mobile && tap === "dashboard")) {
+      setChatVisivility(false);
+    } else if (mobile && tap === "team") {
+      setChatVisivility(false);
+    } else if (!mobile && tap === "team") {
+      setChatVisivility(true);
+    }
+  };
+  useEffect(() => {
+    setChatVisivility(mobile);
+  }, [mobile]);
 
   const [userMap, setUserMap] = useState({});
   const [filters, setFilters] = useState({
@@ -361,8 +376,17 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
               tap === "team" ? "lg:col-span-12 h-[83vh]" : "lg:col-span-4"
             } col-span-12 flex`}
           >
-            <div className="flex">
-              <div className={tap === "team" ? "w-200 " : "w-full"}>
+            <div
+              className={`flex w-full justify-between ${
+                tap === "team" ? "" : ""
+              }`}
+            >
+              <div className={tap === "team" ? "w-4/5  " : "w-full "}>
+                <Button
+                  icon={SVGIcons.x}
+                  color={"orange"}
+                  onClick={() => setChatVisivility(!chatVisivility)}
+                />
                 <TeamMembers
                   tasks={tasks} // opcional, para mostrar conteos
                   onMemberClick={(uid) => {
@@ -371,12 +395,10 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
                   }}
                 />
               </div>
-              {tap === "team" && (
+              {tap === "team" && chatVisivility && (
                 <div className="bg-gray-300 rounded-3xl p-3 w-full h-full flex flex-col-reverse items-end  ">
-                  <div className="bg-white h-35 rounded-3xl w-full shadow-2xl flex items-end">
-                    <textarea className="w-full max-h-full min-h-full p-5 focus:outline-0 ">
-                      kjkjnk
-                    </textarea>
+                  <div className="bg-white h-35 rounded-3xl w-fill shadow-2xl flex items-end">
+                    <textarea className="w-fit max-h-full min-h-full p-5 focus:outline-0 "></textarea>
                     <Button color={"green"} icon={SVGIcons.home}>
                       Send
                     </Button>
@@ -392,6 +414,14 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
                       <label className="text-xs">Username</label>
                       TeamMessage
                     </div>
+                  </div>
+
+                  <div className="absolute top-36 ">
+                    <Button
+                      icon={SVGIcons.x}
+                      color={"orange"}
+                      onClick={() => setChatVisivility(!chatVisivility)}
+                    />
                   </div>
                 </div>
               )}

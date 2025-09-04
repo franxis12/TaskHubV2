@@ -7,10 +7,11 @@ import PersonalTaskForm from "../components/PersonalTaskForm";
 
 function Dashboard() {
   const isMobileInit = typeof window !== "undefined" && window.innerWidth < 700;
-  const [expanded, setExpanded] = useState(!isMobileInit);
+  const [expanded, setExpanded] = useState(isMobileInit);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
   const [showPublicForm, setShowPublicForm] = useState(false);
-  const [tap, setTap] = useState("stats");
+  const [tap, setTap] = useState("dashboard");
+  const [chatVisivility, setChatVisivility] = useState(!isMobileInit);
   console.log(tap);
 
   return (
@@ -30,6 +31,8 @@ function Dashboard() {
           setShowPersonalForm={setShowPersonalForm}
           tap={tap}
           setTap={setTap}
+          chatVisivility={chatVisivility}
+          setChatVisivility={setChatVisivility}
         />
       </div>
 
