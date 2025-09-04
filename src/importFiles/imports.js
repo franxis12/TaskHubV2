@@ -26,13 +26,11 @@ import logout from "../assets/iconsV2/right-from-bracket-solid-full.svg?react";
 import setting from "../assets/iconsV2/gears-solid-full.svg?react";
 import addPublic from "../assets/iconsV2/addPublic-Icon.svg?react";
 import addPersonal from "../assets/iconsV2/AddPersonal-icon.svg?react";
-
+import tasklistIcon from "../assets/iconsV2/list-check-solid-full.svg?react";
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
 import logo from "../assets/LOGO.svg?react";
-
-
 
 const SVGIcons = {
     public: PublicIcon,
@@ -73,6 +71,7 @@ const SVGIcons = {
     stast: stats,
     logout: logout,
     setting: setting,
+    tasklist: tasklistIcon,
 
     
 }

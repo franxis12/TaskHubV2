@@ -10,10 +10,17 @@ function Dashboard() {
   const [expanded, setExpanded] = useState(!isMobileInit);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
   const [showPublicForm, setShowPublicForm] = useState(false);
+  const [tap, setTap] = useState("stats");
+  console.log(tap);
 
   return (
     <div className="bg-pages w-screen h-screen flex">
-      <NavMenu expanded={expanded} setExpanded={setExpanded} />
+      <NavMenu
+        expanded={expanded}
+        setExpanded={setExpanded}
+        tap={tap}
+        setTap={setTap}
+      />
       <div className="w-screen mainSection">
         <TopBar expanded={expanded} setExpanded={setExpanded} />
         <TaskList
@@ -21,6 +28,8 @@ function Dashboard() {
           setShowPublicForm={setShowPublicForm}
           showPersonalForm={showPersonalForm}
           setShowPersonalForm={setShowPersonalForm}
+          tap={tap}
+          setTap={setTap}
         />
       </div>
 
