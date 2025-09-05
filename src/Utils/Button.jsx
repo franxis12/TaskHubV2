@@ -29,6 +29,8 @@ function Button({
       "bg-[var(--textColorInverse)] text-[var(--textColor)] border-1 border-[var(--textColor)] hover:bg-[var(--textColor)] hover:text-[var(--textColorInverse)] hover:border-[var(--textColorInverse)]",
     auto: "bg-[var(--textColor)] text-[var(--textColorInverse)] border-1 border-[var(--textColorInverse)] hover:bg-[var(--textColorInverse)] hover:text-[var(--textColor)] hover:border-[var(--textColor)]",
     disable: "cursor-not-allowed",
+    iconGreen:
+      "hover:text-[var(--greenMain)] hover:border-1 hover:border-slate-500/20",
   };
   const positionSelected = {
     center: "justify-center",
