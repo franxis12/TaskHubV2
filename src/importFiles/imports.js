@@ -27,6 +27,8 @@ import setting from "../assets/iconsV2/gears-solid-full.svg?react";
 import addPublic from "../assets/iconsV2/addPublic-Icon.svg?react";
 import addPersonal from "../assets/iconsV2/AddPersonal-icon.svg?react";
 import tasklistIcon from "../assets/iconsV2/list-check-solid-full.svg?react";
+import commentIcon from "../assets/iconsV2/comment-solid-full.svg?react";
+
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
@@ -72,6 +74,7 @@ const SVGIcons = {
     logout: logout,
     setting: setting,
     tasklist: tasklistIcon,
+    chat: commentIcon,
 
     
 }

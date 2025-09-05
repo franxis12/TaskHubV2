@@ -18,14 +18,16 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
     navigate("/");
   }
 
-  const handleTap = (tapSelect) => {
-    setTap(tapSelect);
-  };
-
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 700
   );
 
+  const handleTap = (tapSelect) => {
+    setTap(tapSelect);
+    if (isMobile) {
+      setExpanded(false);
+    }
+  };
   // transition false to prevent flashing Screen
   const [transitionsOn, setTransitionsOn] = useState(false);
   useEffect(() => {

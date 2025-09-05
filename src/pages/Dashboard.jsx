@@ -7,7 +7,7 @@ import PersonalTaskForm from "../components/PersonalTaskForm";
 
 function Dashboard() {
   const isMobileInit = typeof window !== "undefined" && window.innerWidth < 700;
-  const [expanded, setExpanded] = useState(isMobileInit);
+  const [expanded, setExpanded] = useState(!isMobileInit);
   const [showPersonalForm, setShowPersonalForm] = useState(false);
   const [showPublicForm, setShowPublicForm] = useState(false);
   const [tap, setTap] = useState("dashboard");

@@ -62,17 +62,12 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
   const mobile = window.innerWidth < 700;
   const [chatVisivility, setChatVisivility] = useState(!mobile);
 
-  const handleChatVisivility = () => {
-    if ((mobile && tap === "dashboard") || (!mobile && tap === "dashboard")) {
-      setChatVisivility(false);
-    } else if (mobile && tap === "team") {
-      setChatVisivility(false);
-    } else if (!mobile && tap === "team") {
-      setChatVisivility(true);
-    }
-  };
   useEffect(() => {
-    setChatVisivility(!mobile);
+    if (!mobile) {
+      setChatVisivility(true);
+    } else if (mobile) {
+      setChatVisivility(false);
+    }
   }, [mobile]);
 
   const [userMap, setUserMap] = useState({});
@@ -318,7 +313,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
   };
 
   return (
-    <div className="p-2  w-full bg-component rounded-2xl h-auto shadow-inner drop-shadow-md ">
+    <div className="p-2  w-full bg-component rounded-2xl rounded-b-3xl h-auto shadow-inner drop-shadow-md ">
       {/* Toolbar */}
       <div className="rounded-2xl bg-[var(--pagesBackground)] p-1 mb-2 shadow-md">
         {/* Primary actions and Filters */}
@@ -376,65 +371,54 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
               tap === "team" ? "lg:col-span-12 h-[83vh]" : "lg:col-span-4"
             } col-span-12 flex`}
           >
-            <div
-              className={`flex w-full justify-between ${
-                tap === "team" ? "w-10" : ""
-              }`}
-            >
-              <div
-                className={
-                  mobile && !chatVisivility
-                    ? "w-full bg-amber-500 "
-                    : mobile && chatVisivility
-                    ? "hidden"
-                    : "w-3/5"
-                }
-              >
-                <Button
-                  icon={SVGIcons.x}
-                  color={"orange"}
-                  onClick={() => setChatVisivility(!chatVisivility)}
-                />
+            <div className={`flex w-full justify-between `}>
+              <div className={"w-full"}>
                 <TeamMembers
                   tasks={tasks} // opcional, para mostrar conteos
                   onMemberClick={(uid) => {
                     // opcional: filtra por asignado usando tus filtros existentes
                     setFilters((f) => ({ ...f, assignedTo: uid }));
                   }}
+                  tap={tap}
+                  setTap={setTap}
+                  mobile={mobile}
+                  setChatVisivility={() => setChatVisivility(!chatVisivility)}
+                  chatVisivility={chatVisivility}
                 />
               </div>
 
-              {chatVisivility && (
-                <div
-                  className={`bg-gray-300 rounded-3xl p-3 w-full h-full ${
-                    mobile && !chatVisivility ? "hidden" : "flex"
-                  } flex-col-reverse items-end  `}
-                >
-                  <div className="bg-white h-35 rounded-3xl w-fill shadow-2xl flex items-end">
-                    <textarea className="w-fit max-h-full min-h-full p-5 focus:outline-0 "></textarea>
-                    <Button color={"green"} icon={SVGIcons.home}>
-                      Send
-                    </Button>
-                  </div>
-                  <div className="h-20 w-full flex flex-col justify-end items-end  p-5">
-                    <div className="bg-green-300/50 w-50 h-min p-3 rounded-2xl flex flex-col justify-end  m-2">
-                      <label className="text-xs">Username</label>
-                      YourMessage
+              {tap === "team" && chatVisivility && (
+                <div className="bg-black/50 md:bg-amber-50/0 w-full h-full absolute md:static top-0 left-0">
+                  <div
+                    className={`bg-gray-300 border-8 shadow-3xl border-white rounded-3xl p-3 w-5/6 h-5/6 md:w-full md:h-full flex
+                   flex-col-reverse items-end absolute md:static top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0 `}
+                  >
+                    <div className="bg-white h-35 rounded-2xl w-full shadow-2xl flex items-end">
+                      <textarea className="w-fit max-h-full min-h-full p-5 focus:outline-0 "></textarea>
+                      <Button color={"green"} icon={SVGIcons.home}>
+                        Send
+                      </Button>
                     </div>
-                  </div>
-                  <div className="h-20 w-full flex flex-col justify-start items-start  p-5">
-                    <div className="bg-blue-300/50 w-50 h-min p-3 rounded-2xl flex flex-col justify-start m-2">
-                      <label className="text-xs">Username</label>
-                      TeamMessage
+                    <div className="h-20 w-full flex flex-col justify-end items-end  p-5">
+                      <div className="bg-green-300/50 w-50 h-min p-3 rounded-2xl flex flex-col justify-end  m-2">
+                        <label className="text-xs">Username</label>
+                        YourMessage
+                      </div>
                     </div>
-                  </div>
+                    <div className="h-20 w-full flex flex-col justify-start items-start  p-5">
+                      <div className="bg-blue-300/50 w-50 h-min p-3 rounded-2xl flex flex-col justify-start m-2">
+                        <label className="text-xs">Username</label>
+                        TeamMessage
+                      </div>
+                    </div>
 
-                  <div className="absolute top-36 ">
-                    <Button
-                      icon={SVGIcons.x}
-                      color={"orange"}
-                      onClick={() => setChatVisivility(!chatVisivility)}
-                    />
+                    <div className="absolute top-36 ">
+                      <Button
+                        icon={SVGIcons.x}
+                        color={"orange"}
+                        onClick={() => setChatVisivility(!chatVisivility)}
+                      />
+                    </div>
                   </div>
                 </div>
               )}

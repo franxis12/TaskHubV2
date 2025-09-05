@@ -4,11 +4,21 @@ import React, { useEffect, useState, useContext } from "react";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import { UserContext } from "../context/UserContext";
-import { myImage } from "../importFiles/imports";
+import { myImage, SVGIcons } from "../importFiles/imports";
 import { tailwindClass } from "../importFiles/tailwindStyles";
 import MemberMiniStats from "./MemberMiniStats";
+import Button from "../Utils/Button";
 
-function TeamMembers({ tasks = [], onMemberClick }) {
+function TeamMembers({
+  tasks = [],
+  onMemberClick,
+  tap,
+  setTap,
+  mobile,
+
+  setChatVisivility,
+  chatVisivility,
+}) {
   const { user } = useContext(UserContext);
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,6 +51,11 @@ function TeamMembers({ tasks = [], onMemberClick }) {
     return () => unsub();
   }, [user]);
 
+  const handleChatVisivility = () => {
+    setChatVisivility();
+    setTap("team");
+  };
+
   // Map de conteos si recibimos tasks como prop
   /*const assignedMap = useMemo(() => {
     if (!Array.isArray(tasks) || tasks.length === 0) return {};
@@ -67,12 +82,21 @@ function TeamMembers({ tasks = [], onMemberClick }) {
   return (
     <div className="flex flex-col p-2 col-span-3">
       {/* Título del bloque (ligero, sin tocar tus estilos globales) */}
-      <div className="w-full ">
-        <h3 className="font-semibold ml-3 mt-2">Team Members</h3>
+      <div className="w-full flex justify-between h-12 ">
+        <h3 className="font-semibold ml-3 mt-2">
+          {tap === "dashboard" ? "Team member" : "Team Chat"}
+        </h3>
+        {!chatVisivility && (
+          <Button
+            icon={SVGIcons.chat}
+            color={"iconGreen"}
+            onClick={handleChatVisivility}
+          />
+        )}
       </div>
 
       {/* Lista */}
-      <div className="flex flex-row  gap-2 md:flex-col ">
+      <div className="flex   gap-2 flex-col ">
         {loading ? (
           <div className="w-full flex items-center justify-center h-full">
             <h3 className="text-lg font-medium text-slate-700">
@@ -93,10 +117,11 @@ function TeamMembers({ tasks = [], onMemberClick }) {
                 key={m.uid}
                 type="button"
                 onClick={() => onMemberClick?.(m.uid)}
-                className="w-45  md:w-full h-55 md:h-25 rounded-3xl border border-slate-600/40  p-2 text-left hover:shadow-sm transition-shadow flex flex-wrap justify-between"
+                className={`w-full h-25
+                   md:w-full rounded-3xl border border-slate-600/40  p-2 text-left hover:shadow-sm transition-shadow flex justify-between `}
                 title={m.email || m.name}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 ">
                   <img
                     src={m.photo || myImage.defaultUser}
                     alt={m.name}
