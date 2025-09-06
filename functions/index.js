@@ -158,6 +158,10 @@ exports.taskUpdated = onDocumentUpdated("tasks/{taskId}", async (event) => {
 
     // --- Caso 1: La tarea se completó por primera vez
     if (isStatus === "completed" && !completedCounted) {
+      // No contar completada si aún hay sub-tareas sin completar
+      if (!allSubtasksCompleted(after)) {
+        return; // salir sin tocar contadores
+      }
       if (type === "public" && nextAssignee) {
         tx.set(userRef(nextAssignee), {}, { merge: true });
         tx.update(userRef(nextAssignee), { "stats.company.completed": inc(1) });
@@ -371,6 +375,16 @@ exports.markMissedNow = onRequest(async (req, res) => {
     if (marked > 0) await batch.commit();
     res.status(200).json({ ok: true, marked, date: new Date().toISOString().slice(0, 10) });
   } catch (e) {
+// Helper: true si todas las sub-tareas (si existen) están en "completed"
+function allSubtasksCompleted(task) {
+  try {
+    const subs = Array.isArray(task?.subTasks) ? task.subTasks : [];
+    if (subs.length === 0) return true;
+    return subs.every((s) => (s && (s.status || "pending")) === "completed");
+  } catch {
+    return true;
+  }
+}
     console.error("markMissedNow error:", e);
     res.status(500).json({ ok: false, error: String(e) });
   }
