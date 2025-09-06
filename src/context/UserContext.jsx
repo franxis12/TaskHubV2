@@ -62,27 +62,9 @@ export function UserProvider({ children }) {
       // Suscríbete en tiempo real al doc de usuario
       const ref = doc(db, "users", uid);
 
-      // Asegura doc base si no existe (evita nulls en la app)
+      // Ya no creamos doc base aquí para evitar condiciones de carrera
+      // con el flujo de registro que establece los datos completos.
       const snapOnce = await getDoc(ref);
-      if (!snapOnce.exists()) {
-        await setDoc(
-          ref,
-          {
-            // mínimos necesarios para tu app
-            firstName: "",
-            lastName: "",
-            role: "member",
-            companyId: "",
-            photo: "",
-            createdAt: serverTimestamp(),
-            stats: {
-              company: { completed: 0, pending: 0, missed: 0 },
-              personal: { completed: 0, pending: 0, missed: 0 },
-            },
-          },
-          { merge: true }
-        );
-      }
 
       const unsub = onSnapshot(
         ref,

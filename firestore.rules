@@ -92,8 +92,11 @@ service cloud.firestore {
                      ]);
     }
 
-    // companies: lectura por companyId sólo si aprobado; escritura restringida a admin de esa company
+    // companies: lectura por companyId sólo si aprobado; permitir get sin auth para flujo de registro; escritura restringida a admin de esa company
     match /companies/{companyId} {
+      // Permite GET sin autenticación para verificar existencia durante registro
+      allow get: if request.auth == null;
+      // Lectura completa para usuarios aprobados de la misma empresa
       allow read: if request.auth != null && isApproved() && companyId == userCompanyId();
       // Crear/editar por admin de la misma empresa
       allow create: if request.auth != null
