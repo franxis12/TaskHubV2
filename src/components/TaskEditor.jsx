@@ -20,7 +20,7 @@ function TaskEditor({
   const isAdmin = user?.role === "admin";
   const isMissed = task.status === "missed";
 
-  // permisos
+  // Permissions
   const canEditPublic = task.type === "public" && isAdmin;
   const canEditPersonal =
     task.type === "personal" && task.createdBy === user?.uid;
@@ -31,7 +31,7 @@ function TaskEditor({
 
   const MAX_SUBS = 10;
 
-  // --- estado local controlado (evita mutar props) ---
+  // --- controlled local state (avoid mutating props) ---
   const [form, setForm] = useState({
     taskName: task.taskName || "",
     completeBy: task.completeBy || "",
@@ -138,7 +138,7 @@ function TaskEditor({
         assignedTo: s?.assignedTo || "",
         status: s?.status || "pending",
       }))
-      .filter((s) => s.name); // descarta vacías
+      .filter((s) => s.name); // discard empty
 
   const save = async () => {
     try {
@@ -163,7 +163,7 @@ function TaskEditor({
         subTasks: sanitizeSubTasks(form.subTasks).slice(0, MAX_SUBS),
       };
 
-      // si pasó a completed ahora, setear completedAt
+      // if it transitioned to completed now, set completedAt
       if (task.status !== "completed" && form.status === "completed") {
         payload.completedAt = serverTimestamp();
       }
@@ -178,7 +178,7 @@ function TaskEditor({
     }
   };
 
-  // --- helpers UI / estilos coherentes ---
+  // --- UI helpers / consistent styles ---
   const inputBase =
     "flex-1 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 " +
     "placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40";
@@ -214,7 +214,7 @@ function TaskEditor({
     missed: "bg-orange-trasparent text-orange",
   };
 
-  // aviso de solo-lectura
+  // read-only notice
   const readOnlyBanner =
     !canEdit &&
     "Esta tarea es de solo lectura para tu usuario (no tienes permisos para editar).";
@@ -367,7 +367,7 @@ function TaskEditor({
 
         {/* Columna 2 */}
         <div className="space-y-3">
-          {/* Asignación */}
+          {/* Assignment */}
           <div className="flex items-center gap-2">
             <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
               <img
@@ -381,9 +381,9 @@ function TaskEditor({
               value={form.assignedTo}
               onChange={onChange("assignedTo")}
               disabled={
-                // públicas: sólo admin puede cambiar
+                // public: only admin can change
                 (task.type === "public" && !isAdmin) ||
-                // personales: sólo el creador (canEditPersonal)
+                // personal: only the creator (canEditPersonal)
                 (task.type === "personal" && !canEditPersonal)
               }
             >

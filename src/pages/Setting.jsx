@@ -1,4 +1,4 @@
-// src/pages/VerifyEmail.jsx
+// src/pages/Setting.jsx
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
@@ -15,14 +15,14 @@ function Setting() {
   const [message, setMessage] = useState("");
   const [checking, setChecking] = useState(false);
   const [sending, setSending] = useState(false);
-  const [cooldown, setCooldown] = useState(0); // segs para reenviar
+  const [cooldown, setCooldown] = useState(0); // seconds to resend
 
-  // Si no hay usuario, manda a login
+  // If there is no user, redirect to login
   useEffect(() => {
     if (!auth.currentUser) navigate("/login");
   }, [navigate]);
 
-  // Temporizador de cooldown
+  // Cooldown timer
   useEffect(() => {
     if (cooldown <= 0) return;
     const id = setInterval(() => setCooldown((s) => s - 1), 1000);

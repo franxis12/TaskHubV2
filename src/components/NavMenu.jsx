@@ -108,7 +108,7 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
         className={`${baseAside} ${positionClass} ${widthClass}  `}
         aria-expanded={expanded}
       >
-        {/* Encabezado: logo + cerrar en mobile */}
+        {/* Header: logo + close on mobile */}
         <div className="flex flex-col gap-4">
           <div className="relative border-b-1 flex">
             <div className="flex flex-col h-11 w-full items-start gap-3 mb-2  ">
@@ -128,12 +128,12 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
                 className="absolute -right-3 top-3 btn btn-xs btn-ghost border border-base-300 rounded-full z-50"
                 ariaLabel="Close menu"
                 icon={SVGIcons.x}
-                title="Cerrar"
+                title="Close"
               />
             )}
           </div>
 
-          {/* Menú */}
+          {/* Menu */}
           <nav className="w-full  flex flex-col  gap-1">
             <Button
               onClick={() => handleTap("dashboard")}

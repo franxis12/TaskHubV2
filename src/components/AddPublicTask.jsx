@@ -16,7 +16,7 @@ import Button from "../Utils/Button";
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
 
-  // Campos de la tarea principal
+  // Main task fields
   const [taskName, setTaskName] = useState("");
   const [priority, setPriority] = useState("medium");
   const [completeBy, setCompleteBy] = useState("");
@@ -26,7 +26,7 @@ function AddPublicTask({ accion }) {
   const [submitting, setSubmitting] = useState(false);
   const [subTaskMenu, setSubTaskMenu] = useState(false);
 
-  // Sub-tasks (cada una con asignación independiente)
+  // Sub-tasks (each one with independent assignment)
   const [stName, setStName] = useState("");
   const [stPriority, setStPriority] = useState("medium");
   const [stCompleteBy, setStCompleteBy] = useState("");
@@ -44,7 +44,7 @@ function AddPublicTask({ accion }) {
       return () => clearTimeout(timeout);
     }
   }, [subTaskMenu]);
-  // Obtener miembros de la empresa (desde 'users')
+  // Fetch company members (from 'users')
   useEffect(() => {
     async function fetchMembers() {
       if (!user?.companyId) return;
@@ -65,7 +65,7 @@ function AddPublicTask({ accion }) {
     fetchMembers();
   }, [user]);
 
-  // Atajo: Cmd/Ctrl + Enter para enviar
+  // Shortcut: Cmd/Ctrl + Enter to submit
   useEffect(() => {
     const handler = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
@@ -76,13 +76,13 @@ function AddPublicTask({ accion }) {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  // Copiar prioridad/fecha desde la principal a los inputs de sub-task
+  // Copy priority/date from the main task to the sub-task inputs
   const copyFromMain = () => {
     setStPriority(priority);
     setStCompleteBy(completeBy);
   };
 
-  // Agregar/Eliminar sub-tasks (límite 10)
+  // Add/Remove sub-tasks (limit 10)
   const handleAddSubTask = () => {
     const name = stName.trim();
     if (!name) return;
@@ -100,7 +100,7 @@ function AddPublicTask({ accion }) {
       },
     ]);
 
-    // Limpiar nombre/notas/asignación; dejar prioridad/fecha para agregar varias similares
+    // Clear name/notes/assignment; keep priority/date to add several similar
     setStName("");
     setStNotes("");
     setStAssignedTo("");
@@ -141,11 +141,11 @@ function AddPublicTask({ accion }) {
         priority, // prioridad
 
         // Fechas
-        createdAt: serverTimestamp(), // fecha que se creó la tarea
-        completeBy, // fecha límite (string "YYYY-MM-DD" o vacío)
-        completedAt: null, // fecha que se completó (nulo al crear)
+        createdAt: serverTimestamp(), // creation timestamp
+        completeBy, // due date (string "YYYY-MM-DD" or empty)
+        completedAt: null, // completion timestamp (null on create)
 
-        // Estado + flags de métricas
+        // State + metrics flags
         status: "pending", // "pending" | "progress" | "completed" | "missed"
         pendingCounted: false,
         completedCounted: false,
@@ -180,7 +180,7 @@ function AddPublicTask({ accion }) {
 
   return (
     <div className="fixed inset-0 z-[4000] bg-black/50 overflow-y-auto overscroll-contain">
-      {/* Wrapper responsivo: top en móvil, centrado en md+ */}
+      {/* Responsive wrapper: top on mobile, centered on md+ */}
       <div
         className="min-h-svh flex items-start md:items-center justify-center p-4 md:p-6"
         style={{ paddingTop: "max(16px, env(safe-area-inset-top))" }} // respeta notch
@@ -307,7 +307,7 @@ function AddPublicTask({ accion }) {
               </div>
             </div>
 
-            {/* Sub-tasks con asignación independiente */}
+            {/* Sub-tasks with independent assignment */}
 
             {subTaskMenu ? (
               <div
@@ -428,7 +428,7 @@ function AddPublicTask({ accion }) {
                           <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
                             <span>Prioridad: {st.priority}</span>
                             {st.completeBy && (
-                              <span>• Límite: {st.completeBy}</span>
+                              <span>• Due: {st.completeBy}</span>
                             )}
                             {st.notes && <span>• Notas: {st.notes}</span>}
                             {st.assignedTo && (

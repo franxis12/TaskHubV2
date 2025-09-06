@@ -19,13 +19,13 @@ import {
 export const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
-  const [user, setUser] = useState(null); // datos combinados: auth + firestore
-  const [loading, setLoading] = useState(true); // bloquea UI hasta resolver estado inicial
+  const [user, setUser] = useState(null); // combined: auth + Firestore user doc
+  const [loading, setLoading] = useState(true); // gate UI until initial state is resolved
 
-  // Guarda el último unsubscribe del userDoc para limpiarlo al cambiar de cuenta
+  // Keep last userDoc unsubscribe to cleanup on account change
   const [unsubUserDoc, setUnsubUserDoc] = useState(null);
 
-  // Forzar recarga manual del doc de usuario (útil después de un flow que lo modifique)
+  // Force manual reload of the user doc (useful after flows that modify it)
   const refreshUser = useCallback(async () => {
     if (!auth.currentUser) return;
     const uid = auth.currentUser.uid;
@@ -43,7 +43,7 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, async (firebaseUser) => {
-      // Limpia listener previo del doc si había
+      // Cleanup previous doc listener if present
       if (unsubUserDoc) {
         unsubUserDoc();
         setUnsubUserDoc(null);
@@ -59,11 +59,11 @@ export function UserProvider({ children }) {
       const email = firebaseUser.email || "";
       const emailVerified = !!firebaseUser.emailVerified;
 
-      // Suscríbete en tiempo real al doc de usuario
+      // Subscribe to the user doc in realtime
       const ref = doc(db, "users", uid);
 
-      // Ya no creamos doc base aquí para evitar condiciones de carrera
-      // con el flujo de registro que establece los datos completos.
+      // Do not create a base doc here to avoid race conditions
+      // with the registration flow which writes the complete data.
       const snapOnce = await getDoc(ref);
 
       const unsub = onSnapshot(
@@ -80,7 +80,7 @@ export function UserProvider({ children }) {
         },
         (err) => {
           console.error("onSnapshot(users/{uid}) error:", err);
-          // si falla, al menos deja pasar la UI con lo que tengamos
+          // If it fails, at least allow the UI with what we have
           setUser({
             uid,
             email,
@@ -99,7 +99,7 @@ export function UserProvider({ children }) {
       if (unsubUserDoc) unsubUserDoc();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // se inicializa una vez
+  }, []); // initialize once
 
   const logout = async () => {
     try {

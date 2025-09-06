@@ -23,7 +23,7 @@ function TeamMembers({
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Cargar miembros de la compañía en vivo
+  // Live-load company members
   useEffect(() => {
     if (!user?.companyId) return;
     const q = query(
@@ -56,7 +56,7 @@ function TeamMembers({
     setTap("team");
   };
 
-  // Map de conteos si recibimos tasks como prop
+  // Counts map if tasks are passed as prop
   /*const assignedMap = useMemo(() => {
     if (!Array.isArray(tasks) || tasks.length === 0) return {};
     const map = {};
@@ -77,11 +77,11 @@ function TeamMembers({
     return map;
   }, [tasks]);*/
 
-  // (Estadísticas por miembro movidas a MemberMiniStats)
+  // (Per-member stats moved to MemberMiniStats)
 
   return (
     <div className="flex flex-col p-2 col-span-3">
-      {/* Título del bloque (ligero, sin tocar tus estilos globales) */}
+      {/* Block title (lightweight, without touching global styles) */}
       <div className="w-full flex justify-between h-12 ">
         <h3 className="font-semibold ml-3 mt-2">
           {tap === "dashboard" ? "Team member" : "Team Chat"}
@@ -95,19 +95,15 @@ function TeamMembers({
         )}
       </div>
 
-      {/* Lista */}
+      {/* List */}
       <div className="flex   gap-2 flex-col ">
         {loading ? (
           <div className="w-full flex items-center justify-center h-full">
-            <h3 className="text-lg font-medium text-slate-700">
-              Cargando miembros…
-            </h3>
+            <h3 className="text-lg font-medium text-slate-700">Loading members…</h3>
           </div>
         ) : members.length === 0 ? (
           <div className="w-full flex items-center justify-center h-full">
-            <h3 className="text-lg font-medium text-slate-700">
-              No hay miembros
-            </h3>
+            <h3 className="text-lg font-medium text-slate-700">No members</h3>
           </div>
         ) : (
           members.map((m) => {
@@ -143,18 +139,18 @@ function TeamMembers({
                   </div>
                 </div>
 
-                {/* Métricas simples (solo si llegan tasks) 
+                {/* Simple metrics (only if tasks are provided)
                 {Array.isArray(tasks) && tasks.length > 0 && (
                   <div className="mt-2 flex items-center gap-3 text-xs text-slate-600">
                     <span className="rounded-full border px-2 py-0.5 bg-white">
-                      Tareas: <b>{counts.tasks}</b>
+                      Tasks: <b>{counts.tasks}</b>
                     </span>
                     <span className="rounded-full border px-2 py-0.5 bg-white">
                       Sub-tasks: <b>{counts.subtasks}</b>
                     </span>
                   </div>
                 )}*/}
-                {/* Mini barras (componente separado) */}
+                {/* Mini bars (separate component) */}
                 <MemberMiniStats
                   tasks={tasks}
                   memberId={m.uid}

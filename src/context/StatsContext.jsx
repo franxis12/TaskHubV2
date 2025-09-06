@@ -6,7 +6,7 @@ import { doc, onSnapshot, updateDoc, increment } from "firebase/firestore";
 
 export const StatsContext = createContext(null);
 
-// Hook de conveniencia
+// Convenience hook
 export function useStats() {
   return useContext(StatsContext);
 }
@@ -17,18 +17,18 @@ export function StatsProvider({ children }) {
   // Flags
   const [loading, setLoading] = useState(true);
 
-  // Company stats (dashboard “compañía” del usuario)
+  // Company stats (user's company dashboard)
   const [cCompleted, setCCompleted] = useState(0);
   const [cPending, setCPending] = useState(0);
   const [cMissed, setCMissed] = useState(0);
 
-  // Personal stats (del propio usuario)
+  // Personal stats (for the current user)
   const [pCompleted, setPCompleted] = useState(0);
   const [pPending, setPPending] = useState(0);
   const [pMissed, setPMissed] = useState(0);
 
   useEffect(() => {
-    // si no hay usuario, resetea y marca listo
+    // No user: reset and finish
     if (!user?.uid) {
       setCCompleted(0);
       setCPending(0);
@@ -60,18 +60,18 @@ export function StatsProvider({ children }) {
 
         setLoading(false);
       },
-      // si hay error (p.ej. reglas), no rompas la UI
+      // If there's an error (e.g., rules), don't break the UI
       () => setLoading(false)
     );
 
     return () => unsub();
   }, [user?.uid]);
 
-  // “Bumpers” opcionales: por defecto escriben al usuario actual,
-  // pero puedes pasar un targetUid para ajustar el doc de otra persona (admin/acciones).
+  // Optional "bumpers": by default write to current user, but you can pass
+  // a targetUid to adjust another user's doc (admin/actions).
   const bumpCompany = async (field, delta = 1, targetUid = user?.uid) => {
     if (!targetUid) return;
-    // Optimista solo si es el usuario actual
+    // Optimistic update only if it's the current user
     if (targetUid === user?.uid) {
       if (field === "completed") setCCompleted((v) => v + delta);
       if (field === "pending") setCPending((v) => v + delta);

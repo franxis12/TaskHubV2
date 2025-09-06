@@ -95,9 +95,9 @@ export default Button;
                      react(),
                      svgr({    <-- ***** Deste aqui ***** )
                        svgrOptions: {
-                         // 1) Si un path trae #000, reemplázalo
+                         // 1) If a path contains #000, replace it
                          replaceAttrValues: { "#000": "currentColor", "#000000": "currentColor", black: "currentColor" },
-                         // 2) Además, agrega fill="currentColor" al <svg>
+                         // 2) Also add fill="currentColor" to the <svg>
                          svgProps: { fill: "currentColor" },
                        },
                      }),        <-- ***** Hasta aqui ***** )

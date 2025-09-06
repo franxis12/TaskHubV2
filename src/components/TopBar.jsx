@@ -11,7 +11,7 @@ function TopBar({ expanded, setExpanded }) {
   const { user } = useContext(UserContext);
   const [logoUrl, setLogoUrl] = useState("");
 
-  // (Opcional) Tienes este mismo efecto duplicado; deja solo uno.
+  // (Optional) If you have this effect duplicated elsewhere, keep only one.
   useEffect(() => {
     if (!user?.companyId) {
       return;

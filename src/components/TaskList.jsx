@@ -161,7 +161,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
     });
   }, [tasks, filters]);
 
-  // NUEVO: items asignados a mí (tareas y sub-tareas)
+  // NEW: items assigned to me (tasks and sub-tasks)
   const assignedItems = useMemo(() => {
     if (!user?.uid) return [];
     const items = [];
@@ -205,7 +205,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
     return items;
   }, [tasks, user]);
 
-  // Cambiar estado (CFs ajustan contadores/flags)
+  // Change status (Cloud Functions adjust counters/flags)
   const updateTaskStatus = async (task, newStatus) => {
     if (!canChangeStatus(task)) {
       alert("No tienes permiso para cambiar el estado de esta tarea.");

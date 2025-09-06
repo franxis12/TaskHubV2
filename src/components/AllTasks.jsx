@@ -35,12 +35,11 @@ function AllTasks({
 }) {
   return (
     <div className=" col-span-3 p-2  ">
-      {/* Estados vacíos / aprobación */}
+      {/* Empty states / approval */}
       {user?.pendingApproval ? (
         <div className="my-6 w-full text-center">
           <h4 className="w-full rounded-xl border bg-[var(--componentsBG)] p-3">
-            You will be able to view your tasks once your account has been
-            approved.
+            You will be able to view your tasks once your account has been approved.
           </h4>
         </div>
       ) : filteredTasks.length === 0 ? (
@@ -74,7 +73,7 @@ function AllTasks({
                 if (editTask) return;
                 setActionTaskId(task.id);
                 setCurrentTask(task);
-                // toggleExpand controlado por botón
+                // toggleExpand controlled by button
               }}
               className={[
                 " grid grid-cols-12 rounded-3xl m-2 px-2 border border-slate-500/30  ",
@@ -172,7 +171,7 @@ function AllTasks({
                 </div>
               </div>
 
-              {/* Extras con animación */}
+              {/* Extras with animation */}
               <div
                 className={
                   `col-span-12 overflow-hidden transition-all duration-300 ease-in-out ` +
@@ -368,7 +367,7 @@ function AllTasks({
                     </div>
                   )}
 
-                {/* Confirm delete */}
+                    {/* Confirm delete */}
                 {deleteTaskId === task.id && (
                   <div className="mx-2 mb-3 w-[calc(100%-1rem)] rounded-lg border border-slate-200 bg-white p-3 text-slate-800 shadow-sm">
                     <h3 className="mb-2 text-sm font-medium">
@@ -422,7 +421,7 @@ function AllTasks({
                   </div>
                 )}
 
-                {/* Editor */}
+                    {/* Editor */}
                 {editTask === task.id && (
                   <div className="w-full px-2 pb-3 col-span-12">
                     <TaskEditor
