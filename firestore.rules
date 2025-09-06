@@ -10,6 +10,28 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
     }
 
+    function isAdmin() {
+      return userRole() == "admin";
+    }
+
+    function isApproved() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+             && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pendingApproval == false;
+    }
+
+    function isValidTaskType(t) {
+      return t == "public" || t == "personal";
+    }
+
+    function isAllowedStatus(s) {
+      return s == "pending" || s == "progress" || s == "completed";
+    }
+
+    function companyExists(id) {
+      return exists(/databases/$(database)/documents/companies/$(id));
+    }
+
+    // Helper: checks if any subtask has status == "progress"
     // Helper: checks if any subtask has status == "progress"
     function hasProgressSubtask() {
       return ("subTasks" in resource.data)
@@ -29,57 +51,136 @@ service cloud.firestore {
 
     // users
     match /users/{userId} {
-      allow read: if request.auth != null 
-                  && resource.data.companyId == userCompanyId();
-      allow write: if request.auth != null 
-                   && request.auth.uid == userId;
+      // Leer: siempre puedes leer tu propio doc; para ver usuarios de tu empresa debes estar aprobado
+      allow read: if request.auth != null && (
+                    userId == request.auth.uid ||
+                    (isApproved() && resource.data.companyId == userCompanyId())
+                  );
+
+      // Actualizar mi propio perfil: permitir datos básicos + companyId + pendingApproval con reglas
+      allow update: if request.auth != null
+                     && request.auth.uid == userId
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                       "firstName", "lastName", "photo", "email", "companyId", "pendingApproval"
+                     ])
+                      && (
+                        // Si cambia companyId: existe -> pendingApproval debe ser true; si NO existe -> solo admin y pendingApproval false
+                        (
+                          request.resource.data.companyId != resource.data.companyId && (
+                            (companyExists(request.resource.data.companyId) && request.resource.data.pendingApproval == true) ||
+                            (!companyExists(request.resource.data.companyId) && isAdmin() && request.resource.data.pendingApproval == false)
+                          )
+                        )
+                        ||
+                        // Si NO cambia companyId: pendingApproval no puede cambiar
+                        (
+                          request.resource.data.companyId == resource.data.companyId &&
+                          request.resource.data.pendingApproval == resource.data.pendingApproval
+                        )
+                      );
+
+      // Crear mi doc base (primer login)
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // Admin puede actualizar role/pendingApproval SOLO dentro de su empresa
+      allow update: if request.auth != null
+                     && isAdmin()
+                     && resource.data.companyId == userCompanyId()
+                     && request.resource.data.companyId == resource.data.companyId
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                       "role", "pendingApproval"
+                     ]);
     }
 
-    // companies: any authenticated user can read their own company doc and nested data
+    // companies: lectura por companyId sólo si aprobado; escritura restringida a admin de esa company
     match /companies/{companyId} {
-      allow read: if request.auth != null && companyId == userCompanyId();
+      allow read: if request.auth != null && isApproved() && companyId == userCompanyId();
+      // Crear/editar por admin de la misma empresa
+      allow create: if request.auth != null
+                     && isAdmin()
+                     && companyId == userCompanyId()
+                     && request.auth.uid == request.resource.data.createdBy;
+      allow update: if request.auth != null
+                     && isAdmin()
+                     && companyId == userCompanyId()
+                     && request.resource.data.createdBy == resource.data.createdBy
+                     && request.resource.data.createdAt == resource.data.createdAt
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                       "logo", "theme"
+                     ]);
     }
     match /companies/{companyId}/{document=**} {
-      allow read: if request.auth != null && companyId == userCompanyId();
+      allow read: if request.auth != null && isApproved() && companyId == userCompanyId();
     }
 
     // tasks rules
     match /tasks/{taskId} {
-      // Public tasks: readable when authenticated
-      allow read: if request.auth != null && resource.data.type == "public";
+      // Public tasks: lectura por usuarios autenticados de la misma empresa y aprobados
+      allow read: if request.auth != null
+                   && isApproved()
+                   && resource.data.type == "public"
+                   && resource.data.companyId == userCompanyId();
 
       // Personal tasks: only the owner (createdBy) can read or write
       allow read: if request.auth != null
                    && resource.data.type == "personal"
                    && request.auth.uid == resource.data.createdBy;
 
-      // Create personal task: owner must be the requester; roles allowed: admin or member
+      // Create personal task: owner must be the requester; roles: admin o member; en mi empresa; status no "missed"
       allow create: if request.auth != null
                      && request.resource.data.type == "personal"
+                     && isValidTaskType(request.resource.data.type)
                      && request.auth.uid == request.resource.data.createdBy
-                     && (userRole() == "admin" || userRole() == "member");
+                     && request.resource.data.companyId == userCompanyId()
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
 
-      // Create public task: only admins; creator must match requester
+      // Create public task: solo admins; creador = requester; en mi empresa; status no "missed"
       allow create: if request.auth != null
                      && request.resource.data.type == "public"
-                     && userRole() == "admin"
-                     && request.auth.uid == request.resource.data.createdBy;
+                     && isValidTaskType(request.resource.data.type)
+                     && isAdmin()
+                     && request.auth.uid == request.resource.data.createdBy
+                     && request.resource.data.companyId == userCompanyId()
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
 
-      // Update/Delete personal task: only the owner, and must remain personal and owned by same user
+      // Update/Delete personal task: sólo dueño; debe seguir siendo personal, mismo dueño y misma company; status no "missed"
       allow update, delete: if request.auth != null
                              && resource.data.type == "personal"
                              && request.auth.uid == resource.data.createdBy
                              && request.resource.data.type == "personal"
-                             && request.auth.uid == request.resource.data.createdBy;
+                             && request.auth.uid == request.resource.data.createdBy
+                             && resource.data.companyId == request.resource.data.companyId
+                             && resource.data.createdBy == request.resource.data.createdBy
+                             && resource.data.pendingCounted == request.resource.data.pendingCounted
+                             && resource.data.completedCounted == request.resource.data.completedCounted
+                             && resource.data.missedCounted == request.resource.data.missedCounted
+                             && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
 
-      // Admin can update/delete public tasks only if status is not "progress"
+      // Admin puede actualizar tareas públicas sólo si status actual no es "progress"; limitar a campos editables y mantener inmutables
       allow update: if request.auth != null
                      && resource.data.type == "public"
-                     && userRole() == "admin"
-                     && resource.data.status != "progress";
+                     && isAdmin()
+                     && resource.data.status != "progress"
+                     && resource.data.type == request.resource.data.type
+                     && resource.data.companyId == request.resource.data.companyId
+                     && resource.data.createdBy == request.resource.data.createdBy
+                     && resource.data.pendingCounted == request.resource.data.pendingCounted
+                     && resource.data.completedCounted == request.resource.data.completedCounted
+                     && resource.data.missedCounted == request.resource.data.missedCounted
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                          "taskName","notes","priority","completeBy","status","assignedTo","subTasks","completedAt"
+                        ])
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
+
+      // El asignado puede cambiar SOLO el status (y completedAt) de una pública; no "missed"
+      allow update: if request.auth != null
+                     && resource.data.type == "public"
+                     && request.auth.uid == resource.data.assignedTo
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly(["status","completedAt"]) 
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
       allow delete: if request.auth != null
                      && resource.data.type == "public"
-                     && userRole() == "admin"
+                     && isAdmin()
                      && resource.data.status != "progress"
                      && !hasProgressSubtask();
     }
