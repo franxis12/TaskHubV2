@@ -6,22 +6,82 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId;
     }
 
-    
-    
+    function userRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    // Helper: checks if any subtask has status == "progress"
+    function hasProgressSubtask() {
+      return ("subTasks" in resource.data)
+             && (
+               (resource.data.subTasks.size() > 0  && resource.data.subTasks[0].status  == "progress") ||
+               (resource.data.subTasks.size() > 1  && resource.data.subTasks[1].status  == "progress") ||
+               (resource.data.subTasks.size() > 2  && resource.data.subTasks[2].status  == "progress") ||
+               (resource.data.subTasks.size() > 3  && resource.data.subTasks[3].status  == "progress") ||
+               (resource.data.subTasks.size() > 4  && resource.data.subTasks[4].status  == "progress") ||
+               (resource.data.subTasks.size() > 5  && resource.data.subTasks[5].status  == "progress") ||
+               (resource.data.subTasks.size() > 6  && resource.data.subTasks[6].status  == "progress") ||
+               (resource.data.subTasks.size() > 7  && resource.data.subTasks[7].status  == "progress") ||
+               (resource.data.subTasks.size() > 8  && resource.data.subTasks[8].status  == "progress") ||
+               (resource.data.subTasks.size() > 9  && resource.data.subTasks[9].status  == "progress")
+             );
+    }
+
     // users
     match /users/{userId} {
       allow read: if request.auth != null 
                   && resource.data.companyId == userCompanyId();
-
       allow write: if request.auth != null 
                    && request.auth.uid == userId;
     }
 
-    // tasks: read-only access to public tasks in the same company
+    // companies: any authenticated user can read their own company doc and nested data
+    match /companies/{companyId} {
+      allow read: if request.auth != null && companyId == userCompanyId();
+    }
+    match /companies/{companyId}/{document=**} {
+      allow read: if request.auth != null && companyId == userCompanyId();
+    }
+
+    // tasks rules
     match /tasks/{taskId} {
+      // Public tasks: readable when authenticated
+      allow read: if request.auth != null && resource.data.type == "public";
+
+      // Personal tasks: only the owner (createdBy) can read or write
       allow read: if request.auth != null
-                   && resource.data.type == "public"
-                   
+                   && resource.data.type == "personal"
+                   && request.auth.uid == resource.data.createdBy;
+
+      // Create personal task: owner must be the requester; roles allowed: admin or member
+      allow create: if request.auth != null
+                     && request.resource.data.type == "personal"
+                     && request.auth.uid == request.resource.data.createdBy
+                     && (userRole() == "admin" || userRole() == "member");
+
+      // Create public task: only admins; creator must match requester
+      allow create: if request.auth != null
+                     && request.resource.data.type == "public"
+                     && userRole() == "admin"
+                     && request.auth.uid == request.resource.data.createdBy;
+
+      // Update/Delete personal task: only the owner, and must remain personal and owned by same user
+      allow update, delete: if request.auth != null
+                             && resource.data.type == "personal"
+                             && request.auth.uid == resource.data.createdBy
+                             && request.resource.data.type == "personal"
+                             && request.auth.uid == request.resource.data.createdBy;
+
+      // Admin can update/delete public tasks only if status is not "progress"
+      allow update: if request.auth != null
+                     && resource.data.type == "public"
+                     && userRole() == "admin"
+                     && resource.data.status != "progress";
+      allow delete: if request.auth != null
+                     && resource.data.type == "public"
+                     && userRole() == "admin"
+                     && resource.data.status != "progress"
+                     && !hasProgressSubtask();
     }
   }
 }
