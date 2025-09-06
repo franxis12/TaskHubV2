@@ -12,7 +12,6 @@ function Dashboard() {
   const [showPublicForm, setShowPublicForm] = useState(false);
   const [tap, setTap] = useState("dashboard");
   const [chatVisivility, setChatVisivility] = useState(!isMobileInit);
-  console.log(tap);
 
   return (
     <div className="bg-pages w-screen h-screen flex">

@@ -1,5 +1,5 @@
 // src/components/TaskList.jsx
-import React, { useState, useEffect, useContext, useMemo, use } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { UserContext } from "../context/UserContext";
 import {
   doc,
@@ -342,7 +342,13 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
 
       <div className="grid grid-cols-12   gap-2 grid-flow-row-dense  col-span-2">
         {(tap === "assigned" || tap === "dashboard") && (
-          <Container className="max-h-100 col-span-12 md:col-span-6 lg:col-span-4   grid-cols-12 overflow-x-hidden">
+          <Container
+            className={`max-h-100 col-span-12 ${
+              tap !== "assigned"
+                ? "md:col-span-6 lg:col-span-4"
+                : "max-h-screen h-[83vh]"
+            }   grid-cols-12 overflow-x-hidden`}
+          >
             <AssignedToMe
               assignedItems={assignedItems}
               getTimeLeft={getTimeLeft}
@@ -427,13 +433,17 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
         )}
 
         {(tap === "alltask" || tap === "dashboard") && (
-          <Container className="col-span-12 md:col-span-12 lg:col-span-8 transition-height duration-500 ease-in-out ">
+          <Container
+            className={`col-span-12 md:col-span-12 ${
+              tap === "alltask" ? "lg:col-span-12" : ""
+            } transition-height duration-500 ease-in-out`}
+          >
             {/*<<<<---- Container for all task */}
             <div className="flex items-center justify-between col-span-3 p-2 shadowBottom divTitle  ">
               <h3 className="font-semibold ml-3 ">All Tasks</h3>
 
               {/* Acciones de la tarea seleccionada 
-            {actionTaskId === currentTask.id && (
+             {actionTaskId === currentTask.id && (
               <div className=" " onClick={(e) => e.stopPropagation()}>
                 <div className="mb-2 flex items-center justify-between">
                   <span className={badgeByStatus(currentTask.status)}>

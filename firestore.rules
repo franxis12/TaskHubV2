@@ -1,8 +1,240 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if true;
+
+    function userCompanyId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.companyId;
+    }
+
+    function userRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return userRole() == "admin";
+    }
+
+    function isApproved() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid))
+             && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.pendingApproval == false;
+    }
+
+    function isValidTaskType(t) {
+      return t == "public" || t == "personal";
+    }
+
+    function isAllowedStatus(s) {
+      return s == "pending" || s == "progress" || s == "completed";
+    }
+
+    function companyExists(id) {
+      return exists(/databases/$(database)/documents/companies/$(id));
+    }
+
+    // Bloquea cambiar el estado si la tarea ya está finalizada (completed o missed)
+    function statusChangeLocked() {
+      return !((resource.data.status == "completed" || resource.data.status == "missed")
+               && ("status" in request.resource.data)
+               && request.resource.data.status != resource.data.status);
+    }
+
+    // No permitir ninguna edición si la tarea está en estado final (completed o missed)
+    function isTerminal() {
+      return resource.data.status == "completed" || resource.data.status == "missed";
+    }
+
+    // Requiere que todas las subTareas estén "completed" si se intenta marcar la tarea como "completed"
+    function subsAllCompletedForNewDoc() {
+      return !(("subTasks" in request.resource.data) && request.resource.data.subTasks.size() > 0) ||
+             (
+               (request.resource.data.subTasks.size() > 0 && request.resource.data.subTasks[0].status == "completed") &&
+               (request.resource.data.subTasks.size() > 1 && request.resource.data.subTasks[1].status == "completed" || request.resource.data.subTasks.size() <= 1) &&
+               (request.resource.data.subTasks.size() > 2 && request.resource.data.subTasks[2].status == "completed" || request.resource.data.subTasks.size() <= 2) &&
+               (request.resource.data.subTasks.size() > 3 && request.resource.data.subTasks[3].status == "completed" || request.resource.data.subTasks.size() <= 3) &&
+               (request.resource.data.subTasks.size() > 4 && request.resource.data.subTasks[4].status == "completed" || request.resource.data.subTasks.size() <= 4) &&
+               (request.resource.data.subTasks.size() > 5 && request.resource.data.subTasks[5].status == "completed" || request.resource.data.subTasks.size() <= 5) &&
+               (request.resource.data.subTasks.size() > 6 && request.resource.data.subTasks[6].status == "completed" || request.resource.data.subTasks.size() <= 6) &&
+               (request.resource.data.subTasks.size() > 7 && request.resource.data.subTasks[7].status == "completed" || request.resource.data.subTasks.size() <= 7) &&
+               (request.resource.data.subTasks.size() > 8 && request.resource.data.subTasks[8].status == "completed" || request.resource.data.subTasks.size() <= 8) &&
+               (request.resource.data.subTasks.size() > 9 && request.resource.data.subTasks[9].status == "completed" || request.resource.data.subTasks.size() <= 9)
+             );
+    }
+
+    // Helper: checks if any subtask has status == "progress"
+    // Helper: checks if any subtask has status == "progress"
+    function hasProgressSubtask() {
+      return ("subTasks" in resource.data)
+             && (
+               (resource.data.subTasks.size() > 0  && resource.data.subTasks[0].status  == "progress") ||
+               (resource.data.subTasks.size() > 1  && resource.data.subTasks[1].status  == "progress") ||
+               (resource.data.subTasks.size() > 2  && resource.data.subTasks[2].status  == "progress") ||
+               (resource.data.subTasks.size() > 3  && resource.data.subTasks[3].status  == "progress") ||
+               (resource.data.subTasks.size() > 4  && resource.data.subTasks[4].status  == "progress") ||
+               (resource.data.subTasks.size() > 5  && resource.data.subTasks[5].status  == "progress") ||
+               (resource.data.subTasks.size() > 6  && resource.data.subTasks[6].status  == "progress") ||
+               (resource.data.subTasks.size() > 7  && resource.data.subTasks[7].status  == "progress") ||
+               (resource.data.subTasks.size() > 8  && resource.data.subTasks[8].status  == "progress") ||
+               (resource.data.subTasks.size() > 9  && resource.data.subTasks[9].status  == "progress")
+             );
+    }
+
+    // users
+    match /users/{userId} {
+      // Leer: siempre puedes leer tu propio doc; para ver usuarios de tu empresa debes estar aprobado
+      allow read: if request.auth != null && (
+                    userId == request.auth.uid ||
+                    (isApproved() && resource.data.companyId == userCompanyId())
+                  );
+
+      // Actualizar mi propio perfil: permitir datos básicos + companyId + pendingApproval con reglas
+      allow update: if request.auth != null
+                     && request.auth.uid == userId
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                       "firstName", "lastName", "photo", "email", "companyId", "pendingApproval"
+                     ])
+                      && (
+                        // Si cambia companyId: existe -> pendingApproval debe ser true; si NO existe -> solo admin y pendingApproval false
+                        (
+                          request.resource.data.companyId != resource.data.companyId && (
+                            (companyExists(request.resource.data.companyId) && request.resource.data.pendingApproval == true) ||
+                            (!companyExists(request.resource.data.companyId) && isAdmin() && request.resource.data.pendingApproval == false)
+                          )
+                        )
+                        ||
+                        // Si NO cambia companyId: pendingApproval no puede cambiar
+                        (
+                          request.resource.data.companyId == resource.data.companyId &&
+                          request.resource.data.pendingApproval == resource.data.pendingApproval
+                        )
+                      );
+
+      // Crear mi doc base (primer login)
+      allow create: if request.auth != null && request.auth.uid == userId;
+
+      // Admin puede actualizar role/pendingApproval SOLO dentro de su empresa
+      allow update: if request.auth != null
+                     && isAdmin()
+                     && resource.data.companyId == userCompanyId()
+                     && request.resource.data.companyId == resource.data.companyId
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                       "role", "pendingApproval"
+                     ]);
+    }
+
+    // companies: lectura por companyId sólo si aprobado; permitir get sin auth para flujo de registro; escritura restringida a admin de esa company
+    match /companies/{companyId} {
+      // Permite GET sin autenticación para verificar existencia durante registro
+      allow get: if request.auth == null;
+      // Lectura completa para usuarios aprobados de la misma empresa
+      allow read: if request.auth != null && isApproved() && companyId == userCompanyId();
+      // Crear/editar por admin de la misma empresa
+      allow create: if request.auth != null
+                     && isAdmin()
+                     && companyId == userCompanyId()
+                     && request.auth.uid == request.resource.data.createdBy;
+      allow update: if request.auth != null
+                     && isAdmin()
+                     && companyId == userCompanyId()
+                     && request.resource.data.createdBy == resource.data.createdBy
+                     && request.resource.data.createdAt == resource.data.createdAt
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                       "logo", "theme"
+                     ]);
+    }
+    match /companies/{companyId}/{document=**} {
+      allow read: if request.auth != null && isApproved() && companyId == userCompanyId();
+    }
+
+    // tasks rules
+    match /tasks/{taskId} {
+      // Public tasks: lectura por usuarios autenticados de la misma empresa y aprobados
+      allow read: if request.auth != null
+                   && isApproved()
+                   && resource.data.type == "public"
+                   && resource.data.companyId == userCompanyId();
+
+      // Personal tasks: only the owner (createdBy) can read or write
+      allow read: if request.auth != null
+                   && resource.data.type == "personal"
+                   && request.auth.uid == resource.data.createdBy;
+
+      // Create personal task: owner must be the requester; roles: admin o member; en mi empresa; status no "missed"
+      allow create: if request.auth != null
+                     && request.resource.data.type == "personal"
+                     && isValidTaskType(request.resource.data.type)
+                     && request.auth.uid == request.resource.data.createdBy
+                     && request.resource.data.companyId == userCompanyId()
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
+
+      // Create public task: solo admins; creador = requester; en mi empresa; status no "missed"
+      allow create: if request.auth != null
+                     && request.resource.data.type == "public"
+                     && isValidTaskType(request.resource.data.type)
+                     && isAdmin()
+                     && request.auth.uid == request.resource.data.createdBy
+                     && request.resource.data.companyId == userCompanyId()
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
+
+      // Update personal task: sólo dueño; mantener inmutables; no permitir ninguna edición si está completed o missed
+      allow update: if request.auth != null
+                     && resource.data.type == "personal"
+                     && request.auth.uid == resource.data.createdBy
+                     && request.resource.data.type == "personal"
+                     && request.auth.uid == request.resource.data.createdBy
+                     && resource.data.companyId == request.resource.data.companyId
+                     && resource.data.createdBy == request.resource.data.createdBy
+                     && resource.data.pendingCounted == request.resource.data.pendingCounted
+                     && resource.data.completedCounted == request.resource.data.completedCounted
+                     && resource.data.missedCounted == request.resource.data.missedCounted
+                     && !isTerminal()
+                     && (!("status" in request.resource.data) || request.resource.data.status != "completed" || subsAllCompletedForNewDoc())
+                     && statusChangeLocked()
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
+
+      // Delete personal task: sólo dueño
+      allow delete: if request.auth != null
+                     && resource.data.type == "personal"
+                     && request.auth.uid == resource.data.createdBy;
+
+      // Admin puede actualizar tareas públicas sólo si status actual no es "progress"; limitar a campos editables y mantener inmutables; bloquear cambio de status si ya está completed o missed; y exigir todas las subTasks completadas al completar
+      allow update: if request.auth != null
+                     && resource.data.type == "public"
+                     && isAdmin()
+                     && resource.data.status != "progress"
+                     && !isTerminal()
+                     && resource.data.type == request.resource.data.type
+                     && resource.data.companyId == request.resource.data.companyId
+                     && resource.data.createdBy == request.resource.data.createdBy
+                     && resource.data.pendingCounted == request.resource.data.pendingCounted
+                     && resource.data.completedCounted == request.resource.data.completedCounted
+                     && resource.data.missedCounted == request.resource.data.missedCounted
+                     && (!("status" in request.resource.data) || request.resource.data.status != "completed" || subsAllCompletedForNewDoc())
+                     && statusChangeLocked()
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+                          "taskName","notes","priority","completeBy","status","assignedTo","subTasks","completedAt"
+                        ])
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
+
+      // El asignado puede cambiar SOLO el status (y completedAt) de una pública; no permitir cambiar status si ya está completed o missed; exigir subTasks completadas al completar
+      allow update: if request.auth != null
+                     && resource.data.type == "public"
+                     && request.auth.uid == resource.data.assignedTo
+                     && !isTerminal()
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly(["status","completedAt"]) 
+                     && (!("status" in request.resource.data) || request.resource.data.status != "completed" || subsAllCompletedForNewDoc())
+                     && statusChangeLocked()
+                     && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
+      allow delete: if request.auth != null
+                     && resource.data.type == "public"
+                     && isAdmin()
+                     && resource.data.status != "progress"
+                     && !hasProgressSubtask();
     }
   }
 }
+
+
+//firebase deploy --only firestore:rules
+//firebase deploy --only functions
+//Function URL (ping(us-central1)): https://ping-x3tfsbgsra-uc.a.run.app
+//Function URL (markMissedNow(us-central1)): https://markmissednow-x3tfsbgsra-uc.a.run.app

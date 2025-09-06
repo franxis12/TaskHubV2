@@ -63,7 +63,7 @@ function Register() {
       case "auth/invalid-email":
         return "El correo no es válido.";
       default:
-        return "Ocurrió un error al registrar.";
+        return `Ocurrió un error al registrar. ${code}`;
     }
   };
 
@@ -133,6 +133,7 @@ function Register() {
       setSuccessMsg(
         "Registro exitoso. Revisa tu correo para verificar tu cuenta."
       );
+
       navigate("/verify-email");
     } catch (err) {
       if (err.message === "COMPANY_EXISTS")

@@ -29,12 +29,20 @@ function PrivateRoute({
   }
 
   // 3) Email no verificado (si aplica)
-  if (!allowUnverified && user.emailVerified === false && location.pathname !== "/verify-email") {
+  if (
+    !allowUnverified &&
+    user.emailVerified === false &&
+    location.pathname !== "/verify-email"
+  ) {
     return <Navigate to="/verify-email" replace state={{ from: location }} />;
   }
 
   // 4) Aprobación de cuenta (si aplica)
-  if (requireApproved && user.pendingApproval && location.pathname !== "/await-approval") {
+  if (
+    requireApproved &&
+    user.pendingApproval &&
+    location.pathname !== "/await-approval"
+  ) {
     return <Navigate to="/await-approval" replace state={{ from: location }} />;
   }
 
