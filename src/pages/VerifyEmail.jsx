@@ -15,14 +15,14 @@ function VerifyEmail() {
   const [message, setMessage] = useState("");
   const [checking, setChecking] = useState(false);
   const [sending, setSending] = useState(false);
-  const [cooldown, setCooldown] = useState(0); // segs para reenviar
+  const [cooldown, setCooldown] = useState(0); // seconds to resend
 
-  // Si no hay usuario, manda a login
+  // If there is no user, redirect to login
   useEffect(() => {
     if (!auth.currentUser) navigate("/login");
   }, [navigate]);
 
-  // Autochequeo cada 5s
+  // Auto-check every 5s
   useEffect(() => {
     const id = setInterval(async () => {
       if (!auth.currentUser) return;
@@ -36,7 +36,7 @@ function VerifyEmail() {
     return () => clearInterval(id);
   }, [navigate]);
 
-  // Temporizador de cooldown
+  // Cooldown timer
   useEffect(() => {
     if (cooldown <= 0) return;
     const id = setInterval(() => setCooldown((s) => s - 1), 1000);
@@ -57,7 +57,7 @@ function VerifyEmail() {
         );
       }
     } catch (e) {
-      setMessage("No se pudo revisar el estado. Intenta de nuevo.");
+      setMessage("Could not check status. Try again.");
     } finally {
       setChecking(false);
     }
@@ -69,12 +69,10 @@ function VerifyEmail() {
     setMessage("");
     try {
       await sendEmailVerification(auth.currentUser);
-      setMessage(
-        "Correo de verificación reenviado. Revisa tu bandeja (y spam)."
-      );
+      setMessage("Verification email sent. Check your inbox (and spam). ");
       setCooldown(30); // 30s de espera para reenviar
     } catch (e) {
-      setMessage("Error al reenviar el correo. Intenta más tarde.");
+      setMessage("Error resending email. Try again later.");
     } finally {
       setSending(false);
     }

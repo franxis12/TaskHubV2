@@ -3,8 +3,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 
-// Renderiza 3 barras verticales (completed, pending, missed)
-// Fuente: users/{memberId}.stats.company (y opcionalmente .personal)
+// Renders 3 vertical bars (completed, pending, missed)
+// Source: users/{memberId}.stats.company (optionally .personal)
 // scope: 'public' | 'personal' | 'all' (default 'public')
 function MemberMiniStats({ memberId, scope = "public" }) {
   const [userStats, setUserStats] = useState(null);

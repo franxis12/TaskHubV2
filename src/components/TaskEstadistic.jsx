@@ -23,7 +23,7 @@ export default function TaskEstadistic() {
   const stats = useContext(StatsContext);
   const { user } = useContext(UserContext);
 
-  // Pestaña activa: team / company / personal
+  // Active tab: team / company / personal
   const [view, setView] = useState("company"); // por defecto "company"
 
   // --- Stats del usuario actual (de tus contextos) ---
@@ -46,7 +46,7 @@ export default function TaskEstadistic() {
     );
   }, [stats]);
 
-  // --- Suscripción a TODOS los usuarios de la misma compañía para sumar COMPANY ---
+  // --- Subscribe to ALL users in the same company to compute COMPANY metrics ---
   const [members, setMembers] = useState([]); // [{photo, company:{completed,pending,missed}}]
   useEffect(() => {
     if (!user?.companyId) {
@@ -85,7 +85,7 @@ export default function TaskEstadistic() {
     );
   }, [members]);
 
-  // Escoger stats según la pestaña
+  // Pick stats according to the active tab
   const activeStats = useMemo(() => {
     if (view === "team") return teamCompanySum; // TODAS las de company de todos
     if (view === "company")

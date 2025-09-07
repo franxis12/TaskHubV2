@@ -5,9 +5,9 @@ import { UserContext } from "../context/UserContext";
 
 /**
  * Props:
- * - requireRole: string | string[] (opcional) -> ej: "admin" o ["admin","manager"]
- * - allowUnverified: boolean (default false) -> si true, no fuerza verificación de email
- * - requireApproved: boolean (default true) -> si true, redirige si pendingApproval
+ * - requireRole: string | string[] (optional) -> e.g., "admin" or ["admin","manager"]
+ * - allowUnverified: boolean (default false) -> if true, do not force email verification
+ * - requireApproved: boolean (default true) -> if true, redirect when pendingApproval
  */
 function PrivateRoute({
   children,
@@ -18,17 +18,17 @@ function PrivateRoute({
   const { user, loading } = useContext(UserContext);
   const location = useLocation();
 
-  // 1) Mientras carga el contexto, no decidir
+  // 1) While context is loading, don't decide
   if (loading) {
-    return null; // o un spinner/skeleton
+    return null; // or a spinner/skeleton
   }
 
-  // 2) Si no hay sesión -> al login, guardando "from"
+  // 2) No session -> go to login, preserving "from"
   if (!user) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  // 3) Email no verificado (si aplica)
+  // 3) Email not verified (if applicable)
   if (
     !allowUnverified &&
     user.emailVerified === false &&
@@ -37,7 +37,7 @@ function PrivateRoute({
     return <Navigate to="/verify-email" replace state={{ from: location }} />;
   }
 
-  // 4) Aprobación de cuenta (si aplica)
+  // 4) Account approval (if applicable)
   if (
     requireApproved &&
     user.pendingApproval &&
@@ -46,7 +46,7 @@ function PrivateRoute({
     return <Navigate to="/await-approval" replace state={{ from: location }} />;
   }
 
-  // 5) Guardia por rol (si se pide)
+  // 5) Role guard (if requested)
   if (requireRole) {
     const roles = Array.isArray(requireRole) ? requireRole : [requireRole];
     if (!roles.includes(user.role)) {

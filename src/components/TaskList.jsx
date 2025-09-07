@@ -18,6 +18,7 @@ import TaskFilters, { defaultFilters } from "./TaskFilters";
 import TaskEditor from "../components/TaskEditor";
 import TaskEstadistic from "../components/TaskEstadistic";
 import TeamMembers from "../components/TeamMembers";
+import Setting from "../pages/Setting";
 
 import Container from "../Utils/Container";
 import AssignedToMe from "./AssignedToMe";
@@ -161,7 +162,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
     });
   }, [tasks, filters]);
 
-  // NUEVO: items asignados a mí (tareas y sub-tareas)
+  // NEW: items assigned to me (tasks and sub-tasks)
   const assignedItems = useMemo(() => {
     if (!user?.uid) return [];
     const items = [];
@@ -205,7 +206,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
     return items;
   }, [tasks, user]);
 
-  // Cambiar estado (CFs ajustan contadores/flags)
+  // Change status (Cloud Functions adjust counters/flags)
   const updateTaskStatus = async (task, newStatus) => {
     if (!canChangeStatus(task)) {
       alert("No tienes permiso para cambiar el estado de esta tarea.");
@@ -514,7 +515,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
                 : "lg:col-span-4"
             } col-span-12 flex items-center justify-center `}
           >
-            <h1 className="font-extrabold text-5xl">Setting</h1>
+            <Setting />
           </Container>
         )}
       </div>

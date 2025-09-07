@@ -102,11 +102,11 @@ body::-webkit-scrollbar{
   }
 }
 
-/* === Componentes: equivalentes Tailwind a clases Bootstrap === */
+/* === Components: Tailwind equivalents to Bootstrap-like classes === */
 @layer components {
 
   
-  /* Botón neutro (antes .btn) */
+  /* Neutral button (formerly .btn) */
   .btn {
     position: relative;
     display: inline-flex;
@@ -116,7 +116,7 @@ body::-webkit-scrollbar{
     font-weight: 500;
     transition-property: color, background-color, border-color;
     transition-duration: 150ms;
-    border-radius: 14px !important;                     /* 1:1 con tu diseño */
+    border-radius: 14px !important;                     /* match your design */
     background-color: var(--neutroColor);
     border: 1px solid var(--neutroColorBorder);
     color: var(--textColor);
@@ -145,7 +145,7 @@ body::-webkit-scrollbar{
     opacity: 1;
   }*/
 
-  /* Botón primario (antes .btn-primary) 
+  /* Primary button (formerly .btn-primary) 
   .btn-primary {
     position: relative;
     display: inline-flex;
@@ -184,13 +184,13 @@ body::-webkit-scrollbar{
   }
   /*.btn-primary:hover::after { width: 60%; opacity: 1; }
 
-  /* Marcar botón seleccionado (mismo efecto decorativo visible) *
+  /* Mark selected button (keep decorative effect visible) *
   .btn-selected::after { width: 60%; opacity: 1; } */
 
-  /* Íconos bootstrap (.bi) → solo padding-inline start */
+  /* Bootstrap icons (.bi) → padding-inline start only */
   .bi { padding-inline-start: 5px; }
 
-  /* Texto primario */
+  /* Primary text */
   .text-primary { color: var(--primaryColor) !important; }
 
   /* Stats strip */
@@ -205,22 +205,14 @@ body::-webkit-scrollbar{
     gap: 4px;
     min-width: 120px;
   }
-  .kpi {
-    font-size: 1.8rem;
-    color: var(--primaryColor);
-    font-family: var(--font-primary);
-  }
-  .kpi-label {
-    font-size: 0.95rem;
-    color: var(--textColor);
-  }
+
   .strip-divider {
     width: 1px;
     height: 40px;
     background-color: var(--neutroColorBorder);
   }
 
-  /* Navbar y títulos (puedes usar utilities en JSX, dejo alias por compatibilidad) */
+  /* Navbar and titles (you can use utilities in JSX; kept as aliases for compatibility) */
   .navbar { background-color: var(--componentsBG); }
   .title { font-family: var(--font-primary); }
 

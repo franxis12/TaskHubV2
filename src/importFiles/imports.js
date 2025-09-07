@@ -23,16 +23,25 @@ import home from "../assets/iconsV2/house-solid-full.svg?react";
 import teams from "../assets/iconsV2/people-group-solid-full.svg?react";
 import stats from "../assets/iconsV2/chart-simple-solid-full.svg?react";
 import logout from "../assets/iconsV2/right-from-bracket-solid-full.svg?react";
+import login from "../assets/iconsV2/right-to-bracket-solid-full.svg?react"
 import setting from "../assets/iconsV2/gears-solid-full.svg?react";
 import addPublic from "../assets/iconsV2/addPublic-Icon.svg?react";
 import addPersonal from "../assets/iconsV2/AddPersonal-icon.svg?react";
 import tasklistIcon from "../assets/iconsV2/list-check-solid-full.svg?react";
 import commentIcon from "../assets/iconsV2/comment-solid-full.svg?react";
+import githubIcon from "../assets/iconsV2/github-brands-solid-full.svg?react";
+import instagramIcon from "../assets/iconsV2/instagram-brands-solid-full.svg?react";
+import twitterXIcon from "../assets/iconsV2/twitter-brands-solid-full.svg?react";
+import XIcon from "../assets/iconsV2/x-twitter-brands-solid-full.svg?react";
+import linkedInIcon from "../assets/iconsV2/linkedin-brands-solid-full.svg?react";
 
 
 //Images
 import defaultUser from "../assets/default/default-userImg.jpg"
 import logo from "../assets/LOGO.svg?react";
+import logoImage from "../assets/LOGO.svg";
+import heroMock from "../assets/hero.png";
+import notifyMock from "../assets/notify.png";
 
 const SVGIcons = {
     public: PublicIcon,
@@ -40,14 +49,25 @@ const SVGIcons = {
     addPublic: addPublic,
     addPersonal: addPersonal,
     calendar: CalendarIcon,
+    home: home,
+    team: teams,
+    stast: stats,
+    logout: logout,
+    login: login,
+    setting: setting,
+    tasklist: tasklistIcon,
+    chat: commentIcon,
+    note: NotesIcon,
+    x: MissedIcon,
+    timeLeft: timeLeft,
+    plus: PlusIcon,
+    question: CircleQuestionIcon,
+
     priority:{
         low: LowIcon,
         med: MediumIcon,
         high: HighIcon,
-        
     },
-    question: CircleQuestionIcon,
-    note: NotesIcon,
     arrowTurn: {
         right: ArrowTurnRight,
     },
@@ -55,33 +75,31 @@ const SVGIcons = {
         up: arrowUp,
         down: arrowDown,
     },
-    plus: PlusIcon,
     status:{
         completed: CompleteIcon,
         pending: PendingIcon,
         missed: MissedIcon,
         progress : ProgressIcon,
     },
-    x: MissedIcon,
-    timeLeft: timeLeft,
     menu:{
         open:openIcon,
         close: closeIcon,
     },
-    home: home,
-    team: teams,
-    stast: stats,
-    logout: logout,
-    setting: setting,
-    tasklist: tasklistIcon,
-    chat: commentIcon,
-
-    
+    social:{
+        twitter: twitterXIcon,
+        github: githubIcon,
+        instagram: instagramIcon,
+        linkedin: linkedInIcon,
+        xSocial: XIcon,
+    },
 }
 
 const myImage = {
     defaultUser: defaultUser,
     logo: logo,
+    logoImage: logoImage,
+    heroMock: heroMock,
+    notifyMock: notifyMock
 }
 
 

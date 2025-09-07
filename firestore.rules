@@ -31,19 +31,19 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/companies/$(id));
     }
 
-    // Bloquea cambiar el estado si la tarea ya está finalizada (completed o missed)
+    // Block changing status when the task is already finalized (completed or missed)
     function statusChangeLocked() {
       return !((resource.data.status == "completed" || resource.data.status == "missed")
                && ("status" in request.resource.data)
                && request.resource.data.status != resource.data.status);
     }
 
-    // No permitir ninguna edición si la tarea está en estado final (completed o missed)
+    // Disallow any edit when task is in a terminal state (completed or missed)
     function isTerminal() {
       return resource.data.status == "completed" || resource.data.status == "missed";
     }
 
-    // Requiere que todas las subTareas estén "completed" si se intenta marcar la tarea como "completed"
+    // Require all subTasks to be "completed" if the task is being set to "completed"
     function subsAllCompletedForNewDoc() {
       return !(("subTasks" in request.resource.data) && request.resource.data.subTasks.size() > 0) ||
              (
@@ -80,20 +80,20 @@ service cloud.firestore {
 
     // users
     match /users/{userId} {
-      // Leer: siempre puedes leer tu propio doc; para ver usuarios de tu empresa debes estar aprobado
+      // Read: you can always read your own doc; to see users from your company you must be approved
       allow read: if request.auth != null && (
                     userId == request.auth.uid ||
                     (isApproved() && resource.data.companyId == userCompanyId())
                   );
 
-      // Actualizar mi propio perfil: permitir datos básicos + companyId + pendingApproval con reglas
+      // Update my own profile: allow basic fields + companyId + pendingApproval under rules below
       allow update: if request.auth != null
                      && request.auth.uid == userId
                      && request.resource.data.diff(resource.data).changedKeys().hasOnly([
                        "firstName", "lastName", "photo", "email", "companyId", "pendingApproval"
                      ])
                       && (
-                        // Si cambia companyId: existe -> pendingApproval debe ser true; si NO existe -> solo admin y pendingApproval false
+                        // If companyId changes: if it exists -> pendingApproval must be true; if it does NOT exist -> only admin and pendingApproval must be false
                         (
                           request.resource.data.companyId != resource.data.companyId && (
                             (companyExists(request.resource.data.companyId) && request.resource.data.pendingApproval == true) ||
@@ -101,17 +101,17 @@ service cloud.firestore {
                           )
                         )
                         ||
-                        // Si NO cambia companyId: pendingApproval no puede cambiar
+                        // If companyId does NOT change: pendingApproval cannot change
                         (
                           request.resource.data.companyId == resource.data.companyId &&
                           request.resource.data.pendingApproval == resource.data.pendingApproval
                         )
                       );
 
-      // Crear mi doc base (primer login)
+      // Create my base doc (first login)
       allow create: if request.auth != null && request.auth.uid == userId;
 
-      // Admin puede actualizar role/pendingApproval SOLO dentro de su empresa
+      // Admin may update role/pendingApproval ONLY within their company
       allow update: if request.auth != null
                      && isAdmin()
                      && resource.data.companyId == userCompanyId()
@@ -121,13 +121,13 @@ service cloud.firestore {
                      ]);
     }
 
-    // companies: lectura por companyId sólo si aprobado; permitir get sin auth para flujo de registro; escritura restringida a admin de esa company
+    // companies: read by companyId only if approved; allow unauthenticated get for registration flow; write restricted to company admin
     match /companies/{companyId} {
-      // Permite GET sin autenticación para verificar existencia durante registro
+      // Allow GET without authentication to check during registration
       allow get: if request.auth == null;
-      // Lectura completa para usuarios aprobados de la misma empresa
+      // Full read for approved users in the same company
       allow read: if request.auth != null && isApproved() && companyId == userCompanyId();
-      // Crear/editar por admin de la misma empresa
+      // Create/update by admin in the same company
       allow create: if request.auth != null
                      && isAdmin()
                      && companyId == userCompanyId()
@@ -147,7 +147,7 @@ service cloud.firestore {
 
     // tasks rules
     match /tasks/{taskId} {
-      // Public tasks: lectura por usuarios autenticados de la misma empresa y aprobados
+      // Public tasks: readable by authenticated and approved users in the same company
       allow read: if request.auth != null
                    && isApproved()
                    && resource.data.type == "public"
@@ -158,7 +158,7 @@ service cloud.firestore {
                    && resource.data.type == "personal"
                    && request.auth.uid == resource.data.createdBy;
 
-      // Create personal task: owner must be the requester; roles: admin o member; en mi empresa; status no "missed"
+      // Create personal task: owner must be requester; roles: admin or member; must be in my company; status cannot be "missed"
       allow create: if request.auth != null
                      && request.resource.data.type == "personal"
                      && isValidTaskType(request.resource.data.type)
@@ -166,7 +166,7 @@ service cloud.firestore {
                      && request.resource.data.companyId == userCompanyId()
                      && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
 
-      // Create public task: solo admins; creador = requester; en mi empresa; status no "missed"
+      // Create public task: admins only; creator == requester; must be in my company; status cannot be "missed"
       allow create: if request.auth != null
                      && request.resource.data.type == "public"
                      && isValidTaskType(request.resource.data.type)
@@ -175,7 +175,7 @@ service cloud.firestore {
                      && request.resource.data.companyId == userCompanyId()
                      && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
 
-      // Update personal task: sólo dueño; mantener inmutables; no permitir ninguna edición si está completed o missed
+      // Update personal task: owner only; keep immutable fields; disallow any edit if it is completed or missed
       allow update: if request.auth != null
                      && resource.data.type == "personal"
                      && request.auth.uid == resource.data.createdBy
@@ -191,12 +191,12 @@ service cloud.firestore {
                      && statusChangeLocked()
                      && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
 
-      // Delete personal task: sólo dueño
+      // Delete personal task: owner only
       allow delete: if request.auth != null
                      && resource.data.type == "personal"
                      && request.auth.uid == resource.data.createdBy;
 
-      // Admin puede actualizar tareas públicas sólo si status actual no es "progress"; limitar a campos editables y mantener inmutables; bloquear cambio de status si ya está completed o missed; y exigir todas las subTasks completadas al completar
+      // Public update by admin only if current status is not "progress"; limit to editable fields and keep immutable ones; block status change if already completed/missed; require all subTasks completed when completing
       allow update: if request.auth != null
                      && resource.data.type == "public"
                      && isAdmin()
@@ -215,7 +215,7 @@ service cloud.firestore {
                         ])
                      && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
 
-      // El asignado puede cambiar SOLO el status (y completedAt) de una pública; no permitir cambiar status si ya está completed o missed; exigir subTasks completadas al completar
+      // Assignee can change ONLY status (and completedAt) of a public task; do not allow status change if already completed or missed; require all subTasks completed when completing
       allow update: if request.auth != null
                      && resource.data.type == "public"
                      && request.auth.uid == resource.data.assignedTo
@@ -224,6 +224,20 @@ service cloud.firestore {
                      && (!("status" in request.resource.data) || request.resource.data.status != "completed" || subsAllCompletedForNewDoc())
                      && statusChangeLocked()
                      && (!("status" in request.resource.data) || isAllowedStatus(request.resource.data.status));
+
+      // Unassigned public task (assignedTo == null): any approved user in the same company can COMPLETE it
+      // Constraints: not terminal, only change status/completedAt, status must be "completed", all subTasks must be completed
+      allow update: if request.auth != null
+                     && isApproved()
+                     && resource.data.type == "public"
+                     && resource.data.companyId == userCompanyId()
+                     && resource.data.assignedTo == null
+                     && !isTerminal()
+                     && request.resource.data.diff(resource.data).changedKeys().hasOnly(["status","completedAt"]) 
+                     && ("status" in request.resource.data)
+                     && request.resource.data.status == "completed"
+                     && subsAllCompletedForNewDoc()
+                     && statusChangeLocked();
       allow delete: if request.auth != null
                      && resource.data.type == "public"
                      && isAdmin()
@@ -234,7 +248,7 @@ service cloud.firestore {
 }
 
 
-//firebase deploy --only firestore:rules
-//firebase deploy --only functions
-//Function URL (ping(us-central1)): https://ping-x3tfsbgsra-uc.a.run.app
-//Function URL (markMissedNow(us-central1)): https://markmissednow-x3tfsbgsra-uc.a.run.app
+// firebase deploy --only firestore:rules
+// firebase deploy --only functions
+// Function URL (ping, us-central1): https://ping-x3tfsbgsra-uc.a.run.app
+// Function URL (markMissedNow, us-central1): https://markmissednow-x3tfsbgsra-uc.a.run.app

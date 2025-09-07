@@ -1,39 +1,39 @@
 // ===============================
-// Importaciones principales
+// Main imports
 // ===============================
 
-// Importamos los triggers de Firestore (cuando se crea, actualiza o borra un documento)
+// Firestore triggers (create, update, delete)
 const { onDocumentCreated, onDocumentUpdated, onDocumentDeleted } = require("firebase-functions/v2/firestore");
 
-// Importamos el scheduler para tareas programadas (cron jobs)
+// Scheduler for cron jobs
 const { onSchedule } = require("firebase-functions/v2/scheduler");
 
-// Importamos para crear endpoints HTTP (ej: /ping, /markMissedNow)
+// HTTP endpoints (e.g., /ping, /markMissedNow)
 const { onRequest } = require("firebase-functions/v2/https");
 
-// Importamos Firebase Admin (nos da acceso completo a Firestore desde el backend)
+// Firebase Admin SDK (full backend access to Firestore)
 const admin = require("firebase-admin");
 
-// Inicializamos Firebase Admin
+// Initialize Firebase Admin
 admin.initializeApp();
 
-// Creamos referencia global a Firestore
+// Global Firestore reference
 const db = admin.firestore();
 
-// Helper para sumar/restar en Firestore con `FieldValue.increment`
+// Helper: increment/decrement via FieldValue.increment
 const inc = (n) => admin.firestore.FieldValue.increment(n);
 
-// Helper para acceder rápido al documento de un usuario
+// Helper: quick access to a user doc
 const userRef = (uid) => db.doc(`users/${uid}`);
 
 
 // ===============================
-// Configuración de claves secretas
+// Secret keys configuration
 // ===============================
 
-// Permite usar una clave secreta para proteger funciones HTTP (ej: markMissedNow)
-// - En local: se puede definir en variable de entorno MISSED_JOB_KEY
-// - En deploy: se usa functions.config().missed.key
+// Optional secret key to protect HTTP functions (e.g., markMissedNow)
+// - Local: use env var MISSED_JOB_KEY
+// - Deployed: functions.config().missed.key
 const legacyConfig = (() => {
   try { return require("firebase-functions").config(); } catch { return {}; }
 })();
@@ -44,10 +44,10 @@ const CONFIG_MISSED_KEY =
 
 
 // ===============================
-// Helpers de fecha
+// Date helpers
 // ===============================
 
-// Convierte distintos formatos a un objeto Date válido
+// Convert diverse formats into a valid Date
 function toDate(val) {
   if (!val) return null;
 
@@ -77,7 +77,7 @@ function toDate(val) {
   return null;
 }
 
-// Devuelve la fecha al inicio del día (00:00:00)
+// Return date at start of day (00:00:00)
 function startOfDay(date) {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -86,10 +86,10 @@ function startOfDay(date) {
 
 
 // ===============================
-// Funciones HTTP
+// HTTP Functions
 // ===============================
 
-// Función de prueba rápida para saber si las funciones están vivas
+// Quick health check function
 exports.ping = onRequest((req, res) => res.status(200).send("pong"));
 
 
@@ -98,10 +98,10 @@ exports.ping = onRequest((req, res) => res.status(200).send("pong"));
 // ===============================
 
 /**
- * Cuando se CREA una tarea en /tasks/{taskId}:
- * - Si es pública → asignada: suma +1 al pending de la empresa del asignado
- * - Si es personal → suma +1 al pending personal del creador
- * - Marca flags para que no se repita el conteo
+ * On CREATE /tasks/{taskId}:
+ * - Public (with assignee): +1 to company.pending for the assignee
+ * - Personal: +1 to personal.pending for the creator
+ * - Sets flags to avoid double counting
  */
 exports.taskCreated = onDocumentCreated("tasks/{taskId}", async (event) => {
   const task = event.data?.data();
@@ -136,9 +136,9 @@ exports.taskCreated = onDocumentCreated("tasks/{taskId}", async (event) => {
 
 
 /**
- * Cuando se ACTUALIZA una tarea en /tasks/{taskId}:
- * - Maneja el paso de "pending → completed"
- * - Ajusta pendientes cuando cambia el asignado o cambia el estado
+ * On UPDATE /tasks/{taskId}:
+ * - Handles transition "pending → completed"
+ * - Adjusts pending when assignee changes or status changes
  */
 exports.taskUpdated = onDocumentUpdated("tasks/{taskId}", async (event) => {
   await db.runTransaction(async (tx) => {
@@ -156,11 +156,11 @@ exports.taskUpdated = onDocumentUpdated("tasks/{taskId}", async (event) => {
     let pendingCounted = !!after.pendingCounted;
     let completedCounted = !!after.completedCounted;
 
-    // --- Caso 1: La tarea se completó por primera vez
+    // --- Case 1: First time the task is completed
     if (isStatus === "completed" && !completedCounted) {
-      // No contar completada si aún hay sub-tareas sin completar
+      // Do not count completion if there are incomplete subtasks
       if (!allSubtasksCompleted(after)) {
-        return; // salir sin tocar contadores
+        return; // skip counters update
       }
       if (type === "public" && nextAssignee) {
         tx.set(userRef(nextAssignee), {}, { merge: true });
@@ -172,7 +172,7 @@ exports.taskUpdated = onDocumentUpdated("tasks/{taskId}", async (event) => {
       tx.update(taskRef, { completedCounted: true });
       completedCounted = true;
 
-      // Si ya estaba en pending → lo restamos
+      // If it was counted as pending → decrement
       if (pendingCounted) {
         if (type === "public" && nextAssignee) {
           tx.update(userRef(nextAssignee), { "stats.company.pending": inc(-1) });
@@ -185,7 +185,7 @@ exports.taskUpdated = onDocumentUpdated("tasks/{taskId}", async (event) => {
       return;
     }
 
-    // --- Caso 2: Control de "pending" mientras NO está completada
+    // --- Case 2: Manage "pending" while NOT completed
     const isActive = isStatus === "pending" || isStatus === "progress";
 
     if (type === "public") {
@@ -228,8 +228,8 @@ exports.taskUpdated = onDocumentUpdated("tasks/{taskId}", async (event) => {
 
 
 /**
- * Cuando se BORRA una tarea en /tasks/{taskId}:
- * - Si estaba pendiente y no completada → resta 1 al pending del usuario
+ * On DELETE /tasks/{taskId}:
+ * - If it was counted as pending and not completed → decrement pending
  */
 exports.taskDeleted = onDocumentDeleted("tasks/{taskId}", async (event) => {
   const task = event.data?.data();
@@ -249,13 +249,13 @@ exports.taskDeleted = onDocumentDeleted("tasks/{taskId}", async (event) => {
 
 
 // ===============================
-// Funciones para "missed tasks"
+// Functions for "missed tasks"
 // ===============================
 
 /**
  * markMissedDaily
- * - Corre todos los días a las 2 am
- * - Busca tareas vencidas y las marca como "missed"
+ * - Runs daily at 2am
+ * - Finds overdue tasks and marks them as "missed"
  */
 exports.markMissedDaily = onSchedule("0 2 * * *", async () => {
   const todayStart = startOfDay(new Date());
@@ -276,7 +276,7 @@ exports.markMissedDaily = onSchedule("0 2 * * *", async () => {
     if (!due) return;
 
     if (due < todayStart) {
-      // 1) Sumar missed al usuario correcto
+      // 1) Increment missed to the correct user bucket
       if (t.type === "public" && t.assignedTo) {
         const u = userRef(t.assignedTo);
         batch.set(u, {}, { merge: true });
@@ -287,7 +287,7 @@ exports.markMissedDaily = onSchedule("0 2 * * *", async () => {
         batch.update(u, { "stats.personal.missed": inc(1) });
       }
 
-      // 2) Restar pending si estaba contado
+      // 2) Decrement pending if it was counted
       if (t.pendingCounted) {
         if (t.type === "public" && t.assignedTo) {
           const u = userRef(t.assignedTo);
@@ -298,7 +298,7 @@ exports.markMissedDaily = onSchedule("0 2 * * *", async () => {
         }
       }
 
-      // 3) Marcar tarea como missed
+      // 3) Mark the task as missed
       batch.update(docSnap.ref, {
         status: "missed",
         missedCounted: true,
@@ -313,8 +313,8 @@ exports.markMissedDaily = onSchedule("0 2 * * *", async () => {
 
 /**
  * markMissedNow
- * - Endpoint manual (http://.../markMissedNow?key=XXXX)
- * - Sirve para probar inmediatamente la lógica de "missed"
+ * - Manual endpoint (http://.../markMissedNow?key=XXXX)
+ * - Lets you trigger the "missed" logic immediately
  */
 exports.markMissedNow = onRequest(async (req, res) => {
   try {
@@ -375,16 +375,6 @@ exports.markMissedNow = onRequest(async (req, res) => {
     if (marked > 0) await batch.commit();
     res.status(200).json({ ok: true, marked, date: new Date().toISOString().slice(0, 10) });
   } catch (e) {
-// Helper: true si todas las sub-tareas (si existen) están en "completed"
-function allSubtasksCompleted(task) {
-  try {
-    const subs = Array.isArray(task?.subTasks) ? task.subTasks : [];
-    if (subs.length === 0) return true;
-    return subs.every((s) => (s && (s.status || "pending")) === "completed");
-  } catch {
-    return true;
-  }
-}
     console.error("markMissedNow error:", e);
     res.status(500).json({ ok: false, error: String(e) });
   }

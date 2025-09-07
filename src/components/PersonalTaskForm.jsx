@@ -8,7 +8,7 @@ import { SVGIcons, myImage } from "../importFiles/imports";
 function PersonalTaskForm({ onClose, onCreated }) {
   const { user } = useContext(UserContext);
 
-  // Campos principales
+  // Main fields
   const [taskName, setTaskName] = useState("");
   const [priority, setPriority] = useState("medium");
   const [completeBy, setCompleteBy] = useState("");
@@ -24,7 +24,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
   const [stNotes, setStNotes] = useState("");
   const [subTasks, setSubTasks] = useState([]); // {name, priority, completeBy, notes, status, assignedTo}
 
-  // Animación de acordeón
+  // Accordion animation
   useEffect(() => {
     if (subTaskMenu) {
       setAnimation(true);
@@ -62,13 +62,13 @@ function PersonalTaskForm({ onClose, onCreated }) {
         completeBy: stCompleteBy || "",
         notes: stNotes?.trim() || "",
         status: "pending",
-        // importante: que el dueño pueda cambiar estado
+        // Important: owner can change status
         assignedTo: user?.uid || null,
       },
     ]);
     setStName("");
     setStNotes("");
-    // dejo prioridad/fecha para añadir varias similares
+    // Leave priority/date to add several similar ones
   };
 
   const handleRemoveSubTask = (idx) => {
@@ -90,7 +90,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
         type: "personal",
         companyId: user.companyId,
         createdBy: user.uid,
-        assignedTo: user.uid, // dueño
+        assignedTo: user.uid, // owner
         // Contenido
         taskName: taskName.trim(),
         notes: notes || "",
@@ -108,7 +108,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
         subTasks,
       });
 
-      // reset
+    // Reset
       setTaskName("");
       setPriority("medium");
       setCompleteBy("");
@@ -131,7 +131,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
 
   return (
     <div className="fixed inset-0 z-[4000] bg-black/50 overflow-y-auto overscroll-contain">
-      {/* Wrapper: top en móvil, centrado en md+ */}
+      {/* Wrapper: top on mobile, centered on md+ */}
       <div
         className="min-h-svh flex items-start md:items-center justify-center p-4 md:p-6"
         style={{ paddingTop: "max(16px, env(safe-area-inset-top))" }}
@@ -146,7 +146,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
           }}
         >
           <form className="flex flex-col gap-4" onSubmit={handleCreate}>
-            {/* Header con icono PERSONAL + input título */}
+            {/* Header with PERSONAL icon + title input */}
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-1 w-full border-b-2">
                 <SVGIcons.personal className="w-10 h-7 textColor" />
@@ -165,9 +165,9 @@ function PersonalTaskForm({ onClose, onCreated }) {
 
             {/* Dos columnas principales */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Columna izquierda */}
+              {/* Left column */}
               <div className="space-y-3">
-                {/* Asignación (sólo lectura: dueño) */}
+                {/* Assignment (read-only: owner) */}
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl mb-5">
                   <span className="ml-2 aspect-square min-w-10 min-h-10 flex items-center">
                     <img
@@ -183,7 +183,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
                   </div>
                 </div>
 
-                {/* Fecha */}
+                {/* Date */}
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
                   <span className="ml-3 mx-3 px-2 py-2 ">
                     <SVGIcons.calendar className="h-6 w-6" />
@@ -196,7 +196,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
                   />
                 </div>
 
-                {/* Prioridad */}
+                {/* Priority */}
                 <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
                   <span className="ml-3  px-2 py-2 ">
                     {priority === "high" ? (
@@ -221,9 +221,9 @@ function PersonalTaskForm({ onClose, onCreated }) {
                 </div>
               </div>
 
-              {/* Columna derecha */}
+              {/* Right column */}
               <div className="space-y-3">
-                {/* Notas */}
+                {/* Notes */}
                 <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
                   <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
                     <SVGIcons.note className="h-6 w-6" />
@@ -272,7 +272,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
                   </div>
                 </div>
 
-                {/* Formulario de subtask */}
+                {/* Subtask form */}
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
                   <input
                     type="text"
@@ -301,7 +301,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
                       className="flex items-center"
                     />
                   </div>
-                  {/* En personal NO reasignamos: subtasks se asignan al owner */}
+                  {/* In personal we DO NOT reassign: subtasks are assigned to the owner */}
                   <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl text-xs selectBase pointer-events-none opacity-100">
                     Assigned to you
                   </div>
@@ -400,7 +400,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
               </div>
             )}
 
-            {/* Acciones */}
+                {/* Actions */}
             <div className="flex items-center gap-2">
               <button
                 id="personal-task-submit"
