@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+//import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
@@ -14,7 +14,7 @@ import Terms from "./pages/Terms";
 import { UserProvider } from "./context/UserContext";
 import PrivateRoute from "./components/PrivateRoute";
 import { StatsProvider } from "./context/StatsContext";
-import app from "./auth/firebaseConfig";
+//import app from "./auth/firebaseConfig";
 
 function App() {
   return (
