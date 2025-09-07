@@ -205,15 +205,7 @@ body::-webkit-scrollbar{
     gap: 4px;
     min-width: 120px;
   }
-  .kpi {
-    font-size: 1.8rem;
-    color: var(--primaryColor);
-    font-family: var(--font-primary);
-  }
-  .kpi-label {
-    font-size: 0.95rem;
-    color: var(--textColor);
-  }
+
   .strip-divider {
     width: 1px;
     height: 40px;

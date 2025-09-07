@@ -11,7 +11,7 @@ import Logo from "../assets/LOGO.svg?react";
 import { SVGIcons } from "../importFiles/imports";
 
 function NavMenu({ expanded, setExpanded, tap, setTap }) {
-  const { user, logout } = useContext(UserContext);
+  const { logout } = useContext(UserContext);
   const navigate = useNavigate();
   function handleLogout() {
     logout();
@@ -82,7 +82,7 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
   `;
 
   const positionClass = isMobile
-    ? `fixed inset-y-0 left-0 z-40 transform ${
+    ? `fixed inset-y-0 left-0 z-40 transform h-screen ${
         expanded ? "translate-x-0" : "-translate-x-full"
       }`
     : "sticky left-0 top-0";
@@ -109,16 +109,12 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
         aria-expanded={expanded}
       >
         {/* Header: logo + close on mobile */}
-        <div className="flex flex-col gap-4">
-          <div className="relative border-b-1 flex">
-            <div className="flex flex-col h-11 w-full items-start gap-3 mb-2  ">
-              <Logo className="object-contain h-10 w-8" />
-
-              {!expanded && (
-                <span className="sr-only ">
-                  {user?.companyId || "No companyId assigned"}
-                </span>
-              )}
+        <div className="flex flex-col gap-4   mt-1">
+          <div className="relative border-b-1 flex  ">
+            <div className="flex flex-col h-11 w-full items-start gap-3 mb-2   ">
+              <Button color={"neutroIcon"}>
+                <Logo className="object-contain h-10 w-8" />
+              </Button>
             </div>
             {isMobile && expanded && (
               <Button
@@ -134,7 +130,7 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
           </div>
 
           {/* Menu */}
-          <nav className="w-full  flex flex-col  gap-1">
+          <nav className="w-full  flex flex-col  gap-1  mi-h-120">
             <Button
               onClick={() => handleTap("dashboard")}
               icon={SVGIcons.home}
@@ -182,7 +178,7 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
         </div>
 
         {/* Footer */}
-        <div className="w-full flex flex-col gap-1">
+        <div className="w-full flex flex-col gap-1 ">
           <Button
             onClick={() => handleTap("settings")}
             icon={SVGIcons.setting}

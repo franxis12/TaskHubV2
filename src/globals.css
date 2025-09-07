@@ -41,6 +41,8 @@
 
     --placeholderColor: #cecece8f;
     --bg-color-component: #1a1a1a;
+    --bg-color-componentSecondary: #8d8d8d;
+
     --color-input: #252525;
     --inputArrow: url('./assets/iconsV2/arrowDown-White.svg')
 }
@@ -86,6 +88,7 @@
     --placeholderColor: #3236398f;
 
     --bg-color-component: #ffffff;
+    --bg-color-componentSecondary: #2b2b2b;
     --color-input: #fff;
     --inputArrow: url('./assets/iconsV2/arrowDown.svg')
   }

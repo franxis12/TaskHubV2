@@ -12,6 +12,7 @@ function Button({
   title,
   iconSize,
   ariaLabel,
+  iconRight,
 }) {
   const SVGIcon = icon;
   const colorPick = {
@@ -31,6 +32,8 @@ function Button({
     disable: "cursor-not-allowed",
     iconGreen:
       "hover:text-[var(--greenMain)] hover:border-1 hover:border-slate-500/20",
+    neutroIcon: "cursor-pointer hover:scale-112",
+    neutro: "",
   };
   const positionSelected = {
     center: "justify-center",
@@ -63,20 +66,27 @@ function Button({
         disabled={disabled}
         title={title}
         aria-label={ariaLabel}
-        className={`flex items-center ${justify}  text-sm gap-2 px-3 rounded-xl h-11 hover:font-semibold justify-center ${
+        className={`flex items-center ${justify}   text-sm gap-2 px-3 rounded-xl h-11 hover:font-semibold justify-center ${
           btnColor !== undefined
             ? btnColor
             : "border-1 border-slate-500/20 hover:bg-black/25"
         }`}
       >
-        {icon && (
+        {icon && !iconRight && (
           <SVGIcon
             className={
-              iconSizeSelected !== undefined ? iconSizeSelected : "w-5 h-5"
+              iconSizeSelected !== undefined ? iconSizeSelected : "w-5 h-5 "
             }
           />
         )}
         {children}
+        {icon && iconRight && (
+          <SVGIcon
+            className={
+              iconSizeSelected !== undefined ? iconSizeSelected : "w-5 h-5 "
+            }
+          />
+        )}
       </button>
     </>
   );
