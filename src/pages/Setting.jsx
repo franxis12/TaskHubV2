@@ -3,6 +3,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { auth } from "../auth/firebaseConfig";
+import Button from "../Utils/Button";
 //import { sendEmailVerification } from "firebase/auth";
 
 function Setting() {
@@ -16,7 +17,7 @@ function Setting() {
   const [checking, setChecking] = useState(false);
   const [sending, setSending] = useState(false);
   const [cooldown, setCooldown] = useState(0); // seconds to resend
-
+  const [visible, setVisible] = useState(false);
   // If there is no user, redirect to login
   useEffect(() => {
     if (!auth.currentUser) navigate("/login");
@@ -75,11 +76,17 @@ function Setting() {
   };
 
   return (
-    <div>
-      <h1>Setting</h1>
-      <button className="btn" onClick={() => navigate("/dashboard")}>
-        Dash
-      </button>
+    <div className="w-full h-full flex p-3 flex-col">
+      <div className="w-full">
+        <h3 className="text-2xl font-bold">Settings</h3>
+      </div>
+      <div className="w-full bg-gray-400/20 h-full rounded-2xl grid grid-cols-12 overflow-hidden">
+        <div className="col-span-3">
+          {" "}
+          <Button color={"neutro"}>Personal info</Button>
+        </div>
+        <div className="col-span-9 "></div>
+      </div>
     </div>
   );
 }
