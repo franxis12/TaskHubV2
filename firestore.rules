@@ -121,10 +121,11 @@ service cloud.firestore {
                      ]);
     }
 
-    // companies: read by companyId only if approved; allow unauthenticated get for registration flow; write restricted to company admin
+    // companies: allow GET for existence checks (registration + settings),
+    // full read by approved users in their company; write restricted to company admin
     match /companies/{companyId} {
-      // Allow GET without authentication to check during registration
-      allow get: if request.auth == null;
+      // Allow GET for anyone (used to verify existence from UI flows)
+      allow get: if true;
       // Full read for approved users in the same company
       allow read: if request.auth != null && isApproved() && companyId == userCompanyId();
       // Create/update by admin in the same company
