@@ -1,12 +1,14 @@
 TaskHub V2 — Company Task Management (React + Firebase)
 
 Overview
+
 - TaskHub is a lightweight task management app for companies with two roles: admin and member.
 - Supports public (company) and personal tasks, each with optional subtasks and status transitions.
 - Enforces strict Firestore security rules for company scoping, approvals, roles, and status constraints.
 - Cloud Functions keep user stats in sync and mark overdue tasks as missed.
 
 Key Features
+
 - Public vs Personal tasks: Public tasks are visible to approved users in the same company; personal tasks are private to their owners.
 - Subtasks: A task can include up to 10 subtasks. A task can only be completed if all its subtasks are completed.
 - Status model: pending, progress, completed, missed. Completed/missed tasks are immutable (no further edits).
@@ -15,28 +17,32 @@ Key Features
 - Admin controls: Admin can edit company logo and theme; can delete public tasks if not in progress and without subtasks in progress.
 
 Tech Stack
+
 - Frontend: React + Vite, Tailwind CSS
 - Firebase: Auth, Firestore, Storage, Cloud Functions
 - Tooling: ESLint
 
 Monorepo Layout
+
 - `src/` React app
 - `functions/` Firebase Cloud Functions (Node 22)
 - `firestore.rules` Firestore security rules
 - `firebase.json` Firebase hosting & emulators config
 
 Local Setup
-1) Create a Firebase project and enable Auth, Firestore, and Storage.
-2) Update `src/auth/firebaseConfig.js` with your Firebase config.
-3) Install dependencies:
+
+1. Create a Firebase project and enable Auth, Firestore, and Storage.
+2. Update `src/auth/firebaseConfig.js` with your Firebase config.
+3. Install dependencies:
    - `npm install`
    - `cd functions && npm install && cd ..`
-4) Start the app:
+4. Start the app:
    - `npm run dev` (Vite)
-5) Optional: Run emulators for local dev
+5. Optional: Run emulators for local dev
    - `firebase emulators:start --only firestore,functions`
 
 Security Rules (Summary)
+
 - Users (`users/{uid}`):
   - Read: user can read their doc; approved users can read users in their company.
   - Update (self): can change firstName, lastName, photo, email, companyId, pendingApproval.
@@ -57,6 +63,7 @@ Security Rules (Summary)
   - Complete requires all subtasks completed.
 
 Cloud Functions (Summary)
+
 - `taskCreated`: increments pending stats on creation (public -> assignee; personal -> creator).
 - `taskUpdated`: handles transitions to completed (increments completed stats, decrements pending). Requires all subtasks completed to count.
 - `taskDeleted`: decrements pending stats if a pending task is deleted.
@@ -64,6 +71,7 @@ Cloud Functions (Summary)
 - `markMissedNow` (HTTP): manual trigger for testing missed logic with an optional secret key.
 
 Common Scripts
+
 - App:
   - `npm run dev` — start Vite dev server
   - `npm run build` — build for production
@@ -74,11 +82,12 @@ Common Scripts
   - `npm --prefix functions run deploy` — deploy functions
 
 Deploy
+
 - Deploy Firestore rules:
   - `firebase deploy --only firestore:rules`
 - Deploy Cloud Functions:
   - `firebase deploy --only functions`
 
 Notes
-- This repo intentionally keeps UI strings in Spanish. Only developer comments were translated to English.
-- When debugging Safari console noise from Firestore streaming, consider silencing logs or enabling long polling.
+
+- none.

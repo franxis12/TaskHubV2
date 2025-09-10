@@ -107,15 +107,11 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
     if (t.type === "public") return isAssignedUser;
     return false;
   };
-  //Do not deleted Use for TaskFilter
-  {
-    /*const assignees = useMemo(
+  const assignees = useMemo(
     () =>
       Object.entries(userMap).map(([uid, info]) => ({ uid, name: info.name })),
     [userMap]
-  );*/
-  }
-
+  );
   const filteredTasks = useMemo(() => {
     const text = filters.search.trim().toLowerCase();
     return tasks.filter((t) => {
@@ -393,42 +389,6 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
                   chatVisivility={chatVisivility}
                 />
               </div>
-
-              {tap === "team" && chatVisivility && (
-                <div className="bg-black/50 md:bg-amber-50/0 w-full h-full absolute md:static top-0 left-0">
-                  <div
-                    className={`bg-gray-300 border-8 shadow-3xl border-white rounded-3xl p-3 w-5/6 h-5/6 md:w-full md:h-full flex
-                   flex-col-reverse items-end absolute md:static top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0 `}
-                  >
-                    <div className="bg-white h-35 rounded-2xl w-full shadow-2xl flex items-end">
-                      <textarea className="w-fit max-h-full min-h-full p-5 focus:outline-0 "></textarea>
-                      <Button color={"green"} icon={SVGIcons.home}>
-                        Send
-                      </Button>
-                    </div>
-                    <div className="h-20 w-full flex flex-col justify-end items-end  p-5">
-                      <div className="bg-green-300/50 w-50 h-min p-3 rounded-2xl flex flex-col justify-end  m-2">
-                        <label className="text-xs">Username</label>
-                        YourMessage
-                      </div>
-                    </div>
-                    <div className="h-20 w-full flex flex-col justify-start items-start  p-5">
-                      <div className="bg-blue-300/50 w-50 h-min p-3 rounded-2xl flex flex-col justify-start m-2">
-                        <label className="text-xs">Username</label>
-                        TeamMessage
-                      </div>
-                    </div>
-
-                    <div className="absolute top-36 ">
-                      <Button
-                        icon={SVGIcons.x}
-                        color={"orange"}
-                        onClick={() => setChatVisivility(!chatVisivility)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </Container>
         )}
@@ -464,18 +424,18 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
             )}*/}
             </div>
 
-            {/*Task Filters 
-          <div
-            className="mb-4 w-full col-span-3"
-            onClick={() => setEditTask("")}
-          >
-            <TaskFilters
-              filters={filters}
-              setFilters={setFilters}
-              assignees={assignees}
-              currentUserId={user?.uid}
-            />
-          </div>*/}
+            {/*Task Filters */}
+            <div
+              className="mb-4 w-full col-span-3"
+              onClick={() => setEditTask("")}
+            >
+              <TaskFilters
+                filters={filters}
+                setFilters={setFilters}
+                assignees={assignees}
+                currentUserId={user?.uid}
+              />
+            </div>
 
             {/* All Tasks extracted component */}
             <AllTasks
@@ -510,10 +470,8 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
         {tap === "settings" && (
           <Container
             className={`row-span-2 ${
-              tap === "settings"
-                ? "lg:col-span-12 min-h-screen"
-                : "lg:col-span-4"
-            } col-span-12 flex items-center justify-center `}
+              tap === "settings" ? "lg:col-span-12 h-[83vh]" : "lg:col-span-4"
+            } col-span-12 flex`}
           >
             <Setting />
           </Container>
