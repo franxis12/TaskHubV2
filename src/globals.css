@@ -51,7 +51,7 @@
   :root{
     /*Unchange colors*/
     --color-alwaysBlack: #000000;
-    --color-alwaysWhite: #ffffff;
+    --color-alwaysWhite: #fff;
 
     --text-awaysWhite: #fff;
     --border-awalysWhite-1px: solid 1px #fff;
