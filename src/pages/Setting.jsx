@@ -25,7 +25,7 @@ function Setting() {
   const { user } = useContext(UserContext);
   const [newName, setNewName] = useState("");
   const [newLast, setNewLast] = useState("");
-  // Company change
+  // Company change/
   const [companyIdInput, setCompanyIdInput] = useState("");
   const [companyExists, setCompanyExists] = useState(null); // null | true | false
   const [checkingCompany, setCheckingCompany] = useState(false);
@@ -371,7 +371,10 @@ function Setting() {
                 onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
                 className="text-sm"
               />
-              <Button onClick={savePhoto} disabled={uploadingPhoto || !photoFile}>
+              <Button
+                onClick={savePhoto}
+                disabled={uploadingPhoto || !photoFile}
+              >
                 {uploadingPhoto ? "Uploading..." : "Save photo"}
               </Button>
             </div>
@@ -428,13 +431,16 @@ function Setting() {
           {user?.role === "admin" && (
             <div className="mt-6 p-3 rounded-lg border border-slate-300/50 bg-white/50">
               <h2 className="font-semibold mb-2">Pending approvals</h2>
-              {members.filter((m) => m.pendingApproval === true && m.uid !== user?.uid).length ===
-              0 ? (
+              {members.filter(
+                (m) => m.pendingApproval === true && m.uid !== user?.uid
+              ).length === 0 ? (
                 <p className="text-sm text-slate-600">No pending users.</p>
               ) : (
                 <ul className="divide-y divide-slate-200">
                   {members
-                    .filter((m) => m.pendingApproval === true && m.uid !== user?.uid)
+                    .filter(
+                      (m) => m.pendingApproval === true && m.uid !== user?.uid
+                    )
                     .map((m) => {
                       const full =
                         `${m.firstName || ""} ${m.lastName || ""}`.trim() ||
@@ -468,7 +474,10 @@ function Setting() {
                             <option value="member">Member</option>
                             <option value="admin">Admin</option>
                           </select>
-                          <Button onClick={() => approveUser(m.uid)} color={"green"}>
+                          <Button
+                            onClick={() => approveUser(m.uid)}
+                            color={"green"}
+                          >
                             Approve
                           </Button>
                         </li>
@@ -484,43 +493,49 @@ function Setting() {
             <div className="mt-6 p-3 rounded-lg border border-slate-300/50 bg-white/50">
               <h2 className="font-semibold mb-2">Manage team roles</h2>
               <ul className="divide-y divide-slate-200">
-                {members.filter((m) => m.uid !== user?.uid).map((m) => {
-                  const full =
-                    `${m.firstName || ""} ${m.lastName || ""}`.trim() ||
-                    m.email;
-                  return (
-                    <li key={m.uid} className="py-2 flex items-center gap-3">
-                      <img
-                        src={m.photo || myImage.defaultUser}
-                        alt="avatar"
-                        className="w-8 h-8 rounded-full object-cover border"
-                      />
-                      <div className="flex-1">
-                        <div className="text-sm font-medium">{full}</div>
-                        <div className="text-xs text-slate-500">
-                          {m.email}
-                          {m.pendingApproval && (
-                            <span className="ml-2 text-amber-600">(Pending)</span>
-                          )}
+                {members
+                  .filter((m) => m.uid !== user?.uid)
+                  .map((m) => {
+                    const full =
+                      `${m.firstName || ""} ${m.lastName || ""}`.trim() ||
+                      m.email;
+                    return (
+                      <li key={m.uid} className="py-2 flex items-center gap-3">
+                        <img
+                          src={m.photo || myImage.defaultUser}
+                          alt="avatar"
+                          className="w-8 h-8 rounded-full object-cover border"
+                        />
+                        <div className="flex-1">
+                          <div className="text-sm font-medium">{full}</div>
+                          <div className="text-xs text-slate-500">
+                            {m.email}
+                            {m.pendingApproval && (
+                              <span className="ml-2 text-amber-600">
+                                (Pending)
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      <select
-                        className="border rounded-md px-2 py-1 text-sm"
-                        value={roleDraft[m.uid] || m.role || "member"}
-                        onChange={(e) =>
-                          setRoleDraft((p) => ({
-                            ...p,
-                            [m.uid]: e.target.value,
-                          }))
-                        }
-                      >
-                        <option value="member">Member</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                      <Button onClick={() => changeUserRole(m.uid)}>Save</Button>
-                    </li>
-                  );
-                })}
+                        <select
+                          className="border rounded-md px-2 py-1 text-sm"
+                          value={roleDraft[m.uid] || m.role || "member"}
+                          onChange={(e) =>
+                            setRoleDraft((p) => ({
+                              ...p,
+                              [m.uid]: e.target.value,
+                            }))
+                          }
+                        >
+                          <option value="member">Member</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                        <Button onClick={() => changeUserRole(m.uid)}>
+                          Save
+                        </Button>
+                      </li>
+                    );
+                  })}
               </ul>
             </div>
           )}
