@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import { UserContext } from "../context/UserContext";
 import { SVGIcons, myImage } from "../importFiles/imports";
+import Button from "../Utils/Button";
 
 function PersonalTaskForm({ onClose, onCreated }) {
   const { user } = useContext(UserContext);
@@ -108,7 +109,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
         subTasks,
       });
 
-    // Reset
+      // Reset
       setTaskName("");
       setPriority("medium");
       setCompleteBy("");
@@ -254,21 +255,20 @@ function PersonalTaskForm({ onClose, onCreated }) {
                     </span>
                   </label>
                   <div className="gap-2 flex">
-                    <button
+                    <Button
                       type="button"
-                      className="text-xs text-slate-600 hover:text-slate-900 underline"
+                      color=""
                       onClick={copyFromMain}
                       title="Copy priority & date from main"
                     >
                       Copy from main
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => setSubTaskMenu(false)}
                       type="button"
-                      className="btn-danger h-7 font-bold"
-                    >
-                      X
-                    </button>
+                      color={"orange"}
+                      icon={SVGIcons.x}
+                    />
                   </div>
                 </div>
 
@@ -305,15 +305,15 @@ function PersonalTaskForm({ onClose, onCreated }) {
                   <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl text-xs selectBase pointer-events-none opacity-100">
                     Assigned to you
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={handleAddSubTask}
-                    className="btn-green"
+                    color={"green"}
                     disabled={!stName.trim() || subTasks.length >= 10}
                     title="Add sub-task"
                   >
                     Add Sub-task
-                  </button>
+                  </Button>
                 </div>
 
                 <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
@@ -351,14 +351,14 @@ function PersonalTaskForm({ onClose, onCreated }) {
                             <span>• Assigned: You</span>
                           </div>
                         </div>
-                        <button
+                        <Button
                           type="button"
                           onClick={() => handleRemoveSubTask(idx)}
-                          className="text-xs text-slate-600 hover:text-rose-600"
+                          color={"orange"}
                           title="Remove"
                         >
                           Remove
-                        </button>
+                        </Button>
                       </li>
                     ))}
                   </ul>
@@ -400,46 +400,23 @@ function PersonalTaskForm({ onClose, onCreated }) {
               </div>
             )}
 
-                {/* Actions */}
+            {/* Actions */}
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 id="personal-task-submit"
                 type="submit"
-                className="btn-green"
+                color={`green`}
+                icon={submitting && SVGIcons.status.progress}
+                animation={"spin"}
                 disabled={submitting || !taskName.trim()}
                 title="Cmd/Ctrl + Enter to create"
               >
-                {submitting ? (
-                  <span className="inline-flex items-center gap-2">
-                    <svg
-                      className="h-4 w-4 animate-spin"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      />
-                    </svg>
-                    Creating...
-                  </span>
-                ) : (
-                  "Create personal task"
-                )}
-              </button>
+                {submitting ? "Creating..." : "Create personal task"}
+              </Button>
 
-              <button type="button" onClick={onClose} className="btn-danger">
+              <Button type="button" onClick={onClose} color={"orange"}>
                 Cancel
-              </button>
+              </Button>
             </div>
           </form>
         </div>
