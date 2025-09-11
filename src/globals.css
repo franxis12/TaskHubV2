@@ -16,6 +16,10 @@
     --red: #ff4f4f;
     --grayLight: #a7a7a7;
 
+    --shadowGreen: 0 0px 8px #3fadbb; 
+    --shadowOrange: 0 0px 8px #f6673c; 
+    --shadowYellow: 0 0px 8px #f0a938; 
+
     /*Transparent Primary colors*/
     --green-trasparent: #2478818d;
     --orange-trasparent: #ef63388b;

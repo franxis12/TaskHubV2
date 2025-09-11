@@ -12,6 +12,7 @@ import {
 import { UserContext } from "../context/UserContext";
 import { SVGIcons, myImage } from "../importFiles/imports";
 import Button from "../Utils/Button";
+import NewInput from "../Utils/NewInput";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -197,7 +198,7 @@ function AddPublicTask({ accion }) {
           {/* Header */}
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div className="mb-3 flex items-center justify-between">
+            {/*<div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-1 w-full border-b-2  ">
                 <SVGIcons.public className="w-10 h-7 textColor" />
                 <span className="text-black w-full">
@@ -211,7 +212,27 @@ function AddPublicTask({ accion }) {
                   />
                 </span>
               </div>
+            </div>*/}
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-xl">Public Task Form</h2>
+              <Button
+                icon={SVGIcons.x}
+                color={"orange"}
+                iconSize={"4"}
+                onClick={accion}
+              />
             </div>
+            <NewInput
+              id={"taskname"}
+              label="Task name"
+              icon={SVGIcons.public}
+              iconSize={"6"}
+              placeholder="Enter your task name here"
+              required
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+            />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Columna izquierda */}
               <div className="space-y-3">
