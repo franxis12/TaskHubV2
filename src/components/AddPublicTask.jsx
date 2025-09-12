@@ -15,6 +15,7 @@ import Button from "../Utils/Button";
 import Inputs from "../Utils/Inputs";
 import Selects from "../Utils/Selects";
 import SubTaskCard from "../Utils/SubTaskCard";
+import TextArea from "../Utils/TextArea";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -309,18 +310,13 @@ function AddPublicTask({ accion }) {
               {/* Columna derecha */}
               <div className="space-y-3">
                 {/* Notas */}
-                <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
-                  <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
-                    <SVGIcons.note className="h-6 w-6" />
-                    Notes <span className="text-slate-600 ">(Optional)</span>
-                  </span>
-                  <textarea
-                    placeholder="Enter here your notes"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className={"textAreaBase" + " min-h-[110px]"}
-                  />
-                </div>
+                <TextArea
+                  icon={SVGIcons.note}
+                  label="Notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  iconSize={"6"}
+                />
               </div>
             </div>
 

@@ -46,7 +46,7 @@ function Selects({
           {required && <span className="text-red-400"> *</span>}
         </label>
       )}
-      <div className="border border-slate-400/50 rounded-xl flex items-center max-h-10">
+      <div className="border border-slate-400/50 rounded-xl flex items-center max-h-10 bg-[var(--textColorInverse)]">
         <span className="  h-full p-2 ">
           {icon && (
             <SVGIconSelect

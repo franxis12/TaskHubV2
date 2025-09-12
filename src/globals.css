@@ -220,8 +220,8 @@
         background-image: url('./assets/iconsV2/arrowDown-hover.svg'); /* Or .png, .jpg */}
 
     .textAreaBase{
-        height: auto;
-        max-height: max-content;
+        height: 100%;
+        min-height: min-content;
         width: 100%;
         padding-inline: 10px;
         margin-top: 0;}
