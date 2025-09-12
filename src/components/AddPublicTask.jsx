@@ -14,6 +14,7 @@ import { SVGIcons, myImage } from "../importFiles/imports";
 import Button from "../Utils/Button";
 import Inputs from "../Utils/Inputs";
 import Selects from "../Utils/Selects";
+import SubTaskCard from "../Utils/SubTaskCard";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -481,53 +482,25 @@ function AddPublicTask({ accion }) {
                 )}
               </div>
             ) : (
-              <div className="overflow-scroll flex items-center gap-4 rounded-2xl border border-slate-200 p-3 bg-white/50">
-                {/*Sub task assingne*/}
+              <div className=" overflow-scroll flex items-center gap-4 rounded-2xl border border-slate-200 p-3 ">
+                {/*Sub task assingne button*/}
                 <div
                   onClick={() => setSubTaskMenu(true)}
-                  className=" flex flex-col h-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                  className="hover:bg-blue-400 flex flex-col h-full items-center justify-between rounded-xl border border-slate-200  px-3 py-2 text-sm text-slate-800"
                 >
                   <span className="btn-">Add Sub-Taks</span>
                   <SVGIcons.plus className="w-5 h-5 border rounded-3xl " />
                 </div>
 
                 {subTasks.map((st, idx) => (
-                  <li
-                    key={`${st.name}-${idx}`}
-                    className=" flex  items-start justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
-                  >
-                    <div className="flex ">
-                      <div className="h-full w-5">
-                        <div className="bg-black text-white w-5 rounded-sm items-center flex justify-center">
-                          {idx + 1}
-                        </div>
-                        <SVGIcons.arrowTurn.right className="w-4 h-full mr-3 ml-2" />
-                      </div>
-                      <div className="min-w-0 flex-1 ml-3">
-                        <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center o">
-                          {st.assignedTo && (
-                            <>
-                              <span className="inline-flex items-center gap-1 w-30 h-12">
-                                <img
-                                  src={
-                                    members.find((m) => m.uid === st.assignedTo)
-                                      ?.photo || myImage.defaultUser
-                                  }
-                                  alt="assignee"
-                                  className="h-4 w-4 rounded-full border"
-                                />
-                                {members.find((m) => m.uid === st.assignedTo)
-                                  ?.name || "?"}
-                              </span>
-                            </>
-                          )}
-                        </div>
-                        <div className="font-medium truncate mb-1 ">
-                          {st.name}
-                        </div>
-                      </div>
-                    </div>
-                  </li>
+                  <>
+                    <SubTaskCard
+                      st={st}
+                      idx={idx}
+                      members={members}
+                      myImage={myImage}
+                    />
+                  </>
                 ))}
               </div>
             )}

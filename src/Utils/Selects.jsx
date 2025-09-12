@@ -66,7 +66,11 @@ function Selects({
             />
           )}
         </span>
-        <select onChange={onChange} value={value} className="selectBase p-2 ">
+        <select
+          onChange={onChange}
+          value={value}
+          className="selectBase p-2 capitalize "
+        >
           {defaultVal && <option value="">{defaultVal}</option>}
           {map.map((member) => (
             <option key={member[valueKey]} value={member[valueKey]}>
