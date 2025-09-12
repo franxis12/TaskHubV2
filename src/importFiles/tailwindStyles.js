@@ -1,4 +1,3 @@
-const inputs = "h-16px";
 const darkAndLight = "inline-block h-5 w-5 align-[-2px] text-[var(--textColorInverse)] w-10 h-7";
 const iconsWhite = "inline-block h-5 w-5 align-[-2px] text-white w-10 h-7";
 const iconsBlack = "inline-block h-5 w-5 align-[-2px] text-black w-10 h-7";
@@ -22,9 +21,11 @@ const timeBadgeChildren_2 = " text-[var(--textColor)] capitalize font-semibold t
 const adminBadge = "w-18 boder border-1 border- border-[var(--greenMain)] bg-[var(--green-trasparent)] text-xs rounded-3xl flex items-center justify-center whitespace-nowrap font-semibold text-[var(--greenMain)]"
 const memberBadge = "w-18 border border-1 border-[var(--orange)] bg-[var(--orange-trasparent)] text-xs rounded-3xl flex items-center justify-center whitespace-nowrap font-semibold text-[var(--orange)]"
 
+const inputClass = "border"
+
 
 const tailwindClass = {
-    inputs: inputs,
+    inputs: inputClass,
     icon: {
        darkLight: darkAndLight,
        dark: iconsBlack,

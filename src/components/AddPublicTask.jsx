@@ -12,6 +12,8 @@ import {
 import { UserContext } from "../context/UserContext";
 import { SVGIcons, myImage } from "../importFiles/imports";
 import Button from "../Utils/Button";
+import Inputs from "../Utils/Inputs";
+import Selects from "../Utils/Selects";
 
 function AddPublicTask({ accion }) {
   const { user } = useContext(UserContext);
@@ -178,6 +180,12 @@ function AddPublicTask({ accion }) {
     }
   }
 
+  const prioritis = [
+    { uid: "l", name: "low" },
+    { uid: "m", name: "medium" },
+    { uid: "h", name: "high" },
+  ];
+
   return (
     <div className="fixed inset-0 z-[4000] bg-black/50 overflow-y-auto overscroll-contain">
       {/* Responsive wrapper: top on mobile, centered on md+ */}
@@ -196,8 +204,11 @@ function AddPublicTask({ accion }) {
         >
           {/* Header */}
 
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div className="mb-3 flex items-center justify-between">
+          <form
+            className="flex flex-col gap-4 rounded-2xl"
+            onSubmit={handleSubmit}
+          >
+            {/*<div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-1 w-full border-b-2  ">
                 <SVGIcons.public className="w-10 h-7 textColor" />
                 <span className="text-black w-full">
@@ -211,82 +222,87 @@ function AddPublicTask({ accion }) {
                   />
                 </span>
               </div>
+            </div>*/}
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-xl">Public Task Form</h2>
+              <Button
+                icon={SVGIcons.x}
+                color={"orange"}
+                iconSize={"4"}
+                onClick={accion}
+              />
             </div>
+            <Inputs
+              id={"taskname"}
+              label="Task name"
+              icon={SVGIcons.public}
+              iconSize={"6"}
+              placeholder="Enter your task name here"
+              required
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+            />
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Columna izquierda */}
               <div className="space-y-3">
                 {/* Asignar usuario (tarea principal) */}
-                <div className=" h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl mb-5">
-                  <span className=" ml-2 aspect-square min-w-10 min-h-10 flex items-center ">
-                    {assignedTo ? (
-                      <img
-                        src={
-                          members.find((m) => m.uid === assignedTo)?.photo ||
-                          myImage.defaultUser
-                        }
-                        alt="assigned"
-                        className="relative h-15 w-19 rounded-full border-2 border-blue-500 outline-4  outline-[var(--bg-color-component)] object-cover aspect-square"
-                      />
-                    ) : (
-                      <img
-                        src={myImage.defaultUser}
-                        alt="assign"
-                        className="  relative h-15 w-19  rounded-full outline-4  outline-[var(--bg-color-component)] object-cover aspect-square"
-                      />
-                    )}
-                  </span>
-                  <select
-                    value={assignedTo}
-                    onChange={(e) => setAssignedTo(e.target.value)}
-                    className="selectBase "
-                  >
-                    <option value="">Unassigned</option>
-                    {members.map((member) => (
-                      <option key={member.uid} value={member.uid}>
-                        {member.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <Selects
+                  defaultVal={"Unassigned"}
+                  value={assignedTo}
+                  onChange={(e) => setAssignedTo(e.target.value)}
+                  map={members}
+                  id="assignedTo"
+                  label={"Assigned to"}
+                  //icon={SVGIcons.personal}
+                  iconSize={"6"}
+                  image={
+                    members.find((m) => m.uid === assignedTo)?.photo ||
+                    myImage.defaultUser
+                  }
+                />
+
                 {/* Fecha */}
-                <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                  <span className="ml-3 mx-3 px-2 py-2 ">
-                    <SVGIcons.calendar className="h-6 w-6" />
-                  </span>
-                  <input
-                    type="date"
-                    value={completeBy}
-                    onChange={(e) => setCompleteBy(e.target.value)}
-                    className="inputBaseDate"
-                  />
-                </div>
+                <Inputs
+                  type={"date"}
+                  icon={SVGIcons.calendar}
+                  iconSize={"6"}
+                  id={"taskdate"}
+                  label={"Due date"}
+                  value={completeBy}
+                  onChange={(e) => setCompleteBy(e.target.value)}
+                />
 
                 {/* Prioridad */}
-                <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                  <span
-                    className="ml-3  px-2 py-2 "
-                    alt="No priority selected reload"
-                  >
-                    {priority === "high" ? (
-                      <SVGIcons.priority.high className="h-6 w-6 text-[var(--orange)]" />
-                    ) : priority === "medium" ? (
-                      <SVGIcons.priority.med className="h-6 w-6 text-[var(--yellow)]" />
-                    ) : priority === "low" ? (
-                      <SVGIcons.priority.low className="h-6 w-6 text-[var(--green)]" />
-                    ) : (
-                      <SVGIcons.question />
-                    )}
-                  </span>
-                  <select
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value)}
-                    className="selectBase"
-                  >
-                    <option value="low">Low priority</option>
-                    <option value="medium">Medium priority</option>
-                    <option value="high">High priority</option>
-                  </select>
-                </div>
+                <Selects
+                  map={prioritis}
+                  id="priority"
+                  label={"Priority "}
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  valueKey={"name"}
+                  labelKey={"name"}
+                  className="selectBase"
+                  icon={
+                    priority === "high"
+                      ? SVGIcons.priority.high
+                      : priority === "medium"
+                      ? SVGIcons.priority.med
+                      : priority === "low"
+                      ? SVGIcons.priority.low
+                      : SVGIcons.question
+                  }
+                  iconSize={"6"}
+                  iconColor={
+                    priority === "high"
+                      ? "orange"
+                      : priority === "medium"
+                      ? "yellow"
+                      : priority === "low"
+                      ? "green"
+                      : ""
+                  }
+                />
               </div>
 
               {/* Columna derecha */}
@@ -312,7 +328,7 @@ function AddPublicTask({ accion }) {
             {subTaskMenu ? (
               <div
                 className={`${
-                  animation ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+                  animation ? " opacity-100" : "max-h-0 opacity-0"
                 } overflow-hidden transition-all duration-700 rounded-2xl border border-slate-200 p-3 bg-white/10`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -346,7 +362,7 @@ function AddPublicTask({ accion }) {
                 </div>
 
                 {/* Formulario de sub-task */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2 overflow-scroll">
                   <input
                     type="text"
                     value={stName}
@@ -465,7 +481,8 @@ function AddPublicTask({ accion }) {
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-4 rounded-2xl border border-slate-200 p-3 bg-white/50">
+              <div className="overflow-scroll flex items-center gap-4 rounded-2xl border border-slate-200 p-3 bg-white/50">
+                {/*Sub task assingne*/}
                 <div
                   onClick={() => setSubTaskMenu(true)}
                   className=" flex flex-col h-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
@@ -477,7 +494,7 @@ function AddPublicTask({ accion }) {
                 {subTasks.map((st, idx) => (
                   <li
                     key={`${st.name}-${idx}`}
-                    className="flex  items-start justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                    className=" flex  items-start justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
                   >
                     <div className="flex ">
                       <div className="h-full w-5">
@@ -487,10 +504,10 @@ function AddPublicTask({ accion }) {
                         <SVGIcons.arrowTurn.right className="w-4 h-full mr-3 ml-2" />
                       </div>
                       <div className="min-w-0 flex-1 ml-3">
-                        <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
+                        <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center o">
                           {st.assignedTo && (
                             <>
-                              <span className="inline-flex items-center gap-1">
+                              <span className="inline-flex items-center gap-1 w-30 h-12">
                                 <img
                                   src={
                                     members.find((m) => m.uid === st.assignedTo)
@@ -518,6 +535,7 @@ function AddPublicTask({ accion }) {
             {/* Actions */}
             <div className="flex items-center gap-2">
               <Button
+                width={"w-full"}
                 id={"create-public-task"}
                 type={"submit"}
                 disabled={
@@ -538,10 +556,6 @@ function AddPublicTask({ accion }) {
                 ) : (
                   "Created task"
                 )}
-              </Button>
-
-              <Button onClick={accion} color={"orange"} position={"center"}>
-                Cancel
               </Button>
             </div>
           </form>
