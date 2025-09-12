@@ -35,6 +35,7 @@ function Button({
       "hover:text-[var(--greenMain)] hover:border-1 hover:border-slate-500/20",
     neutroIcon: "cursor-pointer hover:scale-112",
     neutro: "",
+    link: "text-blue-400 underline",
   };
   const positionSelected = {
     center: "justify-center",

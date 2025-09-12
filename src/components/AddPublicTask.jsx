@@ -17,7 +17,7 @@ import Selects from "../Utils/Selects";
 import SubTaskCard from "../Utils/SubTaskCard";
 import TextArea from "../Utils/TextArea";
 
-function AddPublicTask({ accion }) {
+function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
   const { user } = useContext(UserContext);
 
   // Main task fields
@@ -39,6 +39,12 @@ function AddPublicTask({ accion }) {
   const [subTasks, setSubTasks] = useState([]); // [{ name, priority, completeBy, notes, assignedTo, status }]
 
   const [animation, setAnimation] = useState(false);
+
+  const handleFormSwitch = (e) => {
+    e.preventDefault;
+    setShowPersonalForm(true);
+    setShowPublicForm(false);
+  };
 
   useEffect(() => {
     if (subTaskMenu) {
@@ -210,23 +216,19 @@ function AddPublicTask({ accion }) {
             className="flex flex-col gap-4 rounded-2xl"
             onSubmit={handleSubmit}
           >
-            {/*<div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-1 w-full border-b-2  ">
-                <SVGIcons.public className="w-10 h-7 textColor" />
-                <span className="text-black w-full">
-                  <input
-                    type="text"
-                    placeholder="Enter Task Name"
-                    value={taskName}
-                    onChange={(e) => setTaskName(e.target.value)}
-                    required
-                    className="inputBase"
-                  />
-                </span>
-              </div>
-            </div>*/}
             <div className="flex items-center justify-between">
-              <h2 className="font-bold text-xl">Public Task Form</h2>
+              <span className="flex items-center">
+                <h2 className="font-bold text-xl">Public Task Form</h2>{" "}
+                <Button
+                  icon={SVGIcons.personal}
+                  iconRight
+                  iconSize={"4"}
+                  onClick={handleFormSwitch}
+                  color={"link"}
+                >
+                  Create personal task
+                </Button>
+              </span>
               <Button
                 icon={SVGIcons.x}
                 color={"orange"}
@@ -478,7 +480,7 @@ function AddPublicTask({ accion }) {
                 )}
               </div>
             ) : (
-              <div className=" overflow-scroll flex items-center gap-4 rounded-2xl border border-slate-200 p-3 ">
+              <div className="no-scrollbar overflow-scroll flex items-center gap-4 rounded-2xl border border-slate-400/50 p-3 ">
                 {/*Sub task assingne button*/}
                 <div
                   onClick={() => setSubTaskMenu(true)}
