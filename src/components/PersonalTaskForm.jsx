@@ -3,10 +3,18 @@ import React, { useState, useContext, useEffect } from "react";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import { UserContext } from "../context/UserContext";
-import { SVGIcons, myImage } from "../importFiles/imports";
+import { SVGIcons } from "../importFiles/imports";
 import Button from "../Utils/Button";
+import Inputs from "../Utils/Inputs";
+import Selects from "../Utils/Selects";
+import TextArea from "../Utils/TextArea";
 
-function PersonalTaskForm({ onClose, onCreated }) {
+function PersonalTaskForm({
+  onClose,
+  onCreated,
+  setShowPublicForm,
+  setShowPersonalForm,
+}) {
   const { user } = useContext(UserContext);
 
   // Main fields
@@ -46,6 +54,16 @@ function PersonalTaskForm({ onClose, onCreated }) {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [submitting, taskName]);
+
+  // Assignment defaults to current user; no UI needed
+
+  const handleFormSwitch = (e) => {
+    e?.preventDefault?.();
+    if (setShowPublicForm && setShowPersonalForm) {
+      setShowPublicForm(true);
+      setShowPersonalForm(false);
+    }
+  };
 
   const copyFromMain = () => {
     setStPriority(priority);
@@ -130,6 +148,12 @@ function PersonalTaskForm({ onClose, onCreated }) {
     }
   };
 
+  const prioritis = [
+    { uid: "l", name: "low" },
+    { uid: "m", name: "medium" },
+    { uid: "h", name: "high" },
+  ];
+
   return (
     <div className="fixed inset-0 z-[4000] bg-black/50 overflow-y-auto overscroll-contain">
       {/* Wrapper: top on mobile, centered on md+ */}
@@ -139,104 +163,108 @@ function PersonalTaskForm({ onClose, onCreated }) {
       >
         {/* Contenedor modal */}
         <div
-          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30 shadow-[inset_0_0_1px_#fff9] "
+          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30 shadow-[inset_0_0_1px_#fff9] shadow-lg "
           style={{
             color: "var(--textColor)",
             maxHeight: "calc(100svh - 2rem)",
             overflow: "auto",
           }}
         >
-          <form className="flex flex-col gap-4" onSubmit={handleCreate}>
-            {/* Header with PERSONAL icon + title input */}
-            <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-1 w-full border-b-2">
-                <SVGIcons.personal className="w-10 h-7 textColor" />
-                <span className="text-black w-full">
-                  <input
-                    type="text"
-                    placeholder="Enter Task Name"
-                    value={taskName}
-                    onChange={(e) => setTaskName(e.target.value)}
-                    required
-                    className="inputBase"
-                  />
-                </span>
-              </div>
+          <form
+            className="flex flex-col gap-4 rounded-2xl"
+            onSubmit={handleCreate}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <span className="flex items-center">
+                <h2 className="font-bold text-xl">Personal Task Form</h2>{" "}
+                <Button
+                  icon={SVGIcons.public}
+                  iconRight
+                  iconSize={"4"}
+                  onClick={handleFormSwitch}
+                  color={"link"}
+                >
+                  Create public task
+                </Button>
+              </span>
+              <Button
+                icon={SVGIcons.x}
+                color={"orange"}
+                iconSize={"4"}
+                onClick={onClose}
+              />
             </div>
+            <Inputs
+              id={"taskname"}
+              label="Task name"
+              icon={SVGIcons.personal}
+              iconSize={"6"}
+              placeholder="Enter your task name here"
+              required
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+            />
 
             {/* Dos columnas principales */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left column */}
               <div className="space-y-3">
-                {/* Assignment (read-only: owner) */}
-                <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl mb-5">
-                  <span className="ml-2 aspect-square min-w-10 min-h-10 flex items-center">
-                    <img
-                      src={user?.photo || myImage.defaultUser}
-                      alt="owner"
-                      className="relative h-15 w-19 rounded-full border-2 border-blue-500 object-cover aspect-square"
-                    />
-                  </span>
-                  <div className="selectBase pointer-events-none opacity-100">
-                    {`${user?.firstName || ""} ${
-                      user?.lastName || ""
-                    }`.trim() || "You"}
-                  </div>
-                </div>
 
                 {/* Date */}
-                <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                  <span className="ml-3 mx-3 px-2 py-2 ">
-                    <SVGIcons.calendar className="h-6 w-6" />
-                  </span>
-                  <input
-                    type="date"
-                    value={completeBy}
-                    onChange={(e) => setCompleteBy(e.target.value)}
-                    className="inputBaseDate"
-                  />
-                </div>
+                <Inputs
+                  type={"date"}
+                  icon={SVGIcons.calendar}
+                  iconSize={"6"}
+                  id={"taskdate"}
+                  label={"Due date"}
+                  value={completeBy}
+                  onChange={(e) => setCompleteBy(e.target.value)}
+                />
 
                 {/* Priority */}
-                <div className="h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                  <span className="ml-3  px-2 py-2 ">
-                    {priority === "high" ? (
-                      <SVGIcons.priority.high className="h-6 w-6 text-[var(--orange)]" />
-                    ) : priority === "medium" ? (
-                      <SVGIcons.priority.med className="h-6 w-6 text-[var(--yellow)]" />
-                    ) : priority === "low" ? (
-                      <SVGIcons.priority.low className="h-6 w-6 text-[var(--green)]" />
-                    ) : (
-                      <SVGIcons.question className="h-6 w-6" />
-                    )}
-                  </span>
-                  <select
-                    value={priority}
-                    onChange={(e) => setPriority(e.target.value)}
-                    className="selectBase"
-                  >
-                    <option value="low">Low priority</option>
-                    <option value="medium">Medium priority</option>
-                    <option value="high">High priority</option>
-                  </select>
-                </div>
+                <Selects
+                  map={prioritis}
+                  id="priority"
+                  label={"Priority "}
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  valueKey={"name"}
+                  labelKey={"name"}
+                  className="selectBase"
+                  icon={
+                    priority === "high"
+                      ? SVGIcons.priority.high
+                      : priority === "medium"
+                      ? SVGIcons.priority.med
+                      : priority === "low"
+                      ? SVGIcons.priority.low
+                      : SVGIcons.question
+                  }
+                  iconSize={"6"}
+                  iconColor={
+                    priority === "high"
+                      ? "orange"
+                      : priority === "medium"
+                      ? "yellow"
+                      : priority === "low"
+                      ? "green"
+                      : ""
+                  }
+                />
               </div>
 
               {/* Right column */}
               <div className="space-y-3">
                 {/* Notes */}
-                <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
-                  <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
-                    <SVGIcons.note className="h-6 w-6" />
-                    Notes <span className="text-slate-600 ">(Optional)</span>
-                  </span>
-                  <textarea
-                    placeholder="Enter your notes here"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className={"textAreaBase min-h-[110px]"}
-                  />
-                </div>
+                <TextArea
+                  icon={SVGIcons.note}
+                  label="Notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  iconSize={"6"}
+                  placeholder="Enter here your notes"
+                />
               </div>
             </div>
 
@@ -301,10 +329,7 @@ function PersonalTaskForm({ onClose, onCreated }) {
                       className="flex items-center"
                     />
                   </div>
-                  {/* In personal we DO NOT reassign: subtasks are assigned to the owner */}
-                  <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl text-xs selectBase pointer-events-none opacity-100">
-                    Assigned to you
-                  </div>
+                  {/* No assignee selector for subtasks; defaults to owner */}
                   <Button
                     type="button"
                     onClick={handleAddSubTask}
@@ -412,10 +437,6 @@ function PersonalTaskForm({ onClose, onCreated }) {
                 title="Cmd/Ctrl + Enter to create"
               >
                 {submitting ? "Creating..." : "Create personal task"}
-              </Button>
-
-              <Button type="button" onClick={onClose} color={"orange"}>
-                Cancel
               </Button>
             </div>
           </form>

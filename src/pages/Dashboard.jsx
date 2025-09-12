@@ -46,6 +46,8 @@ function Dashboard() {
         <PersonalTaskForm
           onClose={() => setShowPersonalForm(false)}
           onCreated={() => {}}
+          setShowPublicForm={setShowPublicForm}
+          setShowPersonalForm={setShowPersonalForm}
         />
       )}
     </div>
