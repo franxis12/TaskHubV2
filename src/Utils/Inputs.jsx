@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function NewInput({
+function Inputs({
   icon,
   iconSize,
   placeholder,
@@ -42,7 +42,7 @@ function NewInput({
             focus ? " shadow-[var(--shadowGreen)]" : ""
           }`}
         >
-          <span className=" h-full p-2">
+          <span className=" h-full p-2 ">
             {icon && (
               <SVGIconSelect
                 className={
@@ -53,7 +53,7 @@ function NewInput({
               />
             )}
           </span>
-          <span className="w-full h-full">
+          <span className="w-full h-full p-2">
             <input
               className="w-full h-full outline-0 "
               placeholder={placeholder}
@@ -73,4 +73,4 @@ function NewInput({
   );
 }
 
-export default NewInput;
+export default Inputs;

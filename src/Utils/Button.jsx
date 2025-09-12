@@ -13,6 +13,7 @@ function Button({
   iconSize,
   ariaLabel,
   iconRight,
+  width,
 }) {
   const SVGIcon = icon;
   const colorPick = {
@@ -66,7 +67,7 @@ function Button({
         disabled={disabled}
         title={title}
         aria-label={ariaLabel}
-        className={`flex items-center ${justify}   text-sm gap-2 px-3 rounded-xl h-11 hover:font-semibold justify-center ${
+        className={`flex items-center ${justify} ${width}  text-sm gap-2 px-3 rounded-xl h-11 hover:font-semibold justify-center ${
           btnColor !== undefined
             ? btnColor
             : "border-1 border-slate-500/20 hover:bg-black/25"
