@@ -1,5 +1,4 @@
 // src/components/AddPublicTask.jsx
-import React, { useState, useContext, useEffect } from "react";
 import { db } from "../auth/firebaseConfig";
 import {
   collection,
@@ -9,13 +8,10 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { SVGIcons, myImage } from "../importFiles/imports";
-import Button from "../Utils/Button";
-import Inputs from "../Utils/Inputs";
-import Selects from "../Utils/Selects";
-import SubTaskCard from "../Utils/SubTaskCard";
-import TextArea from "../Utils/TextArea";
+import { MyComponents } from "../importFiles/components";
 
 function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
   const { user } = useContext(UserContext);
@@ -219,7 +215,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
             <div className="flex items-center justify-between">
               <span className="flex items-center">
                 <h2 className="font-bold text-xl">Public Task Form</h2>{" "}
-                <Button
+                <MyComponents.Button
                   icon={SVGIcons.personal}
                   iconRight
                   iconSize={"4"}
@@ -227,16 +223,16 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                   color={"link"}
                 >
                   Create personal task
-                </Button>
+                </MyComponents.Button>
               </span>
-              <Button
+              <MyComponents.Button
                 icon={SVGIcons.x}
                 color={"orange"}
                 iconSize={"4"}
                 onClick={accion}
               />
             </div>
-            <Inputs
+            <MyComponents.Input
               id={"taskname"}
               label="Task name"
               icon={SVGIcons.public}
@@ -251,7 +247,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
               {/* Columna izquierda */}
               <div className="space-y-3">
                 {/* Asignar usuario (tarea principal) */}
-                <Selects
+                <MyComponents.Select
                   defaultVal={"Unassigned"}
                   value={assignedTo}
                   onChange={(e) => setAssignedTo(e.target.value)}
@@ -267,7 +263,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                 />
 
                 {/* Fecha */}
-                <Inputs
+                <MyComponents.Input
                   type={"date"}
                   icon={SVGIcons.calendar}
                   iconSize={"6"}
@@ -278,7 +274,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                 />
 
                 {/* Prioridad */}
-                <Selects
+                <MyComponents.Select
                   map={prioritis}
                   id="priority"
                   label={"Priority "}
@@ -312,7 +308,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
               {/* Columna derecha */}
               <div className="space-y-3">
                 {/* Notas */}
-                <TextArea
+                <MyComponents.TextArea
                   icon={SVGIcons.note}
                   label="Notes"
                   value={notes}
@@ -342,16 +338,15 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                     </span>
                   </label>
                   <div className="gap-2 flex">
-                    <button
+                    <MyComponents.Button
                       type="button"
-                      className="text-xs text-slate-600 hover:text-slate-900 underline"
                       onClick={copyFromMain}
                       title="Copiar prioridad y fecha desde la tarea principal"
                     >
                       Copy from main
-                    </button>
+                    </MyComponents.Button>
 
-                    <Button
+                    <MyComponents.Button
                       iconSize={"5"}
                       color="yellow"
                       onClick={() => setSubTaskMenu(false)}
@@ -361,9 +356,9 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                 </div>
 
                 {/* Form sub-task */}
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2 overflow-hidden">
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2 ">
                   <div className="col-span-6 md:col-span-3">
-                    <Inputs
+                    <MyComponents.Input
                       type="text"
                       value={stName}
                       onChange={(e) => setStName(e.target.value)}
@@ -372,7 +367,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                       label={"Sub-task name"}
                       required
                     />
-                    <Selects
+                    <MyComponents.Select
                       defaultVal={"Unassigned"}
                       value={stAssignedTo}
                       onChange={(e) => setStAssignedTo(e.target.value)}
@@ -389,7 +384,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                   </div>
                   <div className="col-span-6 md:col-span-3">
                     {/* Date */}
-                    <Inputs
+                    <MyComponents.Input
                       type={"date"}
                       icon={SVGIcons.calendar}
                       iconSize={"5"}
@@ -400,7 +395,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                     />
 
                     {/*Priority*/}
-                    <Selects
+                    <MyComponents.Select
                       map={prioritis}
                       id="priority"
                       label={"Priority "}
@@ -432,7 +427,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                   </div>
                   {/* Notas */}
                   <div className="col-span-6">
-                    <TextArea
+                    <MyComponents.TextArea
                       icon={SVGIcons.note}
                       label="Notes"
                       value={stNotes}
@@ -443,7 +438,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                     />
                   </div>
                   <div className="col-span-6">
-                    <Button
+                    <MyComponents.Button
                       color="green"
                       type="button"
                       onClick={handleAddSubTask}
@@ -452,7 +447,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                       width={"w-full"}
                     >
                       Add Sub-task
-                    </Button>
+                    </MyComponents.Button>
                   </div>
                 </div>
 
@@ -493,14 +488,14 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                             )}
                           </div>
                         </div>
-                        <button
+                        <MyComponents.Button
                           type="button"
                           onClick={() => handleRemoveSubTask(idx)}
-                          className="text-xs text-slate-600 hover:text-rose-600"
+                          color={"orange"}
                           title="Delete"
                         >
                           Delete
-                        </button>
+                        </MyComponents.Button>
                       </li>
                     ))}
                   </ul>
@@ -519,7 +514,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
 
                 {subTasks.map((st, idx) => (
                   <>
-                    <SubTaskCard
+                    <MyComponents.SubTaskCard
                       st={st}
                       idx={idx}
                       members={members}
@@ -533,7 +528,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
             {/* Actions */}
             <div className="flex items-center gap-2">
               {!subTaskMenu && (
-                <Button
+                <MyComponents.Button
                   width={"w-full"}
                   id={"create-public-task"}
                   type={"submit"}
@@ -555,7 +550,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                   ) : (
                     "Created task"
                   )}
-                </Button>
+                </MyComponents.Button>
               )}
             </div>
           </form>

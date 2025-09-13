@@ -163,7 +163,7 @@ function PersonalTaskForm({
       >
         {/* Contenedor modal */}
         <div
-          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30 shadow-[inset_0_0_1px_#fff9] shadow-lg "
+          className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30  shadow-lg "
           style={{
             color: "var(--textColor)",
             maxHeight: "calc(100svh - 2rem)",
@@ -210,7 +210,6 @@ function PersonalTaskForm({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left column */}
               <div className="space-y-3">
-
                 {/* Date */}
                 <Inputs
                   type={"date"}
