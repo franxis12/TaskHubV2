@@ -360,73 +360,100 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                   </div>
                 </div>
 
-                {/* Formulario de sub-task */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2 overflow-scroll">
-                  <input
-                    type="text"
-                    value={stName}
-                    onChange={(e) => setStName(e.target.value)}
-                    className={"inputBase text-lg border-b-2"}
-                    placeholder="Enter Sub-task name"
-                    maxLength={100}
-                  />
-                  <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                    <select
-                      value={stPriority}
-                      onChange={(e) => setStPriority(e.target.value)}
-                      className={"selectBase"}
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                    </select>
-                  </div>
-                  <div className="pl-4 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                    <input
-                      type="date"
-                      value={stCompleteBy}
-                      onChange={(e) => setStCompleteBy(e.target.value)}
-                      className="flex items-center"
+                {/* Form sub-task */}
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2 overflow-hidden">
+                  <div className="col-span-6 md:col-span-3">
+                    <Inputs
+                      type="text"
+                      value={stName}
+                      onChange={(e) => setStName(e.target.value)}
+                      placeholder="Enter Sub-task name"
+                      maxLength={100}
+                      label={"Sub-task name"}
+                      required
                     />
-                  </div>
-                  <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                    <select
+                    <Selects
+                      defaultVal={"Unassigned"}
                       value={stAssignedTo}
                       onChange={(e) => setStAssignedTo(e.target.value)}
-                      className="selectBase"
-                    >
-                      <option value="">Sin asignar</option>
-                      {members.map((member) => (
-                        <option key={member.uid} value={member.uid}>
-                          {member.name}
-                        </option>
-                      ))}
-                    </select>
+                      map={members}
+                      id="stAssignedTo"
+                      label={"Assigned to"}
+                      //icon={SVGIcons.personal}
+                      iconSize={"5"}
+                      image={
+                        members.find((m) => m.uid === stAssignedTo)?.photo ||
+                        myImage.defaultUser
+                      }
+                    />
                   </div>
+                  <div className="col-span-6 md:col-span-3">
+                    {/* Date */}
+                    <Inputs
+                      type={"date"}
+                      icon={SVGIcons.calendar}
+                      iconSize={"5"}
+                      id={"taskdate"}
+                      label={"Due date"}
+                      value={stCompleteBy}
+                      onChange={(e) => setStCompleteBy(e.target.value)}
+                    />
 
-                  <Button
-                    color="green"
-                    type="button"
-                    onClick={handleAddSubTask}
-                    disabled={!stName.trim() || subTasks.length >= 10}
-                    title="Add sub-task"
-                  >
-                    Add Sub-task
-                  </Button>
-                </div>
-                <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
-                  <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
-                    <SVGIcons.note className="h-6 w-6" />
-                    Sub-task notes
-                    <span className="text-slate-600 ">(Optional)</span>
-                  </span>
-                  <textarea
-                    value={stNotes}
-                    onChange={(e) => setStNotes(e.target.value)}
-                    className={"textAreaBase" + " mb-2 min-h-[60px]"}
-                    placeholder="Enter your notes here"
-                    maxLength={400}
-                  />
+                    {/*Priority*/}
+                    <Selects
+                      map={prioritis}
+                      id="priority"
+                      label={"Priority "}
+                      value={stPriority}
+                      onChange={(e) => setStPriority(e.target.value)}
+                      valueKey={"name"}
+                      labelKey={"name"}
+                      className="selectBase"
+                      icon={
+                        priority === "high"
+                          ? SVGIcons.priority.high
+                          : priority === "medium"
+                          ? SVGIcons.priority.med
+                          : priority === "low"
+                          ? SVGIcons.priority.low
+                          : SVGIcons.question
+                      }
+                      iconSize={"5"}
+                      iconColor={
+                        priority === "high"
+                          ? "orange"
+                          : priority === "medium"
+                          ? "yellow"
+                          : priority === "low"
+                          ? "green"
+                          : ""
+                      }
+                    />
+                  </div>
+                  {/* Notas */}
+                  <div className="col-span-6">
+                    <TextArea
+                      icon={SVGIcons.note}
+                      label="Notes"
+                      value={stNotes}
+                      onChange={(e) => setStNotes(e.target.value)}
+                      iconSize={"6"}
+                      placeholder="Enter here your notes"
+                      maxLength={400}
+                    />
+                  </div>
+                  <div className="col-span-6">
+                    <Button
+                      color="green"
+                      type="button"
+                      onClick={handleAddSubTask}
+                      disabled={!stName.trim() || subTasks.length >= 10}
+                      title="Add sub-task"
+                      width={"w-full"}
+                    >
+                      Add Sub-task
+                    </Button>
+                  </div>
                 </div>
 
                 {subTasks.length > 0 && (
@@ -505,29 +532,31 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              <Button
-                width={"w-full"}
-                id={"create-public-task"}
-                type={"submit"}
-                disabled={
-                  submitting || !taskName.trim() || user?.role !== "admin"
-                }
-                color={user?.role !== "admin" ? "disable" : "green"}
-                title={
-                  user?.role !== "admin"
-                    ? "Only admin can create public tasks."
-                    : "Cmd/Ctrl + Enter to create"
-                }
-              >
-                {submitting ? (
-                  <span className="inline-flex items-center gap-2">
-                    <SVGIcons.status.progress className="h-4 w-4 animate-spin" />
-                    Creating...
-                  </span>
-                ) : (
-                  "Created task"
-                )}
-              </Button>
+              {!subTaskMenu && (
+                <Button
+                  width={"w-full"}
+                  id={"create-public-task"}
+                  type={"submit"}
+                  disabled={
+                    submitting || !taskName.trim() || user?.role !== "admin"
+                  }
+                  color={user?.role !== "admin" ? "disable" : "green"}
+                  title={
+                    user?.role !== "admin"
+                      ? "Only admin can create public tasks."
+                      : "Cmd/Ctrl + Enter to create"
+                  }
+                >
+                  {submitting ? (
+                    <span className="inline-flex items-center gap-2">
+                      <SVGIcons.status.progress className="h-4 w-4 animate-spin" />
+                      Creating...
+                    </span>
+                  ) : (
+                    "Created task"
+                  )}
+                </Button>
+              )}
             </div>
           </form>
         </div>
