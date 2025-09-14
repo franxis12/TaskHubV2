@@ -1,8 +1,6 @@
 // src/pages/Setting.jsx
-import { useContext, useEffect, useMemo, useState } from "react";
-//import { useNavigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import Button from "../Utils/Button";
 import {
   doc,
   updateDoc,
@@ -20,6 +18,7 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
 } from "firebase/auth";
+import { MyComponents } from "../importFiles/components";
 
 function Setting() {
   const { user } = useContext(UserContext);
@@ -43,11 +42,11 @@ function Setting() {
   const [members, setMembers] = useState([]); // users in my company
   const [roleDraft, setRoleDraft] = useState({}); // uid -> role
 
-  const userName = useMemo(() => {
+  /*const userName = useMemo(() => {
     const full = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
     return full || (user?.email ?? "User");
   }, [user]);
-
+*/
   // Prellenar los campos cuando cargue/cambie el usuario
   useEffect(() => {
     setNewName(user?.firstName || "");
@@ -280,54 +279,62 @@ function Setting() {
     }
   };
 
+  const roles = [
+    { uid: "1", name: "admin" },
+    { uid: "2", name: "member" },
+  ];
+
   return (
     <div className="w-full h-full flex p-3 flex-col">
       <div className="w-full">
         <h3 className="text-2xl font-bold">Settings</h3>
       </div>
       <div className="w-full bg-gray-400/20 h-full rounded-2xl grid grid-cols-12 overflow-hidden">
-        <div className="col-span-3">
-          <Button color={"neutro"}>Personal info</Button>
-        </div>
-        <div className="col-span-9 ">
-          <div>
-            <h1>
+        <div className="col-span-12">
+          <div className="flex w-full gap-2 mt-5">
+            {/*<h1>
               {user.email} <span>{userName}</span>
-            </h1>
-            <label>First:</label>
-            <input
+            </h1>*/}
+            <MyComponents.Input
+              label={"First"}
+              required
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               className="border p-1 m-2 rounded-lg"
             />
-          </div>
-          <div>
-            <label>Last:</label>
-            <input
+
+            <MyComponents.Input
+              label={"Last"}
+              required
               value={newLast}
               onChange={(e) => setNewLast(e.target.value)}
-              className="border p-1 m-2 rounded-lg"
             />
           </div>
-          <Button onClick={save}>Save name</Button>
+          <MyComponents.Button color={"green"} onClick={save}>
+            Save name
+          </MyComponents.Button>
 
           {/* Change Company ID */}
           <div className="mt-6 p-3 rounded-lg border border-slate-300/50 bg-white/50">
             <h2 className="font-semibold mb-2">Change Company ID</h2>
             <div className="flex items-center gap-2 flex-wrap">
-              <label>Company ID:</label>
-              <input
+              <MyComponents.Input
                 value={companyIdInput}
+                label={"CompanyID"}
+                required
                 onChange={(e) => {
                   setCompanyIdInput(e.target.value);
                   setCompanyExists(null);
                 }}
-                className="border p-1 m-2 rounded-lg"
                 placeholder="e.g., my-company-123"
               />
-              <Button onClick={checkCompany} disabled={checkingCompany}>
+              <MyComponents.Button
+                onClick={checkCompany}
+                disabled={checkingCompany}
+                color={"yellow"}
+              >
                 {checkingCompany ? "Checking..." : "Check"}
-              </Button>
+              </MyComponents.Button>
               <span className="text-sm">
                 {companyExists === true && (
                   <span className="text-green-600">Exists</span>
@@ -338,7 +345,7 @@ function Setting() {
               </span>
             </div>
             <div className="mt-2">
-              <Button
+              <MyComponents.Button
                 onClick={saveCompany}
                 disabled={
                   updatingCompany ||
@@ -348,7 +355,7 @@ function Setting() {
                 color={"green"}
               >
                 {updatingCompany ? "Saving..." : "Request change"}
-              </Button>
+              </MyComponents.Button>
               <p className="text-xs mt-2 text-slate-600">
                 Changing your Company ID sets "pendingApproval: true" until an
                 admin approves you in that company.
@@ -358,25 +365,27 @@ function Setting() {
 
           {/* Change Profile Photo */}
           <div className="mt-6 p-3 rounded-lg border border-slate-300/50 bg-white/50">
-            <h2 className="font-semibold mb-2">Change profile photo</h2>
             <div className="flex items-center gap-4 flex-wrap">
               <img
                 src={photoPreview || user?.photo || myImage.defaultUser}
                 alt="preview"
                 className="w-16 h-16 rounded-full object-cover border"
               />
-              <input
+              <MyComponents.Input
+                required
+                label={"Change profile photo"}
                 type="file"
                 accept="image/*"
                 onChange={(e) => setPhotoFile(e.target.files?.[0] || null)}
                 className="text-sm"
               />
-              <Button
+              <MyComponents.Button
+                color={"green"}
                 onClick={savePhoto}
                 disabled={uploadingPhoto || !photoFile}
               >
                 {uploadingPhoto ? "Uploading..." : "Save photo"}
-              </Button>
+              </MyComponents.Button>
             </div>
           </div>
 
@@ -385,42 +394,43 @@ function Setting() {
             <h2 className="font-semibold mb-2">Change password</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm">Current password</label>
-                <input
-                  type="password"
-                  value={currPass}
-                  onChange={(e) => setCurrPass(e.target.value)}
-                  className="border p-2 rounded-lg w-full"
-                  placeholder="Optional, if required"
-                />
-              </div>
-              <div>
-                <label className="block text-sm">New password</label>
-                <input
+                <MyComponents.Input
                   type="password"
                   value={newPass}
                   onChange={(e) => setNewPass(e.target.value)}
-                  className="border p-2 rounded-lg w-full"
                   placeholder="Minimum 6 characters"
+                  label={"New password"}
+                  required
                 />
               </div>
               <div>
-                <label className="block text-sm">Confirm new password</label>
-                <input
+                <MyComponents.Input
                   type="password"
                   value={confirmPass}
                   onChange={(e) => setConfirmPass(e.target.value)}
-                  className="border p-2 rounded-lg w-full"
+                  label={"Confirm new password"}
+                  required
+                />
+              </div>
+              <div>
+                <MyComponents.Input
+                  type="password"
+                  value={currPass}
+                  onChange={(e) => setCurrPass(e.target.value)}
+                  placeholder="Optional, if required"
+                  label={"Current password"}
+                  required
                 />
               </div>
             </div>
             <div className="mt-3 flex items-center gap-2">
-              <Button
+              <MyComponents.Button
                 onClick={changePassword}
                 disabled={changingPass || !newPass}
+                color={"orange"}
               >
                 {changingPass ? "Saving..." : "Change password"}
-              </Button>
+              </MyComponents.Button>
               <p className="text-xs text-slate-600">
                 May require recent re-authentication for security.
               </p>
@@ -461,8 +471,8 @@ function Setting() {
                               {m.email}
                             </div>
                           </div>
-                          <select
-                            className="border rounded-md px-2 py-1 text-sm"
+                          <MyComponents.Select
+                            map={roles}
                             value={roleDraft[m.uid] || m.role || "member"}
                             onChange={(e) =>
                               setRoleDraft((p) => ({
@@ -470,16 +480,16 @@ function Setting() {
                                 [m.uid]: e.target.value,
                               }))
                             }
-                          >
-                            <option value="member">Member</option>
+                          />
+                          {/*<option value="member">Member</option>
                             <option value="admin">Admin</option>
-                          </select>
-                          <Button
+                          </select>*/}
+                          <MyComponents.Button
                             onClick={() => approveUser(m.uid)}
                             color={"green"}
                           >
                             Approve
-                          </Button>
+                          </MyComponents.Button>
                         </li>
                       );
                     })}
@@ -506,7 +516,7 @@ function Setting() {
                           alt="avatar"
                           className="w-8 h-8 rounded-full object-cover border"
                         />
-                        <div className="flex-1">
+                        <div className="flex-1 ">
                           <div className="text-sm font-medium">{full}</div>
                           <div className="text-xs text-slate-500">
                             {m.email}
@@ -517,22 +527,25 @@ function Setting() {
                             )}
                           </div>
                         </div>
-                        <select
-                          className="border rounded-md px-2 py-1 text-sm"
-                          value={roleDraft[m.uid] || m.role || "member"}
-                          onChange={(e) =>
-                            setRoleDraft((p) => ({
-                              ...p,
-                              [m.uid]: e.target.value,
-                            }))
-                          }
-                        >
-                          <option value="member">Member</option>
-                          <option value="admin">Admin</option>
-                        </select>
-                        <Button onClick={() => changeUserRole(m.uid)}>
-                          Save
-                        </Button>
+                        <div className="flex gap-2  w-2/7">
+                          <MyComponents.Select
+                            map={roles}
+                            className="border rounded-md px-2 py-1 text-sm"
+                            value={roleDraft[m.uid] || m.role || "member"}
+                            onChange={(e) =>
+                              setRoleDraft((p) => ({
+                                ...p,
+                                [m.uid]: e.target.value,
+                              }))
+                            }
+                          />
+
+                          <MyComponents.Button
+                            onClick={() => changeUserRole(m.uid)}
+                          >
+                            Save
+                          </MyComponents.Button>
+                        </div>
                       </li>
                     );
                   })}

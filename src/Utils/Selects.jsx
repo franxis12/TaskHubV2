@@ -39,14 +39,14 @@ function Selects({
   const iconColorSelected = iconColorPicker[iconColor];
 
   return (
-    <div>
+    <div className="w-full">
       {label && (
         <label htmlFor={id} className="ml-2 font-medium">
           {label}
           {required && <span className="text-red-400"> *</span>}
         </label>
       )}
-      <div className="border border-slate-400/50 rounded-xl flex items-center max-h-10 bg-[var(--textColorInverse)]">
+      <div className="border  border-slate-400/50 rounded-xl flex items-center max-h-10 bg-[var(--textColorInverse)]">
         <span className="  h-full p-2 ">
           {icon && (
             <SVGIconSelect

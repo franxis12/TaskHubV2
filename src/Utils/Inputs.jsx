@@ -12,6 +12,7 @@ function Inputs({
   defaultValue,
   type,
   maxLength,
+  accept,
 }) {
   const [focus, setFocus] = useState(false);
   const SVGIconSelect = icon;
@@ -73,6 +74,7 @@ function Inputs({
               defaultValue={defaultValue}
               type={type}
               maxLength={maxLength}
+              accept={accept}
             />
           </span>
           {!label && required && (
