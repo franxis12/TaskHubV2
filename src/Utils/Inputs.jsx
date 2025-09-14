@@ -11,6 +11,8 @@ function Inputs({
   onChange,
   defaultValue,
   type,
+  maxLength,
+  accept,
 }) {
   const [focus, setFocus] = useState(false);
   const SVGIconSelect = icon;
@@ -32,9 +34,15 @@ function Inputs({
     <>
       <div className="">
         {label && (
-          <label htmlFor={id} className="ml-2 font-medium">
+          <label htmlFor={id} className="ml-2 font-medium flex items-center">
             {label}
-            {required && <span className="text-red-400"> *</span>}
+            {required && label && <span className="text-red-400">*</span>}
+            {!required && (
+              <span className="text-slate-600 text-[12px] mt-1 ml-1">
+                {" "}
+                (Optional)
+              </span>
+            )}
           </label>
         )}
         <div
@@ -65,8 +73,16 @@ function Inputs({
               required={required}
               defaultValue={defaultValue}
               type={type}
+              maxLength={maxLength}
+              accept={accept}
             />
           </span>
+          {!label && required && (
+            <span className="text-red-400 mr-4 mt-2 text-lg">*</span>
+          )}
+          {!required && !label && (
+            <span className="text-slate-600 text-[12px] mr-4"> (Optional)</span>
+          )}
         </div>
       </div>
     </>

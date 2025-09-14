@@ -36,12 +36,18 @@ function Dashboard() {
       </div>
 
       {showPublicForm && (
-        <AddPublicTask accion={() => setShowPublicForm(!showPublicForm)} />
+        <AddPublicTask
+          accion={() => setShowPublicForm(!showPublicForm)}
+          setShowPersonalForm={setShowPersonalForm}
+          setShowPublicForm={setShowPublicForm}
+        />
       )}
       {showPersonalForm && (
         <PersonalTaskForm
           onClose={() => setShowPersonalForm(false)}
           onCreated={() => {}}
+          setShowPublicForm={setShowPublicForm}
+          setShowPersonalForm={setShowPersonalForm}
         />
       )}
     </div>

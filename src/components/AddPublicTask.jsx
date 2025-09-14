@@ -1,5 +1,4 @@
 // src/components/AddPublicTask.jsx
-import React, { useState, useContext, useEffect } from "react";
 import { db } from "../auth/firebaseConfig";
 import {
   collection,
@@ -9,13 +8,12 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
+import { useState, useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import { SVGIcons, myImage } from "../importFiles/imports";
-import Button from "../Utils/Button";
-import Inputs from "../Utils/Inputs";
-import Selects from "../Utils/Selects";
+import { MyComponents } from "../importFiles/components";
 
-function AddPublicTask({ accion }) {
+function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
   const { user } = useContext(UserContext);
 
   // Main task fields
@@ -37,6 +35,12 @@ function AddPublicTask({ accion }) {
   const [subTasks, setSubTasks] = useState([]); // [{ name, priority, completeBy, notes, assignedTo, status }]
 
   const [animation, setAnimation] = useState(false);
+
+  const handleFormSwitch = (e) => {
+    e.preventDefault;
+    setShowPersonalForm(true);
+    setShowPublicForm(false);
+  };
 
   useEffect(() => {
     if (subTaskMenu) {
@@ -208,31 +212,27 @@ function AddPublicTask({ accion }) {
             className="flex flex-col gap-4 rounded-2xl"
             onSubmit={handleSubmit}
           >
-            {/*<div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-1 w-full border-b-2  ">
-                <SVGIcons.public className="w-10 h-7 textColor" />
-                <span className="text-black w-full">
-                  <input
-                    type="text"
-                    placeholder="Enter Task Name"
-                    value={taskName}
-                    onChange={(e) => setTaskName(e.target.value)}
-                    required
-                    className="inputBase"
-                  />
-                </span>
-              </div>
-            </div>*/}
             <div className="flex items-center justify-between">
-              <h2 className="font-bold text-xl">Public Task Form</h2>
-              <Button
+              <span className="flex items-center">
+                <h2 className="font-bold text-xl">Public Task Form</h2>{" "}
+                <MyComponents.Button
+                  icon={SVGIcons.personal}
+                  iconRight
+                  iconSize={"4"}
+                  onClick={handleFormSwitch}
+                  color={"link"}
+                >
+                  Create personal task
+                </MyComponents.Button>
+              </span>
+              <MyComponents.Button
                 icon={SVGIcons.x}
                 color={"orange"}
                 iconSize={"4"}
                 onClick={accion}
               />
             </div>
-            <Inputs
+            <MyComponents.Input
               id={"taskname"}
               label="Task name"
               icon={SVGIcons.public}
@@ -247,7 +247,7 @@ function AddPublicTask({ accion }) {
               {/* Columna izquierda */}
               <div className="space-y-3">
                 {/* Asignar usuario (tarea principal) */}
-                <Selects
+                <MyComponents.Select
                   defaultVal={"Unassigned"}
                   value={assignedTo}
                   onChange={(e) => setAssignedTo(e.target.value)}
@@ -263,7 +263,7 @@ function AddPublicTask({ accion }) {
                 />
 
                 {/* Fecha */}
-                <Inputs
+                <MyComponents.Input
                   type={"date"}
                   icon={SVGIcons.calendar}
                   iconSize={"6"}
@@ -274,7 +274,7 @@ function AddPublicTask({ accion }) {
                 />
 
                 {/* Prioridad */}
-                <Selects
+                <MyComponents.Select
                   map={prioritis}
                   id="priority"
                   label={"Priority "}
@@ -308,18 +308,13 @@ function AddPublicTask({ accion }) {
               {/* Columna derecha */}
               <div className="space-y-3">
                 {/* Notas */}
-                <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
-                  <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
-                    <SVGIcons.note className="h-6 w-6" />
-                    Notes <span className="text-slate-600 ">(Optional)</span>
-                  </span>
-                  <textarea
-                    placeholder="Enter here your notes"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className={"textAreaBase" + " min-h-[110px]"}
-                  />
-                </div>
+                <MyComponents.TextArea
+                  icon={SVGIcons.note}
+                  label="Notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  iconSize={"6"}
+                />
               </div>
             </div>
 
@@ -343,16 +338,15 @@ function AddPublicTask({ accion }) {
                     </span>
                   </label>
                   <div className="gap-2 flex">
-                    <button
+                    <MyComponents.Button
                       type="button"
-                      className="text-xs text-slate-600 hover:text-slate-900 underline"
                       onClick={copyFromMain}
                       title="Copiar prioridad y fecha desde la tarea principal"
                     >
                       Copy from main
-                    </button>
+                    </MyComponents.Button>
 
-                    <Button
+                    <MyComponents.Button
                       iconSize={"5"}
                       color="yellow"
                       onClick={() => setSubTaskMenu(false)}
@@ -361,73 +355,100 @@ function AddPublicTask({ accion }) {
                   </div>
                 </div>
 
-                {/* Formulario de sub-task */}
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2 overflow-scroll">
-                  <input
-                    type="text"
-                    value={stName}
-                    onChange={(e) => setStName(e.target.value)}
-                    className={"inputBase text-lg border-b-2"}
-                    placeholder="Enter Sub-task name"
-                    maxLength={100}
-                  />
-                  <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                    <select
-                      value={stPriority}
-                      onChange={(e) => setStPriority(e.target.value)}
-                      className={"selectBase"}
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                    </select>
-                  </div>
-                  <div className="pl-4 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                    <input
-                      type="date"
-                      value={stCompleteBy}
-                      onChange={(e) => setStCompleteBy(e.target.value)}
-                      className="flex items-center"
+                {/* Form sub-task */}
+                <div className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2 ">
+                  <div className="col-span-6 md:col-span-3">
+                    <MyComponents.Input
+                      type="text"
+                      value={stName}
+                      onChange={(e) => setStName(e.target.value)}
+                      placeholder="Enter Sub-task name"
+                      maxLength={100}
+                      label={"Sub-task name"}
+                      required
                     />
-                  </div>
-                  <div className="pl-3 h-10 flex items-center bg-[var(--color-input)] gap-2 border border-slate-600/25 rounded-xl">
-                    <select
+                    <MyComponents.Select
+                      defaultVal={"Unassigned"}
                       value={stAssignedTo}
                       onChange={(e) => setStAssignedTo(e.target.value)}
-                      className="selectBase"
-                    >
-                      <option value="">Sin asignar</option>
-                      {members.map((member) => (
-                        <option key={member.uid} value={member.uid}>
-                          {member.name}
-                        </option>
-                      ))}
-                    </select>
+                      map={members}
+                      id="stAssignedTo"
+                      label={"Assigned to"}
+                      //icon={SVGIcons.personal}
+                      iconSize={"5"}
+                      image={
+                        members.find((m) => m.uid === stAssignedTo)?.photo ||
+                        myImage.defaultUser
+                      }
+                    />
                   </div>
+                  <div className="col-span-6 md:col-span-3">
+                    {/* Date */}
+                    <MyComponents.Input
+                      type={"date"}
+                      icon={SVGIcons.calendar}
+                      iconSize={"5"}
+                      id={"taskdate"}
+                      label={"Due date"}
+                      value={stCompleteBy}
+                      onChange={(e) => setStCompleteBy(e.target.value)}
+                    />
 
-                  <Button
-                    color="green"
-                    type="button"
-                    onClick={handleAddSubTask}
-                    disabled={!stName.trim() || subTasks.length >= 10}
-                    title="Add sub-task"
-                  >
-                    Add Sub-task
-                  </Button>
-                </div>
-                <div className="flex flex-col items-start gap-2 border bg-[var(--color-input)] border-slate-600/25 rounded-xl">
-                  <span className="text-black px-2 py-1 flex bg-slate-200 w-full rounded-t-xl items-center gap-2">
-                    <SVGIcons.note className="h-6 w-6" />
-                    Sub-task notes
-                    <span className="text-slate-600 ">(Optional)</span>
-                  </span>
-                  <textarea
-                    value={stNotes}
-                    onChange={(e) => setStNotes(e.target.value)}
-                    className={"textAreaBase" + " mb-2 min-h-[60px]"}
-                    placeholder="Enter your notes here"
-                    maxLength={400}
-                  />
+                    {/*Priority*/}
+                    <MyComponents.Select
+                      map={prioritis}
+                      id="priority"
+                      label={"Priority "}
+                      value={stPriority}
+                      onChange={(e) => setStPriority(e.target.value)}
+                      valueKey={"name"}
+                      labelKey={"name"}
+                      className="selectBase"
+                      icon={
+                        priority === "high"
+                          ? SVGIcons.priority.high
+                          : priority === "medium"
+                          ? SVGIcons.priority.med
+                          : priority === "low"
+                          ? SVGIcons.priority.low
+                          : SVGIcons.question
+                      }
+                      iconSize={"5"}
+                      iconColor={
+                        priority === "high"
+                          ? "orange"
+                          : priority === "medium"
+                          ? "yellow"
+                          : priority === "low"
+                          ? "green"
+                          : ""
+                      }
+                    />
+                  </div>
+                  {/* Notas */}
+                  <div className="col-span-6">
+                    <MyComponents.TextArea
+                      icon={SVGIcons.note}
+                      label="Notes"
+                      value={stNotes}
+                      onChange={(e) => setStNotes(e.target.value)}
+                      iconSize={"6"}
+                      placeholder="Enter here your notes"
+                      maxLength={400}
+                    />
+                  </div>
+                  <div className="col-span-6">
+                    <MyComponents.Button
+                      color="green"
+                      type="button"
+                      onClick={handleAddSubTask}
+                      disabled={!stName.trim() || subTasks.length >= 10}
+                      title="Add sub-task"
+                      width={"w-full"}
+                    >
+                      Add Sub-task
+                    </MyComponents.Button>
+                  </div>
                 </div>
 
                 {subTasks.length > 0 && (
@@ -467,96 +488,70 @@ function AddPublicTask({ accion }) {
                             )}
                           </div>
                         </div>
-                        <button
+                        <MyComponents.Button
                           type="button"
                           onClick={() => handleRemoveSubTask(idx)}
-                          className="text-xs text-slate-600 hover:text-rose-600"
+                          color={"orange"}
                           title="Delete"
                         >
                           Delete
-                        </button>
+                        </MyComponents.Button>
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
             ) : (
-              <div className="overflow-scroll flex items-center gap-4 rounded-2xl border border-slate-200 p-3 bg-white/50">
-                {/*Sub task assingne*/}
+              <div className="no-scrollbar overflow-scroll flex items-center gap-4 rounded-2xl border border-slate-400/50 p-3 ">
+                {/*Sub task assingne button*/}
                 <div
                   onClick={() => setSubTaskMenu(true)}
-                  className=" flex flex-col h-full items-center justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
+                  className="hover:bg-blue-400 flex flex-col h-full items-center justify-between rounded-xl border border-slate-200  px-3 py-2 text-sm text-slate-800"
                 >
                   <span className="btn-">Add Sub-Taks</span>
                   <SVGIcons.plus className="w-5 h-5 border rounded-3xl " />
                 </div>
 
                 {subTasks.map((st, idx) => (
-                  <li
-                    key={`${st.name}-${idx}`}
-                    className=" flex  items-start justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800"
-                  >
-                    <div className="flex ">
-                      <div className="h-full w-5">
-                        <div className="bg-black text-white w-5 rounded-sm items-center flex justify-center">
-                          {idx + 1}
-                        </div>
-                        <SVGIcons.arrowTurn.right className="w-4 h-full mr-3 ml-2" />
-                      </div>
-                      <div className="min-w-0 flex-1 ml-3">
-                        <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center o">
-                          {st.assignedTo && (
-                            <>
-                              <span className="inline-flex items-center gap-1 w-30 h-12">
-                                <img
-                                  src={
-                                    members.find((m) => m.uid === st.assignedTo)
-                                      ?.photo || myImage.defaultUser
-                                  }
-                                  alt="assignee"
-                                  className="h-4 w-4 rounded-full border"
-                                />
-                                {members.find((m) => m.uid === st.assignedTo)
-                                  ?.name || "?"}
-                              </span>
-                            </>
-                          )}
-                        </div>
-                        <div className="font-medium truncate mb-1 ">
-                          {st.name}
-                        </div>
-                      </div>
-                    </div>
-                  </li>
+                  <>
+                    <MyComponents.SubTaskCard
+                      st={st}
+                      idx={idx}
+                      members={members}
+                      myImage={myImage}
+                    />
+                  </>
                 ))}
               </div>
             )}
 
             {/* Actions */}
             <div className="flex items-center gap-2">
-              <Button
-                width={"w-full"}
-                id={"create-public-task"}
-                type={"submit"}
-                disabled={
-                  submitting || !taskName.trim() || user?.role !== "admin"
-                }
-                color={user?.role !== "admin" ? "disable" : "green"}
-                title={
-                  user?.role !== "admin"
-                    ? "Only admin can create public tasks."
-                    : "Cmd/Ctrl + Enter to create"
-                }
-              >
-                {submitting ? (
-                  <span className="inline-flex items-center gap-2">
-                    <SVGIcons.status.progress className="h-4 w-4 animate-spin" />
-                    Creating...
-                  </span>
-                ) : (
-                  "Created task"
-                )}
-              </Button>
+              {!subTaskMenu && (
+                <MyComponents.Button
+                  width={"w-full"}
+                  id={"create-public-task"}
+                  type={"submit"}
+                  disabled={
+                    submitting || !taskName.trim() || user?.role !== "admin"
+                  }
+                  color={user?.role !== "admin" ? "disable" : "green"}
+                  title={
+                    user?.role !== "admin"
+                      ? "Only admin can create public tasks."
+                      : "Cmd/Ctrl + Enter to create"
+                  }
+                >
+                  {submitting ? (
+                    <span className="inline-flex items-center gap-2">
+                      <SVGIcons.status.progress className="h-4 w-4 animate-spin" />
+                      Creating...
+                    </span>
+                  ) : (
+                    "Created task"
+                  )}
+                </MyComponents.Button>
+              )}
             </div>
           </form>
         </div>
