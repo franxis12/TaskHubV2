@@ -4,6 +4,8 @@ import Input from "../Utils/Input";
 import Container from "../Utils/Container";
 import Button from "../Utils/Button";
 import Select from "../Utils/Select";
+import { MyComponents } from "../importFiles/components";
+import { SVGIcons } from "../importFiles/imports";
 
 export const defaultFilters = {
   search: "",
@@ -65,6 +67,32 @@ function TaskFilters({
 
   const reset = () => setFilters({ ...defaultFilters });
 
+  const taskType = [
+    { uid: "all", name: "All" },
+    { uid: "public", name: "Public" },
+    { uid: "personal", name: "Personal" },
+  ];
+  const taskPriority = [
+    { uid: "all", name: "All" },
+    { uid: "high", name: "High" },
+    { uid: "medium", name: "Medium" },
+    { uid: "low", name: "Low" },
+  ];
+
+  const taskStatus = [
+    { uid: "all", name: "All" },
+    { uid: "pending", name: "Pending" },
+    { uid: "progress", name: "In progress" },
+    { uid: "completed", name: "Completed" },
+    { uid: "missed", name: "Missed" },
+  ];
+
+  const taskAssignee = [
+    { uid: "all", name: "Anyone" },
+    { uid: "unassigned", name: "Unassigned" },
+    { uid: currentUserId, name: "Me" },
+  ];
+
   // estilos base para inputs/selects
   const inputBase =
     "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 " +
@@ -101,101 +129,128 @@ function TaskFilters({
                    md:transform-none md:translate-x-0 md:translate-y-0
                    md:w-auto
                    transition-all duration-300 ease-in-out
-                   z-50
+                   z-500
+                   w-5/6
+                   h-5/6
                  `}
         >
           {/* Type */}
-          <Select
-            cols="1"
+          <MyComponents.Select
             labelName={"Type :"}
+            label={"Type :"}
             id="typeSel"
             value={filters.type}
             onChange={handleChange("type")}
-            options={[
-              { optionsVal: "all", nameOpt: "All" },
-              { optionsVal: "public", nameOpt: "Public" },
-              { optionsVal: "personal", nameOpt: "Personal" },
-            ]}
+            map={taskType}
+            icon={
+              filters.type === "personal"
+                ? SVGIcons.personal
+                : filters.type === "public"
+                ? SVGIcons.public
+                : SVGIcons.question
+            }
+            iconSize={"6"}
           />
 
           {/* Priority */}
-          <Select
-            cols="1"
+          <MyComponents.Select
             labelName={"Priority"}
+            label={"Priority"}
             id="prioritySel"
             value={filters.priority}
             onChange={handleChange("priority")}
-            options={[
-              { optionsVal: "all", nameOpt: "All" },
-              { optionsVal: "high", nameOpt: "High" },
-              { optionsVal: "medium", nameOpt: "Medium" },
-              { optionsVal: "low", nameOpt: "Low" },
-            ]}
+            map={taskPriority}
+            icon={
+              filters.priority === "high"
+                ? SVGIcons.priority.high
+                : filters.priority === "medium"
+                ? SVGIcons.priority.med
+                : filters.priority === "low"
+                ? SVGIcons.priority.low
+                : SVGIcons.question
+            }
+            iconSize={"6"}
+            iconColor={
+              filters.priority === "high"
+                ? "orange"
+                : filters.priority === "medium"
+                ? "yellow"
+                : filters.priority === "low"
+                ? "green"
+                : ""
+            }
           />
 
           {/* Status */}
-          <Select
-            cols="1"
-            labelName={"Status"}
+          <MyComponents.Select
+            label={"Status"}
             id="statusSel"
             value={filters.status}
             onChange={handleChange("status")}
-            options={[
-              { optionsVal: "all", nameOpt: "All" },
-              { optionsVal: "pending", nameOpt: "Pending" },
-              { optionsVal: "progress", nameOpt: "In progress" },
-              { optionsVal: "completed", nameOpt: "Completed" },
-              { optionsVal: "missed", nameOpt: "Missed" },
-            ]}
+            map={taskStatus}
+            icon={
+              filters.status === "completed"
+                ? SVGIcons.status.completed
+                : filters.status === "pending"
+                ? SVGIcons.status.pending
+                : filters.status === "progress"
+                ? SVGIcons.status.progress
+                : filters.status === "missed"
+                ? SVGIcons.status.missed
+                : SVGIcons.question
+            }
+            iconSize={"6"}
+            iconColor={
+              filters.status === "missed"
+                ? "orange"
+                : filters.status === "pending"
+                ? "yellow"
+                : filters.status === "completed"
+                ? "green"
+                : filters.status === "progress"
+                ? "yellow"
+                : ""
+            }
           />
 
           {/* Assigned to */}
-          <Select
-            cols={"1"}
-            labelName={"Assigned to"}
+          <MyComponents.Select
+            label={"Assigned to"}
             id="assignedSel"
             value={filters.assignedTo}
             onChange={handleChange("assignedTo")}
-            options={[
-              { optionsVal: "all", nameOpt: "Anyone" },
-              { optionsVal: "unassigned", nameOpt: "Unassigned" },
-              { optionsVal: currentUserId, nameOpt: "Me" },
-            ]}
+            map={taskAssignee}
             optionsMap={assignees}
           />
 
           {/* Due from */}
-          <Input
+          <MyComponents.Input
             id={"dueFrom"}
             type={"date"}
-            classNameExtra={""}
             defaultValue={filters.search}
             onChange={handleChange("dueFrom")}
-            iconPick={"date"}
-            hasIcon
+            icon={SVGIcons.calendar}
             value={filters.dueTo}
-            labelName={"From :"}
-            cols={"1"}
+            label={"From :"}
             current={"due"}
             expandedId={expandedId}
             setExpandedId={setExpandedId}
+            plain
           />
 
           {/* Due to */}
-          <Input
+          <MyComponents.Input
             id={"dueTo"}
             type={"date"}
-            classNameExtra={""}
             defaultValue={filters.search}
             onChange={handleChange("dueTo")}
-            iconPick={"date"}
-            hasIcon
+            icon={SVGIcons.calendar}
             value={filters.dueTo}
-            labelName={"To :"}
-            cols={"1"}
+            label={"To :"}
             current={"due"}
             expandedId={expandedId}
             setExpandedId={setExpandedId}
+            plain
           />
 
           {/* Overdue + Clear */}
@@ -214,12 +269,12 @@ function TaskFilters({
 
           <div className="flex items-center justify-center h-full gap-2">
             <div className="md:hidden">
-              <Button
-                btnType={"danger"}
-                btnName={"Close"}
+              <MyComponents.Button
                 onClick={() => setShowFilters(false)}
-                classNameExtra=" text-white rounded md:hidden"
-              ></Button>
+                color={"green"}
+              >
+                Close
+              </MyComponents.Button>
             </div>
           </div>
         </div>
@@ -227,15 +282,15 @@ function TaskFilters({
           <div className="flex gap-1">
             {" "}
             <div className="md:hidden">
-              <Button
-                btnType={"primary"}
-                btnName={"Filters"}
+              <MyComponents.Button
                 onClick={() => setShowFilters(!showFilters)}
-                className="px-4 py-2 bg-blue-500 text-white rounded"
-              ></Button>
+                color={""}
+              >
+                Filters
+              </MyComponents.Button>
             </div>
             <div className="flex items-center justify-center h-full gap-2">
-              <Button
+              <MyComponents.Button
                 disabled={isDefault}
                 onClick={reset}
                 btnName={"Clear"}
