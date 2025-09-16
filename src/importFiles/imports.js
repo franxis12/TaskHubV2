@@ -34,6 +34,7 @@ import instagramIcon from "../assets/iconsV2/instagram-brands-solid-full.svg?rea
 import twitterXIcon from "../assets/iconsV2/twitter-brands-solid-full.svg?react";
 import XIcon from "../assets/iconsV2/x-twitter-brands-solid-full.svg?react";
 import linkedInIcon from "../assets/iconsV2/linkedin-brands-solid-full.svg?react";
+import lupaIcon from "../assets/iconsV2/magnifying-glass-solid-full.svg?react"
 
 
 //Images
@@ -51,7 +52,7 @@ const SVGIcons = {
     calendar: CalendarIcon,
     home: home,
     team: teams,
-    stast: stats,
+    stats: stats,
     logout: logout,
     login: login,
     setting: setting,
@@ -62,6 +63,7 @@ const SVGIcons = {
     timeLeft: timeLeft,
     plus: PlusIcon,
     question: CircleQuestionIcon,
+    search: lupaIcon,
 
     priority:{
         low: LowIcon,

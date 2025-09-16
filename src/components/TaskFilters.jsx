@@ -99,23 +99,33 @@ function TaskFilters({
     "placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400";
 
   return (
-    <div className=" bg-pages  w-full h-5">
-      <div className="flex w-full items-center justify-between ">
+    <div className=" bg-pages  w-full h-20">
+      <div className="flex flex-col w-full items-center justify-between">
         {/* Search */}
-        <Input
-          id={"taskSearch"}
-          type={"text"}
-          classNameExtra={"h-full"}
-          placeholder="Task name or notes..."
-          defaultValue={filters.search}
-          onChange={handleSearchChange}
-          iconPick={"search"}
-          hasIcon
-          cols={"1"}
-          current={"taskSearch"}
-          expandedId={expandedId}
-          setExpandedId={setExpandedId}
-        />
+        <div className="flex w-full items-center justify-between">
+          <MyComponents.Input
+            id={"taskSearch"}
+            type={"text"}
+            placeholder="Task name or notes..."
+            defaultValue={filters.search}
+            onChange={handleSearchChange}
+            icon={SVGIcons.search}
+            iconSize={"6"}
+            current={"taskSearch"}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            plain
+          />{" "}
+          <div className="flex items-center justify-center h-full gap-2">
+            <MyComponents.Button
+              disabled={isDefault}
+              onClick={reset}
+              color={"yellow"}
+            >
+              Clear
+            </MyComponents.Button>
+          </div>
+        </div>
 
         <div
           className={`
@@ -230,7 +240,7 @@ function TaskFilters({
             defaultValue={filters.search}
             onChange={handleChange("dueFrom")}
             icon={SVGIcons.calendar}
-            value={filters.dueTo}
+            value={filters.dueFrom}
             label={"From :"}
             current={"due"}
             expandedId={expandedId}
@@ -255,12 +265,12 @@ function TaskFilters({
 
           {/* Overdue + Clear */}
           <div className="flex items-center gap-2 center justify-center h-full">
-            <input
-              className="h-4 w-4 rounded border-slate-300 text-slate-700 focus:ring-slate-400/40 accent-slate-700"
+            <MyComponents.Input
               type="checkbox"
               id="overdueOnly"
               checked={!!filters.overdueOnly}
               onChange={handleChange("overdueOnly")}
+              plain
             />
             <label className="text-sm text-slate-700" htmlFor="overdueOnly">
               Overdue only
@@ -288,17 +298,6 @@ function TaskFilters({
               >
                 Filters
               </MyComponents.Button>
-            </div>
-            <div className="flex items-center justify-center h-full gap-2">
-              <MyComponents.Button
-                disabled={isDefault}
-                onClick={reset}
-                btnName={"Clear"}
-                btnType={"primary"}
-                classNameExtra={
-                  "items-center justify-center pl-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                }
-              />
             </div>
           </div>
         )}
