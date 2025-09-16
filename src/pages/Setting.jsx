@@ -20,6 +20,12 @@ import {
 } from "firebase/auth";
 import { MyComponents } from "../importFiles/components";
 
+const normalizeRole = (role) => {
+  if (role === "1") return "admin";
+  if (role === "2") return "member";
+  return role || "member";
+};
+
 function Setting() {
   const { user } = useContext(UserContext);
   const [newName, setNewName] = useState("");
@@ -242,7 +248,8 @@ function Setting() {
     setRoleDraft((prev) => {
       const next = { ...prev };
       for (const m of members) {
-        if (!next[m.uid]) next[m.uid] = m.role || "member";
+        const draftValue = next[m.uid] ?? m.role;
+        next[m.uid] = normalizeRole(draftValue);
       }
       return next;
     });
@@ -254,7 +261,7 @@ function Setting() {
         alert("You cannot approve yourself here.");
         return;
       }
-      const role = roleDraft[targetUid] || "member";
+      const role = normalizeRole(roleDraft[targetUid]);
       await updateDoc(doc(db, "users", targetUid), {
         pendingApproval: false,
         role,
@@ -271,7 +278,7 @@ function Setting() {
         alert("You cannot change your own role.");
         return;
       }
-      const role = roleDraft[targetUid] || "member";
+      const role = normalizeRole(roleDraft[targetUid]);
       await updateDoc(doc(db, "users", targetUid), { role });
     } catch (err) {
       console.error("Error changing role:", err);
@@ -280,8 +287,8 @@ function Setting() {
   };
 
   const roles = [
-    { uid: "1", name: "admin" },
-    { uid: "2", name: "member" },
+    { uid: "admin", name: "Admin" },
+    { uid: "member", name: "Member" },
   ];
 
   return (
@@ -473,7 +480,7 @@ function Setting() {
                           </div>
                           <MyComponents.Select
                             map={roles}
-                            value={roleDraft[m.uid] || m.role || "member"}
+                            value={roleDraft[m.uid] || normalizeRole(m.role)}
                             onChange={(e) =>
                               setRoleDraft((p) => ({
                                 ...p,
@@ -531,7 +538,7 @@ function Setting() {
                           <MyComponents.Select
                             map={roles}
                             className="border rounded-md px-2 py-1 text-sm"
-                            value={roleDraft[m.uid] || m.role || "member"}
+                            value={roleDraft[m.uid] || normalizeRole(m.role)}
                             onChange={(e) =>
                               setRoleDraft((p) => ({
                                 ...p,

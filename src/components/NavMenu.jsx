@@ -151,7 +151,7 @@ function NavMenu({ expanded, setExpanded, tap, setTap }) {
 
             <Button
               onClick={() => handleTap("stats")}
-              icon={SVGIcons.stast}
+              icon={SVGIcons.stats}
               color={tap === "stats" ? "auto" : ""}
               position={expanded ? "left" : "center"}
             >
