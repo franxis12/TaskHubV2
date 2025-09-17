@@ -24,17 +24,17 @@ function Login() {
   const errorFromCode = (code) => {
     switch (code) {
       case "auth/invalid-email":
-        return "El correo no es válido.";
+        return "The email you entered is not valid.";
       case "auth/user-disabled":
-        return "La cuenta está deshabilitada.";
+        return "This account is disabled.";
       case "auth/user-not-found":
-        return "No existe una cuenta con ese correo.";
+        return "No account exists with that email.";
       case "auth/wrong-password":
-        return "Contraseña incorrecta.";
+        return "Incorrect password.";
       case "auth/too-many-requests":
-        return "Demasiados intentos. Intenta más tarde.";
+        return "Too many attempts. Try again later.";
       default:
-        return "No se pudo iniciar sesión. Revisa tus datos e intenta de nuevo.";
+        return "We couldn't sign you in. Check your info and try again.";
     }
   };
 
@@ -60,10 +60,10 @@ function Login() {
           <h1
             style={{ margin: 0, fontSize: "1.6rem", color: "var(--textColor)" }}
           >
-            Iniciar sesión
+            Sign in
           </h1>
           <p style={{ margin: 0, color: "var(--secondaryBlue)" }}>
-            Bienvenido de vuelta a Task‑Hub
+            Welcome back to Task-Hub
           </p>
         </div>
 
@@ -74,12 +74,12 @@ function Login() {
           style={{ display: "grid", gap: "0.75rem" }}
         >
           <div>
-            <label style={styles.label}>Correo</label>
+            <label style={styles.label}>Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="tu@correo.com"
+              placeholder="you@email.com"
               style={styles.input}
               autoComplete="email"
               required
@@ -87,7 +87,7 @@ function Login() {
           </div>
 
           <div>
-            <label style={styles.label}>Contraseña</label>
+            <label style={styles.label}>Password</label>
             <div style={{ position: "relative" }}>
               <input
                 type={showPwd ? "text" : "password"}
@@ -104,14 +104,14 @@ function Login() {
                 onClick={() => setShowPwd((s) => !s)}
                 style={styles.eyeBtn}
                 aria-label={
-                  showPwd ? "Ocultar contraseña" : "Mostrar contraseña"
+                  showPwd ? "Hide password" : "Show password"
                 }
               >
-                {showPwd ? "Ocultar" : "Mostrar"}
+                {showPwd ? "Hide" : "Show"}
               </button>
             </div>
             <small style={{ color: "var(--secondaryBlue)" }}>
-              Mínimo 6 caracteres.
+              Minimum 6 characters.
             </small>
           </div>
 
@@ -124,13 +124,13 @@ function Login() {
               cursor: canSubmit ? "pointer" : "not-allowed",
             }}
           >
-            {submitting ? "Ingresando..." : "Entrar"}
+            {submitting ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
         <div style={styles.divider}>
           <span style={styles.dividerLine} />
-          <span style={styles.dividerText}>¿No tienes cuenta?</span>
+          <span style={styles.dividerText}>Don't have an account?</span>
           <span style={styles.dividerLine} />
         </div>
 
@@ -139,7 +139,7 @@ function Login() {
           onClick={() => navigate("/register")}
           style={styles.secondaryBtn}
         >
-          Crear cuenta
+          Create account
         </button>
 
         <button
@@ -147,7 +147,7 @@ function Login() {
           onClick={() => navigate("/")}
           style={styles.linkBtn}
         >
-          ← Volver al inicio
+          ← Back to home
         </button>
       </div>
     </div>

@@ -53,7 +53,7 @@ function VerifyEmail() {
         navigate("/dashboard");
       } else {
         setMessage(
-          "Aún no está verificado. Revisa tu correo o reenvía el enlace."
+          "Your email is not verified yet. Check your inbox or resend the link."
         );
       }
     } catch (e) {
@@ -70,7 +70,7 @@ function VerifyEmail() {
     try {
       await sendEmailVerification(auth.currentUser);
       setMessage("Verification email sent. Check your inbox (and spam). ");
-      setCooldown(30); // 30s de espera para reenviar
+      setCooldown(30); // 30s wait before resending
     } catch (e) {
       setMessage("Error resending email. Try again later.");
     } finally {
@@ -89,15 +89,15 @@ function VerifyEmail() {
   return (
     <div style={st.page}>
       <div style={st.card}>
-        <h1 style={st.title}>Verifica tu correo</h1>
-        <p style={st.lead}>Te enviamos un enlace de verificación a:</p>
+        <h1 style={st.title}>Verify your email</h1>
+        <p style={st.lead}>We sent a verification link to:</p>
         <div style={st.badge}>{email || "—"}</div>
 
         <div style={st.infoBox}>
           <ul style={st.list}>
-            <li>Abre el correo y haz clic en “Verificar”.</li>
-            <li>Si no lo ves, revisa la carpeta de spam.</li>
-            <li>Puedes reenviar el correo o refrescar el estado aquí mismo.</li>
+            <li>Open the email and click “Verify”.</li>
+            <li>If you don't see it, check your spam folder.</li>
+            <li>You can resend the email or refresh the status here.</li>
           </ul>
         </div>
 
@@ -114,10 +114,10 @@ function VerifyEmail() {
             }}
           >
             {sending
-              ? "Enviando..."
+              ? "Sending..."
               : cooldown > 0
-              ? `Reenviar en ${cooldown}s`
-              : "Reenviar correo"}
+              ? `Resend in ${cooldown}s`
+              : "Resend email"}
           </button>
           <button
             onClick={checkNow}
@@ -128,16 +128,16 @@ function VerifyEmail() {
               cursor: checking ? "wait" : "pointer",
             }}
           >
-            {checking ? "Revisando..." : "Ya verifiqué, refrescar"}
+            {checking ? "Checking..." : "I've verified, refresh"}
           </button>
         </div>
 
         <div style={st.footerRow}>
           <button onClick={handleLogout} style={st.linkBtn}>
-            Cerrar sesión
+            Log out
           </button>
           <button onClick={() => navigate("/login")} style={st.linkBtn}>
-            ← Volver al login
+            ← Back to login
           </button>
         </div>
       </div>

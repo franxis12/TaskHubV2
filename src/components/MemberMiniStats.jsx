@@ -22,7 +22,7 @@ function MemberMiniStats({ memberId, scope = "public" }) {
   const { completed, pending, missed } = useMemo(() => {
     const s = userStats || {};
     const company = s.company || {}; // { completed, pending, missed }
-    const personal = s.personal || {}; // opcional//
+    const personal = s.personal || {}; // optional
 
     const toNum = (v) => Number(v || 0);
     if (scope === "public") {
@@ -39,7 +39,7 @@ function MemberMiniStats({ memberId, scope = "public" }) {
         missed: toNum(personal.missed),
       };
     }
-    // all: combina ambas si existen
+    // all: combine both if they exist
     return {
       completed: toNum(company.completed) + toNum(personal.completed),
       pending: toNum(company.pending) + toNum(personal.pending),

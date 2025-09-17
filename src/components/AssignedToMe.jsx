@@ -27,7 +27,7 @@ function AssignedToMe({
             <div className="col-span-12 rounded-xl border bg-[var(--componentsBG)]">
               {/*Pending*/}
               <h3 className="text-lg font-medium text-[var(--textColor)]">
-                No tienes asignaciones.
+                You have no assignments.
               </h3>
             </div>
           ) : (
@@ -60,12 +60,12 @@ function AssignedToMe({
                   }
                 >
                   <div className="flex  items-center justify-between w-full  p-2">
-                    {/* Izquierda: tipo + badge + nombres */}
+                    {/* Left: type + badges + names */}
 
                     <div className=" flex items-center w-full h-full   text-xs font-semibold text-slate-800   ">
                       <IconBadge tailwindClass={tailwindClass} task={task} />
 
-                      {/* nombres */}
+                      {/* Names */}
                       <div className="  ">
                         {task.kind === "subtask" ? (
                           <>
@@ -100,10 +100,10 @@ function AssignedToMe({
                       {/* Status */}
                       <StatusBadge task={task} />
 
-                      {/* Centro: chips (tiempo restante + estado) */}
+                      {/* Center: chips (time left + status) */}
                       <TimeBadge task={task} getTimeLeft={getTimeLeft} />
 
-                      {/* prioridad */}
+                      {/* Priority */}
                       <PriorityBadge task={task} />
                     </div>
                   </div>

@@ -205,11 +205,11 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
   // Change status (Cloud Functions adjust counters/flags)
   const updateTaskStatus = async (task, newStatus) => {
     if (!canChangeStatus(task)) {
-      alert("No tienes permiso para cambiar el estado de esta tarea.");
+      alert("You don't have permission to change the status of this task.");
       return;
     }
     if (task.status === "missed") {
-      alert('Las tareas "missed" no se pueden cambiar.');
+      alert('Missed tasks cannot be updated.');
       return;
     }
     try {
@@ -219,8 +219,8 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
       await updateDoc(ref, payload);
       setActionTaskId("");
     } catch (err) {
-      console.error("Error al actualizar estado:", err);
-      alert("No se pudo cambiar el estado.");
+      console.error("Error updating status:", err);
+      alert("We couldn't change the status.");
     }
   };
 
@@ -377,9 +377,9 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
             <div className={`flex w-full justify-between `}>
               <div className={"w-full"}>
                 <TeamMembers
-                  tasks={tasks} // opcional, para mostrar conteos
+                  tasks={tasks} // optional, to display counts
                   onMemberClick={(uid) => {
-                    // opcional: filtra por asignado usando tus filtros existentes
+                    // optional: filter by assignee using your existing filters
                     setFilters((f) => ({ ...f, assignedTo: uid }));
                   }}
                   tap={tap}
@@ -403,7 +403,7 @@ function TaskList({ setShowPublicForm, setShowPersonalForm, tap, setTap }) {
             <div className="flex items-center justify-between col-span-3 p-2 shadowBottom divTitle  ">
               <h3 className="font-semibold ml-3 ">All Tasks</h3>
 
-              {/* Acciones de la tarea seleccionada 
+              {/* Actions for the selected task 
              {actionTaskId === currentTask.id && (
               <div className=" " onClick={(e) => e.stopPropagation()}>
                 <div className="mb-2 flex items-center justify-between">

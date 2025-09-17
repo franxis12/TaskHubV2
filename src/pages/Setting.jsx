@@ -53,7 +53,7 @@ function Setting() {
     return full || (user?.email ?? "User");
   }, [user]);
 */
-  // Prellenar los campos cuando cargue/cambie el usuario
+  // Pre-fill fields when the user loads/changes
   useEffect(() => {
     setNewName(user?.firstName || "");
     setNewLast(user?.lastName || "");
@@ -91,7 +91,7 @@ function Setting() {
     }
   };
 
-  // Verificar si existe la company
+  // Check if the company exists
   const checkCompany = async () => {
     const id = (companyIdInput || "").trim();
     if (!id) {
@@ -122,7 +122,7 @@ function Setting() {
         alert("Enter a valid Company ID.");
         return;
       }
-      // Confirmar existencia antes de guardar (coincide con reglas)
+      // Confirm the company exists before saving (matches rules)
       const snap = await getDoc(doc(db, "companies", id));
       if (!snap.exists()) {
         alert("Company ID does not exist.");

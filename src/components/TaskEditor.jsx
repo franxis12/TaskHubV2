@@ -143,11 +143,11 @@ function TaskEditor({
   const save = async () => {
     try {
       if (!canEdit) {
-        alert("No tienes permiso para editar esta tarea.");
+        alert("You don't have permission to edit this task.");
         return;
       }
       if (isMissed) {
-        alert('Las tareas "missed" no se pueden editar.');
+        alert('Missed tasks cannot be edited.');
         return;
       }
       setSaving(true);
@@ -171,8 +171,8 @@ function TaskEditor({
       await updateDoc(ref, payload);
       onClose?.();
     } catch (err) {
-      console.error("Error al actualizar la tarea:", err);
-      alert("No se pudo guardar. Revisa la consola.");
+      console.error("Error updating task:", err);
+      alert("We couldn't save the changes. Check the console for details.");
     } finally {
       setSaving(false);
     }
@@ -217,7 +217,7 @@ function TaskEditor({
   // read-only notice
   const readOnlyBanner =
     !canEdit &&
-    "Esta tarea es de solo lectura para tu usuario (no tienes permisos para editar).";
+    "This task is read-only for your user (you don't have edit permissions).";
 
   if (isMissed) {
     return (
@@ -227,7 +227,7 @@ function TaskEditor({
       >
         <div className="w-full text-center">
           <p className="text-rose-600 mb-3">
-            Esta tarea está marcada como <b>Missed</b> y no se puede modificar.
+            This task is marked as <b>Missed</b> and cannot be modified.
           </p>
         </div>
         <div className="flex gap-2 justify-center">
@@ -235,12 +235,12 @@ function TaskEditor({
             className={btnDanger}
             onClick={() => onDelete?.(task)}
             disabled={!canDelete}
-            title={!canDelete ? "No tienes permiso para eliminar." : ""}
+            title={!canDelete ? "You don't have permission to delete." : ""}
           >
             Delete task
           </button>
           <button className={btnSecondary} onClick={onClose}>
-            Cancelar
+            Cancel
           </button>
         </div>
       </div>
@@ -257,14 +257,14 @@ function TaskEditor({
       {/* HEADER */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
-          {/* Badge de estado */}
+          {/* Status badge */}
           <span
             className={[
               "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border",
               "border-purple-1",
               statusBg[form.status] || "bg-slate-50 text-slate-600",
             ].join(" ")}
-            title={`Estado: ${form.status}`}
+            title={`Status: ${form.status}`}
           >
             <img
               src={statusIcon[form.status] || statusIconImg}
@@ -274,14 +274,14 @@ function TaskEditor({
             <span className="capitalize">{form.status}</span>
           </span>
 
-          {/* Pill de prioridad */}
+          {/* Priority pill */}
           <span
             className={[
               "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold border",
               priorityBorder[form.priority],
               priorityText[form.priority],
             ].join(" ")}
-            title={`Prioridad: ${form.priority}`}
+            title={`Priority: ${form.priority}`}
           >
             <img
               src={priorityIcons[form.priority]}
@@ -291,13 +291,13 @@ function TaskEditor({
             <span className="capitalize">{form.priority}</span>
           </span>
 
-          {/* Tipo */}
+          {/* Type */}
           <span className="text-xs text-slate-500 capitalize">
             {task.type === "public" ? "Public" : "Personal"}
           </span>
         </div>
 
-        {/* Asignado (avatar + nombre) */}
+        {/* Assigned (avatar + name) */}
         <div className="flex items-center gap-2">
           <div className="p-0.5 rounded-full border-teal-2">
             <img
@@ -318,9 +318,9 @@ function TaskEditor({
         </div>
       )}
 
-      {/* BODY: 3 columnas principales */}
+      {/* BODY: 3 main columns */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Columna 1 */}
+        {/* Column 1 */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
@@ -329,7 +329,7 @@ function TaskEditor({
             <input
               type="text"
               className={inputBase}
-              placeholder="Editar nombre de la tarea"
+              placeholder="Edit task name"
               value={form.taskName}
               onChange={onChange("taskName")}
               disabled={!canEdit}
@@ -354,9 +354,9 @@ function TaskEditor({
             disabled={!canDelete || task.status === "progress"}
             title={
               !canDelete
-                ? "No tienes permiso para eliminar."
+                ? "You don't have permission to delete."
                 : task.status === "progress"
-                ? "No puedes eliminar una tarea en progreso"
+                ? "You can't delete a task in progress"
                 : ""
             }
             onClick={() => onDelete?.(task)}
@@ -365,7 +365,7 @@ function TaskEditor({
           </button>
         </div>
 
-        {/* Columna 2 */}
+        {/* Column 2 */}
         <div className="space-y-3">
           {/* Assignment */}
           <div className="flex items-center gap-2">
@@ -387,7 +387,7 @@ function TaskEditor({
                 (task.type === "personal" && !canEditPersonal)
               }
             >
-              <option value="">No asignada</option>
+              <option value="">Unassigned</option>
               {Object.entries(userMap || {}).map(([uid, info]) => (
                 <option key={uid} value={uid}>
                   {info.name}
@@ -396,7 +396,7 @@ function TaskEditor({
             </select>
           </div>
 
-          {/* Prioridad */}
+          {/* Priority */}
           <div className="flex items-center gap-2">
             <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
               <img
@@ -411,13 +411,13 @@ function TaskEditor({
               onChange={onChange("priority")}
               disabled={!canEdit}
             >
-              <option value="low">Baja</option>
-              <option value="medium">Media</option>
-              <option value="high">Alta</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
             </select>
           </div>
 
-          {/* Estado */}
+          {/* Status */}
           <div className="flex items-center gap-2">
             <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
               <img
@@ -433,19 +433,19 @@ function TaskEditor({
               disabled={!canEdit || isTerminal}
               title={
                 isTerminal
-                  ? "No se puede cambiar el estado cuando la tarea está Completed o Missed"
+                  ? "You can't change the status when the task is Completed or Missed"
                   : ""
               }
             >
-              <option value="pending">Pendiente</option>
-              <option value="progress">En progreso</option>
-              <option value="completed">Completada</option>
+              <option value="pending">Pending</option>
+              <option value="progress">In progress</option>
+              <option value="completed">Completed</option>
               <option value="missed">Missed</option>
             </select>
           </div>
         </div>
 
-        {/* Columna 3: notas + acciones */}
+        {/* Column 3: notes + actions */}
         <div className="flex flex-col items-end space-y-3">
           <div className="flex items-start gap-2 w-full">
             <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
@@ -453,7 +453,7 @@ function TaskEditor({
             </span>
             <textarea
               className={inputBase + " min-h-[100px]"}
-              placeholder="Notas"
+              placeholder="Notes"
               value={form.notes}
               onChange={onChange("notes")}
               disabled={!canEdit}
@@ -462,7 +462,7 @@ function TaskEditor({
 
           <div className="flex gap-2">
             <button className={btnSecondary} onClick={onClose}>
-              Cancelar
+              Cancel
             </button>
             <button
               className={btnPrimary}
@@ -470,13 +470,13 @@ function TaskEditor({
               disabled={!dirty || saving || !canEdit}
               title={
                 !canEdit
-                  ? "No tienes permiso para editar."
+                  ? "You don't have permission to edit."
                   : !dirty
-                  ? "Sin cambios"
+                  ? "No changes"
                   : ""
               }
             >
-              {saving ? "Guardando..." : "Guardar cambios"}
+              {saving ? "Saving..." : "Save changes"}
             </button>
           </div>
         </div>
@@ -498,16 +498,16 @@ function TaskEditor({
               onClick={addSub}
               disabled={form.subTasks.length >= MAX_SUBS || !canEdit}
               title={
-                !canEdit ? "No tienes permiso para editar." : "Agregar sub-task"
+                !canEdit ? "You don't have permission to edit." : "Add sub-task"
               }
             >
-              Agregar
+              Add
             </button>
           </div>
         </div>
 
         {form.subTasks.length === 0 ? (
-          <div className="text-sm text-slate-500">No hay sub-tasks.</div>
+          <div className="text-sm text-slate-500">No sub-tasks yet.</div>
         ) : (
           <ul className="space-y-2">
             {form.subTasks.map((st, idx) => {
@@ -523,7 +523,7 @@ function TaskEditor({
                   className="rounded-lg border border-slate-200 bg-white p-2"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-12 gap-2">
-                    {/* Nombre */}
+                    {/* Name */}
                     <div className="md:col-span-4 flex items-center gap-2">
                       <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
                         <img src={titleIcon} alt="title" className="h-5 w-5" />
@@ -531,7 +531,7 @@ function TaskEditor({
                       <input
                         type="text"
                         className={inputBase}
-                        placeholder="Nombre de la sub-task"
+                        placeholder="Sub-task name"
                         value={st.name}
                         onChange={onSubChange(idx, "name")}
                         maxLength={100}
@@ -539,7 +539,7 @@ function TaskEditor({
                       />
                     </div>
 
-                    {/* Prioridad */}
+                    {/* Priority */}
                     <div className="md:col-span-2 flex items-center gap-2">
                       <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
                         <img
@@ -554,13 +554,13 @@ function TaskEditor({
                         onChange={onSubChange(idx, "priority")}
                         disabled={disableSub}
                       >
-                        <option value="low">Baja</option>
-                        <option value="medium">Media</option>
-                        <option value="high">Alta</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
                       </select>
                     </div>
 
-                    {/* Fecha */}
+                    {/* Date */}
                     <div className="md:col-span-2 flex items-center gap-2">
                       <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
                         <img
@@ -578,7 +578,7 @@ function TaskEditor({
                       />
                     </div>
 
-                    {/* Estado */}
+                    {/* Status */}
                     <div className="md:col-span-2 flex items-center gap-2">
                       <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
                         <img
@@ -593,14 +593,14 @@ function TaskEditor({
                         onChange={onSubChange(idx, "status")}
                         disabled={disableSub}
                       >
-                        <option value="pending">Pendiente</option>
-                        <option value="progress">En progreso</option>
-                        <option value="completed">Completada</option>
+                        <option value="pending">Pending</option>
+                        <option value="progress">In progress</option>
+                        <option value="completed">Completed</option>
                         <option value="missed">Missed</option>
                       </select>
                     </div>
 
-                    {/* Asignado */}
+                    {/* Assigned */}
                     <div className="md:col-span-2 flex items-center gap-2">
                       <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
                         <img
@@ -615,7 +615,7 @@ function TaskEditor({
                         onChange={onSubChange(idx, "assignedTo")}
                         disabled={disableSubAssignee}
                       >
-                        <option value="">No asignada</option>
+                        <option value="">Unassigned</option>
                         {Object.entries(userMap || {}).map(([uid, info]) => (
                           <option key={uid} value={uid}>
                             {info.name}
@@ -624,14 +624,14 @@ function TaskEditor({
                       </select>
                     </div>
 
-                    {/* Notas (fila completa) */}
+                    {/* Notes (full row) */}
                     <div className="md:col-span-10 flex items-start gap-2">
                       <span className="rounded-l-md bg-white px-2 py-2 border border-slate-300">
                         <img src={note} alt="notes" className="h-5 w-5" />
                       </span>
                       <textarea
                         className={inputBase + " min-h-[60px]"}
-                        placeholder="Notas (opcional)"
+                        placeholder="Notes (optional)"
                         value={st.notes}
                         onChange={onSubChange(idx, "notes")}
                         maxLength={400}
@@ -639,16 +639,16 @@ function TaskEditor({
                       />
                     </div>
 
-                    {/* Eliminar */}
+                    {/* Delete */}
                     <div className="md:col-span-2 flex items-start justify-end">
                       <button
                         type="button"
                         className={btnDanger}
                         onClick={() => removeSub(idx)}
-                        title="Eliminar sub-task"
+                        title="Delete sub-task"
                         disabled={!canEdit}
                       >
-                        Eliminar
+                        Delete
                       </button>
                     </div>
                   </div>
