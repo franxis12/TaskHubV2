@@ -12,10 +12,7 @@ import Button from "../Utils/Button";
 function TeamMembers({
   tasks = [],
   onMemberClick,
-  tap,
   setTap,
-  mobile,
-
   setChatVisivility,
   chatVisivility,
 }) {
