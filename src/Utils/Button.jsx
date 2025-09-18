@@ -95,24 +95,24 @@ function Button({
 }
 
 export default Button;
-/*Este boton necesita las siguientes dependencias para funcionar correctamente
-  1. npm i -D vite-plugin-svgr con esto ahora podras usar los iconos como componentes 
-  2. Edita el vite.config.js y importa vite-plugin-svgr.
-       Ejemplo:    import { defineConfig } from "vite";
+/*This button requires the following dependencies to work correctly:
+  1. Install vite-plugin-svgr (npm i -D vite-plugin-svgr) so you can use icons as components.
+  2. Update vite.config.js and import vite-plugin-svgr.
+       Example:    import { defineConfig } from "vite";
                    import react from "@vitejs/plugin-react";
-                   import svgr from "vite-plugin-svgr";   <-- ***** Esta linea ***** )
+                   import svgr from "vite-plugin-svgr";   <-- ***** This line ***** )
 
                    export default defineConfig({
                    plugins: [
                      react(),
-                     svgr({    <-- ***** Deste aqui ***** )
+                     svgr({    <-- ***** From here ***** )
                        svgrOptions: {
                          // 1) If a path contains #000, replace it
                          replaceAttrValues: { "#000": "currentColor", "#000000": "currentColor", black: "currentColor" },
                          // 2) Also add fill="currentColor" to the <svg>
                          svgProps: { fill: "currentColor" },
                        },
-                     }),        <-- ***** Hasta aqui ***** )
+                     }),        <-- ***** To here ***** )
                    ],
                    });
-   3. En tu css agrega las clases .btn y btn-primary y ajustalas a tu preferencia.*/
+   3. In your CSS add the classes .btn and .btn-primary and adjust them as needed.*/

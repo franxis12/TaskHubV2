@@ -57,13 +57,13 @@ function Register() {
   const mapError = (code) => {
     switch (code) {
       case "auth/email-already-in-use":
-        return "El correo ya está en uso.";
+        return "This email is already in use.";
       case "auth/weak-password":
-        return "La contraseña debe tener al menos 6 caracteres.";
+        return "The password must be at least 6 characters.";
       case "auth/invalid-email":
-        return "El correo no es válido.";
+        return "The email is not valid.";
       default:
-        return `Ocurrió un error al registrar. ${code}`;
+        return `An error occurred during registration. ${code}`;
     }
   };
 
@@ -131,15 +131,15 @@ function Register() {
       }
 
       setSuccessMsg(
-        "Registro exitoso. Revisa tu correo para verificar tu cuenta."
+        "Registration successful. Check your email to verify your account."
       );
 
       navigate("/verify-email");
     } catch (err) {
       if (err.message === "COMPANY_EXISTS")
-        setErrorMsg("Ese código de empresa ya existe. Elige otro.");
+        setErrorMsg("That company code already exists. Choose another one.");
       else if (err.message === "COMPANY_NOT_FOUND")
-        setErrorMsg("El código de empresa ingresado no existe.");
+        setErrorMsg("The company code you entered does not exist.");
       else setErrorMsg(mapError(err.code));
     } finally {
       setSubmitting(false);
@@ -153,15 +153,15 @@ function Register() {
           <h1
             style={{ margin: 0, fontSize: "1.6rem", color: "var(--textColor)" }}
           >
-            Crear cuenta
+            Create account
           </h1>
           <p style={{ margin: 0, color: "var(--secondaryBlue)" }}>
-            Únete a Task‑Hub en pocos pasos
+            Join Task-Hub in a few steps
           </p>
         </div>
 
         <div style={styles.steps}>
-          {["Datos", "Seguridad", "Foto", "Empresa"].map((label, i) => {
+          {["Info", "Security", "Photo", "Company"].map((label, i) => {
             const idx = i + 1;
             const active = step === idx;
             const done = step > idx;
@@ -206,38 +206,38 @@ function Register() {
           {step === 1 && (
             <>
               <div>
-                <label style={styles.label}>Nombre</label>
+                <label style={styles.label}>First name</label>
                 <input
                   style={styles.input}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Tu nombre"
+                  placeholder="Your first name"
                   required
                 />
               </div>
               <div>
-                <label style={styles.label}>Apellido</label>
+                <label style={styles.label}>Last name</label>
                 <input
                   style={styles.input}
                   value={apellido}
                   onChange={(e) => setApellido(e.target.value)}
-                  placeholder="Tu apellido"
+                  placeholder="Your last name"
                   required
                 />
               </div>
               <div>
-                <label style={styles.label}>Correo</label>
+                <label style={styles.label}>Email</label>
                 <input
                   type="email"
                   style={styles.input}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@correo.com"
+                  placeholder="you@email.com"
                   required
                 />
                 {!emailValid && email.length > 0 && (
                   <small style={{ color: "var(--dangerActionsRed)" }}>
-                    Ingresa un correo válido.
+                    Enter a valid email.
                   </small>
                 )}
               </div>
@@ -253,7 +253,7 @@ function Register() {
                   }}
                   disabled={!canStep1}
                 >
-                  Siguiente
+                  Next
                 </button>
               </div>
             </>
@@ -262,25 +262,25 @@ function Register() {
           {step === 2 && (
             <>
               <div>
-                <label style={styles.label}>Contraseña</label>
+                <label style={styles.label}>Password</label>
                 <input
                   type="password"
                   style={styles.input}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="At least 6 characters"
                   minLength={6}
                   required
                 />
               </div>
               <div>
-                <label style={styles.label}>Confirmar contraseña</label>
+                <label style={styles.label}>Confirm password</label>
                 <input
                   type="password"
                   style={styles.input}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Repite tu contraseña"
+                  placeholder="Repeat your password"
                   minLength={6}
                   required
                 />
@@ -288,7 +288,7 @@ function Register() {
                   confirmPassword &&
                   password !== confirmPassword && (
                     <small style={{ color: "var(--dangerActionsRed)" }}>
-                      Las contraseñas no coinciden.
+                      Passwords do not match.
                     </small>
                   )}
               </div>
@@ -299,7 +299,7 @@ function Register() {
                   onClick={() => setStep(1)}
                   style={styles.secondaryBtn}
                 >
-                  Atrás
+                  Back
                 </button>
                 <button
                   type="button"
@@ -311,7 +311,7 @@ function Register() {
                   }}
                   disabled={!canStep2}
                 >
-                  Siguiente
+                  Next
                 </button>
               </div>
             </>
@@ -320,7 +320,7 @@ function Register() {
           {step === 3 && (
             <>
               <div>
-                <label style={styles.label}>Tu foto (opcional)</label>
+                <label style={styles.label}>Your photo (optional)</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -342,14 +342,14 @@ function Register() {
                   onClick={() => setStep(2)}
                   style={styles.secondaryBtn}
                 >
-                  Atrás
+                  Back
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(4)}
                   style={styles.primaryBtn}
                 >
-                  Siguiente
+                  Next
                 </button>
               </div>
             </>
@@ -358,7 +358,7 @@ function Register() {
           {step === 4 && (
             <>
               <div>
-                <label style={styles.label}>Rol</label>
+                <label style={styles.label}>Role</label>
                 <div style={{ display: "flex", gap: 16 }}>
                   <label style={styles.radio}>
                     <input
@@ -378,7 +378,7 @@ function Register() {
                       checked={role === "member"}
                       onChange={(e) => setRole(e.target.value)}
                     />
-                    Miembro
+                    Member
                   </label>
                 </div>
               </div>
@@ -387,14 +387,14 @@ function Register() {
                 <div>
                   <label style={styles.label}>
                     {role === "admin"
-                      ? "Crea un código de empresa"
-                      : "Código de empresa"}
+                      ? "Create a company code"
+                      : "Company code"}
                   </label>
                   <input
                     style={styles.input}
                     value={companyId}
                     onChange={(e) => setCompanyId(e.target.value)}
-                    placeholder="Ej: ACME-2025"
+                    placeholder="e.g., ACME-2025"
                   />
                 </div>
               )}
@@ -402,7 +402,7 @@ function Register() {
               {role === "admin" && (
                 <div>
                   <label style={styles.label}>
-                    Logo de la empresa (opcional)
+                    Company logo (optional)
                   </label>
                   <input
                     type="file"
@@ -422,7 +422,7 @@ function Register() {
                   onClick={() => setStep(3)}
                   style={styles.secondaryBtn}
                 >
-                  Atrás
+                  Back
                 </button>
                 <button
                   type="submit"
@@ -433,7 +433,7 @@ function Register() {
                   }}
                   disabled={!canStep4 || submitting}
                 >
-                  {submitting ? "Creando cuenta..." : "Registrarse"}
+                  {submitting ? "Creating account..." : "Register"}
                 </button>
               </div>
             </>
@@ -446,7 +446,7 @@ function Register() {
           style={styles.linkBtn}
           disabled={submitting}
         >
-          ← Ya tengo cuenta
+          ← I already have an account
         </button>
       </div>
     </div>

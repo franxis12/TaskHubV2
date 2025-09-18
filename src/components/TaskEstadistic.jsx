@@ -24,9 +24,9 @@ export default function TaskEstadistic() {
   const { user } = useContext(UserContext);
 
   // Active tab: team / company / personal
-  const [view, setView] = useState("company"); // por defecto "company"
+  const [view, setView] = useState("company"); // default view
 
-  // --- Stats del usuario actual (de tus contextos) ---
+  // --- Stats for the current user (from contexts) ---
   const companyStats = useMemo(() => {
     return (
       stats?.company || {
@@ -73,7 +73,7 @@ export default function TaskEstadistic() {
     return () => unsub();
   }, [user?.companyId]);
 
-  // TEAM = suma de TODAS las company de todos los miembros (incluye al usuario)
+  // TEAM = sum of every member's company stats (including the user)
   const teamCompanySum = useMemo(() => {
     return members.reduce(
       (acc, m) => ({
@@ -87,14 +87,14 @@ export default function TaskEstadistic() {
 
   // Pick stats according to the active tab
   const activeStats = useMemo(() => {
-    if (view === "team") return teamCompanySum; // TODAS las de company de todos
+    if (view === "team") return teamCompanySum; // all company stats combined
     if (view === "company")
       return {
-        completed: Number(companyStats.completed || 0), // SOLO company del usuario
+        completed: Number(companyStats.completed || 0), // only the user's company stats
         pending: Number(companyStats.pending || 0),
         missed: Number(companyStats.missed || 0),
       };
-    // personal: SOLO personales del usuario
+    // personal: only the user's personal stats
     return {
       completed: Number(personalStats.completed || 0),
       pending: Number(personalStats.pending || 0),
@@ -113,10 +113,10 @@ export default function TaskEstadistic() {
     missed: Math.round((missed / total) * 100),
   };
 
-  // Avatares
+  // Avatars
   const userAvatar = pickPhoto(user) || samplePhoto;
 
-  // Fotos del equipo para collage/stack
+  // Team photos for collage/stack
   const teamPhotosRaw = members.map((m) => m.photo || samplePhoto);
   const gridPhotos = useMemo(() => {
     const base = teamPhotosRaw.slice(0, 4);
@@ -145,7 +145,7 @@ export default function TaskEstadistic() {
                 : "bg-white text-slate-800"
             }`}
             onClick={() => setView("team")}
-            title="Todas las tareas Company de todos los miembros"
+            title="All company tasks from every member"
           >
             Team
           </button>
@@ -157,7 +157,7 @@ export default function TaskEstadistic() {
                 : "bg-white text-slate-800"
             }`}
             onClick={() => setView("company")}
-            title="Solo tus tareas Company"
+            title="Only your company tasks"
           >
             Company
           </button>
@@ -169,7 +169,7 @@ export default function TaskEstadistic() {
                 : "bg-white text-slate-800"
             }`}
             onClick={() => setView("personal")}
-            title="Solo tus tareas Personales"
+            title="Only your personal tasks"
           >
             Personal
           </button>
@@ -178,7 +178,7 @@ export default function TaskEstadistic() {
 
       {/* Body */}
       <div className="grid grid-cols-12 gap-3 h-full items-center p-3  ">
-        {/* Barras (col 8) */}
+        {/* Bars (col 8) */}
         <div className="col-span-7 h-full flex items-end  w-full gap-2">
           {/* Complete (teal) */}
           <div className="flex flex-col items-center  justify-end h-full  rounded-3xl  w-full min-w-5 ">
@@ -222,9 +222,9 @@ export default function TaskEstadistic() {
           </div>
         </div>
 
-        {/* Avatar / Collage + leyenda (col 4) */}
+        {/* Avatar / collage + legend (col 4) */}
         <div className="col-span-5  h-full flex flex-col items-center justify-between gap-4 w-full  ">
-          {/* Contenedor circular con borde teal */}
+          {/* Circular container with teal border */}
           <div
             className={`p-1 border-teal-2 transition-all duration-500 ease-in-out
                    ${

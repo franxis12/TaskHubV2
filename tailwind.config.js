@@ -7,24 +7,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        /* === Colores base === */
+        /* === Base colors === */
         primaryBlue: "var(--primaryBlue)",
         primaryBlueTransparent: "var(--primaryBlueTransparent)",
         secondaryBlue: "var(--secondaryBlue)",
         surface: "var(--componentsBG)",
 
-        /* Estados / acciones */
+        /* States / actions */
         danger: "var(--dangerActionsRed)",
         dangerTransparent: "var(--dangerActionsRedTransparent)",
         warning: "var(--warningActionsYellow)",
         warningTransparent: "var(--warningActionsYellowTransparent)",
 
-        /* Bordes */
+        /* Borders */
         borderYellow: "var(--borderYellow)",
         borderBlue: "var(--borderBlue)",
         borderRed: "var(--borderRed)",
 
-        /* Estados de usuario */
+        /* User states */
         available: "var(--availableColor)",
         offline: "var(--oflineColor)",
         busy: "var(--busyColor)",
@@ -41,11 +41,11 @@ export default {
         primaryHover: "var(--primaryColorHover)",
         primaryText: "var(--PrimaryTextColor)",
 
-        /* Otros helpers */
+        /* Other helpers */
         textColor: "var(--textColor)",
         pagesBackground: "var(--pagesBackground)",
 
-        /* Colores custom que tenías */
+        /* Custom colors you had */
         orange: "#f15b2a",
         teal: "#247881",
         yellow: "#f9a825",

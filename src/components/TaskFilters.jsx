@@ -22,12 +22,12 @@ function TaskFilters({
   filters,
   setFilters,
   assignees = [],
-  currentUserId, // opcional: para mostrar "Me"
+  currentUserId, // optional: to show "Me"
 }) {
   const [expandedId, setExpandedId] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  // --- debounce para search ---
+  // --- debounce for search ---
   const searchTimer = useRef(null);
   const handleSearchChange = (e) => {
     const v = e.target.value;
@@ -37,7 +37,7 @@ function TaskFilters({
     }, 250);
   };
 
-  // limpiar timeout al desmontar
+  // clear timeout on unmount
   useEffect(() => {
     return () => {
       if (searchTimer.current) clearTimeout(searchTimer.current);
@@ -93,7 +93,7 @@ function TaskFilters({
     { uid: currentUserId, name: "Me" },
   ];
 
-  // estilos base para inputs/selects
+  // base styles for inputs/selects
   const inputBase =
     "block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 " +
     "placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400";

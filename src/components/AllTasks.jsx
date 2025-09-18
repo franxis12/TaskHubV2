@@ -182,7 +182,7 @@ function AllTasks({
               >
                 {actionTaskId === task.id && (
                   <div className="flex col-span-12 pb-3 pl-2 gap-1  w-full border-t-1 pt-1 border-slate-500/50 ">
-                    {/* Botones de estado para la tarea seleccionada */}
+                    {/* Status buttons for the selected task */}
                     <div className="flex flex-wrap items-center gap-2 w-full  ">
                       {canChangeStatus(currentTask) ? (
                         currentTask.status === "missed" ? (
@@ -259,7 +259,7 @@ function AllTasks({
                   </div>
                 )}
 
-                {/* Subtasks expandibles + acciones */}
+                {/* Expandable subtasks + actions */}
                 {isExpanded &&
                   Array.isArray(task.subTasks) &&
                   task.subTasks.length > 0 && (
@@ -275,7 +275,7 @@ function AllTasks({
                             try {
                               if (st.status === "missed") {
                                 alert(
-                                  'Las subtareas "missed" no se pueden cambiar.'
+                                  'Missed subtasks cannot be updated.'
                                 );
                                 return;
                               }
@@ -288,11 +288,11 @@ function AllTasks({
                               await updateDoc(ref, { subTasks: updated });
                             } catch (err) {
                               console.error(
-                                "Error al actualizar subtask:",
+                                "Error updating subtask:",
                                 err
                               );
                               alert(
-                                "No se pudo cambiar el estado de la subtask."
+                                "We couldn't change the subtask status."
                               );
                             }
                           };
@@ -356,7 +356,7 @@ function AllTasks({
                                   </>
                                 ) : (
                                   <span className="text-xs text-slate-500">
-                                    No puedes cambiar el estado
+                                    You can't change the status
                                   </span>
                                 )}
                               </div>
@@ -371,7 +371,7 @@ function AllTasks({
                 {deleteTaskId === task.id && (
                   <div className="mx-2 mb-3 w-[calc(100%-1rem)] rounded-lg border border-slate-200 bg-white p-3 text-slate-800 shadow-sm">
                     <h3 className="mb-2 text-sm font-medium">
-                      Seguro que quieren eliminar la tarea
+                      Are you sure you want to delete this task?
                     </h3>
                     <div className="flex gap-2">
                       <button
@@ -381,7 +381,7 @@ function AllTasks({
                           try {
                             if (task.status === "progress") {
                               alert(
-                                "No puedes eliminar una tarea en progreso."
+                                "You can't delete a task that is in progress."
                               );
                               setDeleteTaskId(null);
                               return;
@@ -392,7 +392,7 @@ function AllTasks({
                               task.createdBy === user.uid;
                             if (!isAdmin && !isMyPersonal) {
                               alert(
-                                "No tienes permiso para eliminar esta tarea."
+                                "You don't have permission to delete this task."
                               );
                               setDeleteTaskId(null);
                               return;
@@ -401,8 +401,8 @@ function AllTasks({
                             setDeleteTaskId(null);
                             setEditTask("");
                           } catch (err) {
-                            console.error("Error al eliminar la tarea:", err);
-                            alert("No se pudo eliminar. Revisa la consola.");
+                            console.error("Error deleting task:", err);
+                            alert("We couldn't delete it. Check the console.");
                           }
                         }}
                       >

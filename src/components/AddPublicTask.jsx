@@ -120,12 +120,12 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
     e.preventDefault();
 
     if (!user || user.role !== "admin") {
-      alert("Solo los administradores pueden crear tareas públicas.");
+      alert("Only administrators can create public tasks.");
       return;
     }
     if (!user?.uid || !user?.companyId) {
       alert(
-        "Falta uid/companyId del usuario. En el emulador crea primero tu documento en 'users/{uid}'."
+        "The user uid/companyId is missing. In the emulator, create your document in 'users/{uid}' first."
       );
       return;
     }
@@ -133,20 +133,20 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
     try {
       setSubmitting(true);
 
-      // Documento con todos los campos que pediste
+      // Document with all requested fields
       await addDoc(collection(db, "tasks"), {
-        // Identidad / ownership
+        // Identity / ownership
         type: "public", // "public" | "personal"
         companyId: user.companyId, // companyId
-        createdBy: user.uid, // user que crea la tarea
-        assignedTo: assignedTo || null, // usuario asignado (o null)
+        createdBy: user.uid, // user who creates the task
+        assignedTo: assignedTo || null, // assigned user (or null)
 
-        // Contenido
+        // Content
         taskName: taskName.trim(), // "Task name"
         notes, // ""
-        priority, // prioridad
+        priority, // priority
 
-        // Fechas
+        // Dates
         createdAt: serverTimestamp(), // creation timestamp
         completeBy, // due date (string "YYYY-MM-DD" or empty)
         completedAt: null, // completion timestamp (null on create)
@@ -157,7 +157,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
         completedCounted: false,
         missedCounted: false,
 
-        // Subtareas (array)
+        // Subtasks (array)
         subTasks, // []
       });
 
@@ -174,11 +174,11 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
       setStNotes("");
       setStAssignedTo("");
 
-      // Cerrar modal/form
+      // Close modal/form
       accion?.();
     } catch (error) {
-      console.error("Error al crear la tarea:", error);
-      alert("Hubo un error al guardar la tarea.");
+      console.error("Error creating task:", error);
+      alert("There was an error while saving the task.");
     } finally {
       setSubmitting(false);
     }
@@ -195,15 +195,15 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
       {/* Responsive wrapper: top on mobile, centered on md+ */}
       <div
         className="min-h-svh flex items-start md:items-center justify-center p-4 md:p-6"
-        style={{ paddingTop: "max(16px, env(safe-area-inset-top))" }} // respeta notch
+        style={{ paddingTop: "max(16px, env(safe-area-inset-top))" }} // respect safe-area notch
       >
-        {/* Contenido del modal */}
+        {/* Modal content */}
         <div
           className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30 shadow-[inset_0_0_1px_#fff9    ] shadow-lg "
           style={{
             color: "var(--textColor)",
-            maxHeight: "calc(100svh - 2rem)", // que no rebase la pantalla
-            overflow: "auto", // scroll interno si hace falta
+            maxHeight: "calc(100svh - 2rem)", // keep within the viewport
+            overflow: "auto", // allow internal scrolling if needed
           }}
         >
           {/* Header */}
@@ -246,7 +246,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Columna izquierda */}
               <div className="space-y-3">
-                {/* Asignar usuario (tarea principal) */}
+                {/* Assign user (main task) */}
                 <MyComponents.Select
                   defaultVal={"Unassigned"}
                   value={assignedTo}
@@ -262,7 +262,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                   }
                 />
 
-                {/* Fecha */}
+                {/* Date */}
                 <MyComponents.Input
                   type={"date"}
                   icon={SVGIcons.calendar}
@@ -273,7 +273,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                   onChange={(e) => setCompleteBy(e.target.value)}
                 />
 
-                {/* Prioridad */}
+                {/* Priority */}
                 <MyComponents.Select
                   map={prioritis}
                   id="priority"
@@ -305,9 +305,9 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                 />
               </div>
 
-              {/* Columna derecha */}
+              {/* Right column */}
               <div className="space-y-3">
-                {/* Notas */}
+                {/* Notes */}
                 <MyComponents.TextArea
                   icon={SVGIcons.note}
                   label="Notes"
@@ -341,7 +341,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                     <MyComponents.Button
                       type="button"
                       onClick={copyFromMain}
-                      title="Copiar prioridad y fecha desde la tarea principal"
+                      title="Copy priority and date from the main task"
                     >
                       Copy from main
                     </MyComponents.Button>
@@ -355,7 +355,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                   </div>
                 </div>
 
-                {/* Form sub-task */}
+                {/* Sub-task form */}
                 <div className="grid grid-cols-1 md:grid-cols-6 gap-2 mb-2 ">
                   <div className="col-span-6 md:col-span-3">
                     <MyComponents.Input
@@ -394,7 +394,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                       onChange={(e) => setStCompleteBy(e.target.value)}
                     />
 
-                    {/*Priority*/}
+                    {/* Priority */}
                     <MyComponents.Select
                       map={prioritis}
                       id="priority"
@@ -425,7 +425,7 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                       }
                     />
                   </div>
-                  {/* Notas */}
+                  {/* Notes */}
                   <div className="col-span-6">
                     <MyComponents.TextArea
                       icon={SVGIcons.note}
@@ -463,14 +463,14 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
                             {idx + 1}. {st.name}
                           </div>
                           <div className="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
-                            <span>Prioridad: {st.priority}</span>
+                            <span>Priority: {st.priority}</span>
                             {st.completeBy && (
                               <span>• Due: {st.completeBy}</span>
                             )}
-                            {st.notes && <span>• Notas: {st.notes}</span>}
+                            {st.notes && <span>• Notes: {st.notes}</span>}
                             {st.assignedTo && (
                               <>
-                                <span>• Asignado:</span>
+                                <span>• Assigned:</span>
                                 <span className="inline-flex items-center gap-1">
                                   <img
                                     src={
@@ -503,12 +503,12 @@ function AddPublicTask({ accion, setShowPublicForm, setShowPersonalForm }) {
               </div>
             ) : (
               <div className="no-scrollbar overflow-scroll flex items-center gap-4 rounded-2xl border border-slate-400/50 p-3 ">
-                {/*Sub task assingne button*/}
+                {/* Sub-task assign button */}
                 <div
                   onClick={() => setSubTaskMenu(true)}
                   className="hover:bg-blue-400 flex flex-col h-full items-center justify-between rounded-xl border border-slate-200  px-3 py-2 text-sm text-slate-800"
                 >
-                  <span className="btn-">Add Sub-Taks</span>
+                  <span className="btn-">Add Sub-Tasks</span>
                   <SVGIcons.plus className="w-5 h-5 border rounded-3xl " />
                 </div>
 

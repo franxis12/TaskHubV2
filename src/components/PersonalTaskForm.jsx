@@ -98,32 +98,32 @@ function PersonalTaskForm({
     e.preventDefault();
     if (!taskName.trim()) return;
     if (!user?.uid || !user?.companyId) {
-      alert("Falta uid/companyId del usuario.");
+      alert("The user uid/companyId is missing.");
       return;
     }
 
     try {
       setSubmitting(true);
       await addDoc(collection(db, "tasks"), {
-        // Identidad / ownership
+        // Identity / ownership
         type: "personal",
         companyId: user.companyId,
         createdBy: user.uid,
         assignedTo: user.uid, // owner
-        // Contenido
+        // Content
         taskName: taskName.trim(),
         notes: notes || "",
         priority,
-        // Fechas
+        // Dates
         createdAt: serverTimestamp(),
         completeBy: completeBy || "",
         completedAt: null,
-        // Estado + flags
+        // Status + flags
         status: "pending",
         pendingCounted: false,
         completedCounted: false,
         missedCounted: false,
-        // Subtareas
+        // Subtasks
         subTasks,
       });
 
@@ -141,8 +141,8 @@ function PersonalTaskForm({
       onCreated?.();
       onClose?.();
     } catch (err) {
-      console.error("Error al crear la tarea personal:", err);
-      alert("No se pudo crear la tarea.");
+      console.error("Error creating personal task:", err);
+      alert("We couldn't create the task.");
     } finally {
       setSubmitting(false);
     }
@@ -161,7 +161,7 @@ function PersonalTaskForm({
         className="min-h-svh flex items-start md:items-center justify-center p-4 md:p-6"
         style={{ paddingTop: "max(16px, env(safe-area-inset-top))" }}
       >
-        {/* Contenedor modal */}
+        {/* Modal container */}
         <div
           className="w-full md:w-[90vw] max-w-4xl rounded-3xl p-4 no-scrollbar bg-principal border border-slate-100/30  shadow-lg "
           style={{
@@ -206,7 +206,7 @@ function PersonalTaskForm({
               onChange={(e) => setTaskName(e.target.value)}
             />
 
-            {/* Dos columnas principales */}
+            {/* Two main columns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Left column */}
               <div className="space-y-3">
