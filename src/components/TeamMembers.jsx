@@ -83,9 +83,7 @@ function TeamMembers({
     <div className="flex flex-col p-2 col-span-3">
       {/* Block title (lightweight, without touching global styles) */}
       <div className="w-full flex justify-between h-12 ">
-        <h3 className="font-semibold ml-3 mt-2">
-          {tap === "dashboard" ? "Team member" : "Team Chat"}
-        </h3>
+        <h3 className="font-semibold ml-3 mt-2">Team members</h3>
         {!chatVisivility && (
           <Button
             icon={SVGIcons.chat}
@@ -99,7 +97,9 @@ function TeamMembers({
       <div className="flex   gap-2 flex-col ">
         {loading ? (
           <div className="w-full flex items-center justify-center h-full">
-            <h3 className="text-lg font-medium text-slate-700">Loading members…</h3>
+            <h3 className="text-lg font-medium text-slate-700">
+              Loading members…
+            </h3>
           </div>
         ) : members.length === 0 ? (
           <div className="w-full flex items-center justify-center h-full">
