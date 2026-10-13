@@ -1,448 +1,835 @@
-// src/pages/Landing.jsx
-import React, { useContext, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
-import { tailwindClass } from "../importFiles/tailwindStyles";
-import Button from "../Utils/Button";
-import { SVGIcons, myImage } from "../importFiles/imports";
+import logo from "../assets/LOGO.svg";
+import "../styles/landing.css";
 
-function Landing() {
-  const navigate = useNavigate();
-  const { user, logout } = useContext(UserContext);
-
-  const userName = useMemo(() => {
-    const full = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
-    return full || (user?.email ?? "User");
-  }, [user]);
-
-  const roleBadgeClasses = useMemo(() => {
-    const r = (user?.role || "").toLowerCase();
-    const base =
-      "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium";
-    const palette = {
-      admin: tailwindClass.accountType.admin,
-      member: tailwindClass.accountType.member,
-    };
-    return `${base} ${
-      palette[r] || "bg-slate-100 text-slate-700 border-slate-200"
-    }`;
-  }, [user?.role]);
-
-  const handleContactSubmit = (e) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    if (!form.checkValidity()) {
-      form.classList.add("was-validated");
-      return;
-    }
-    const data = new FormData(form);
-    const name = encodeURIComponent(data.get("name") || "");
-    const email = encodeURIComponent(data.get("email") || "");
-    const msg = encodeURIComponent(data.get("message") || "");
-    const subject = encodeURIComponent("Landing Contact - Task Hub");
-    const body = `Name: ${name}%0AEmail: ${email}%0A%0A${msg}`;
-    window.location.href = `mailto:hello@taskitin.app?subject=${subject}&body=${body}`;
+function Icon({ name, className = "" }) {
+  const paths = {
+    arrow: <path d="M4 12h15m-6-6 6 6-6 6" />,
+    check: <path d="m5 12 4 4L19 6" />,
+    grid: (
+      <>
+        <rect x="3" y="3" width="7" height="7" rx="2" />
+        <rect x="14" y="3" width="7" height="7" rx="2" />
+        <rect x="3" y="14" width="7" height="7" rx="2" />
+        <rect x="14" y="14" width="7" height="7" rx="2" />
+      </>
+    ),
+    users: (
+      <>
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3 21v-3a6 6 0 0 1 12 0v3m1-17a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 4v3" />
+      </>
+    ),
+    chart: (
+      <>
+        <path d="M4 3v17h17M9 15v-4m5 4V7m5 8v-6" />
+      </>
+    ),
+    lock: (
+      <>
+        <rect x="5" y="10" width="14" height="11" rx="3" />
+        <path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v3" />
+      </>
+    ),
+    calendar: (
+      <>
+        <rect x="3" y="5" width="18" height="16" rx="3" />
+        <path d="M7 3v4m10-4v4M3 11h18m-13 5h2m4 0h2" />
+      </>
+    ),
+    sun: (
+      <>
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
+      </>
+    ),
+    plus: <path d="M12 5v14M5 12h14" />,
+    mail: (
+      <>
+        <rect x="3" y="5" width="18" height="14" rx="3" />
+        <path d="m3 7 9 6 9-6" />
+      </>
+    ),
+    chevron: <path d="m6 9 6 6 6-6" />,
+    menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+    close: <path d="m6 6 12 12M6 18 18 6" />,
+    clock: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </>
+    ),
   };
-
   return (
-    <div>
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b shadow-sm px-3 py-2 bg-[var(--componentsBG)]">
-        <div className="mx-auto w-full max-w-7xl px-2 sm:px-4 flex items-center justify-between">
-          {/* Logo */}
-          <a className="flex items-center gap-2" href="#">
-            <img
-              src={myImage.logoImage}
-              alt="Taskitin logo"
-              className="h-full"
-            />
-          </a>
+    <svg
+      className={`tl-icon ${className}`}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {paths[name] || paths.check}
+    </svg>
+  );
+}
 
-          {/* Actions */}
-          {!user ? (
-            <nav className="flex gap-2">
-              <Button color={"auto"} onClick={() => navigate("/login")}>
-                Log in
-              </Button>
+const sampleTasks = {
+  team: [
+    {
+      name: "Plan the product launch",
+      project: "Marketing",
+      initials: "JD",
+      color: "peach",
+      status: "In progress",
+      priority: "High",
+    },
+    {
+      name: "Review the homepage design",
+      project: "Design",
+      initials: "AL",
+      color: "purple",
+      status: "In progress",
+      priority: "Medium",
+    },
+    {
+      name: "Prepare the team handoff",
+      project: "Operations",
+      initials: "MK",
+      color: "mint",
+      status: "Pending",
+      priority: "Medium",
+    },
+    {
+      name: "Share the project brief",
+      project: "Marketing",
+      initials: "JD",
+      color: "peach",
+      status: "Completed",
+      priority: "Low",
+    },
+  ],
+  personal: [
+    {
+      name: "Outline ideas for next week",
+      project: "Planning",
+      initials: "YO",
+      color: "mint",
+      status: "In progress",
+      priority: "Medium",
+    },
+    {
+      name: "Read the design feedback",
+      project: "Learning",
+      initials: "YO",
+      color: "mint",
+      status: "Pending",
+      priority: "High",
+    },
+    {
+      name: "Organize project notes",
+      project: "Personal",
+      initials: "YO",
+      color: "mint",
+      status: "Completed",
+      priority: "Low",
+    },
+    {
+      name: "Prepare for the team meeting",
+      project: "Planning",
+      initials: "YO",
+      color: "mint",
+      status: "Pending",
+      priority: "Medium",
+    },
+  ],
+};
 
-              <Button color={"orange"} onClick={() => navigate("/register")}>
-                Create account
-              </Button>
-            </nav>
-          ) : (
-            <div className="flex gap-2 px-2 items-center ">
-              <div className="flex flex-col items-end leading-tight">
-                <span className="text-sm font-medium tx-color">{userName}</span>
-                {user?.role && (
-                  <span className={roleBadgeClasses}>{user.role}</span>
-                )}
-              </div>
-              <img
-                className="h-9 w-9 rounded-full object-cover border-2 ring-1 ring-slate-200"
-                src={user?.photo || myImage.defaultUser}
-                alt="Avatar"
-              />
-              <Button
-                color={"auto"}
-                icon={SVGIcons.login}
-                position={"center"}
-                onClick={() => navigate("/dashboard")}
-                iconRight
-              >
-                <span className="hidden md:block">Go Dashboard</span>
-              </Button>
-              <Button
-                color={"orange"}
-                icon={SVGIcons.logout}
-                position={"center"}
-                onClick={logout}
-                iconRight
-              >
-                <span className="hidden md:block">Logout</span>
-              </Button>
+function WorkspacePreview() {
+  const [view, setView] = useState("team");
+  return (
+    <div className="tl-preview-scene" id="workspace">
+      <div className="tl-preview-orbit" aria-hidden="true" />
+      <div className="tl-preview">
+        <div className="tl-window-bar">
+          <span className="tl-window-dots" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+          <span>your workspace, simplified</span>
+          <Icon name="lock" />
+        </div>
+        <div className="tl-app-shell">
+          <aside className="tl-preview-sidebar" aria-hidden="true">
+            <img src={logo} alt="" />
+            <span className="tl-side-active">
+              <Icon name="grid" />
+            </span>
+            <Icon name="users" />
+            <Icon name="chart" />
+            <Icon name="calendar" />
+            <span className="tl-side-avatar">JD</span>
+          </aside>
+          <div className="tl-preview-main">
+            <div className="tl-preview-top">
+              <span>
+                <span className="tl-workspace-square">S</span> Studio workspace{" "}
+                <Icon name="chevron" />
+              </span>
+              <span className="tl-demo-label">DEMO</span>
             </div>
-          )}
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="hero-section mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid gap-4 md:grid-cols-2 items-center">
-          {/* Text column */}
-          <div className="w-full grid gap-3">
-            <h1 className="font-bold text-5xl">
-              Coordinate teams and tasks{" "}
-              <span className="text-orange">clearly</span>.
-            </h1>
-
-            <p className="hero-subtitle mb-1 text-slate-600">
-              Public and personal tasks, member-level metrics, role-based
-              permissions, and a clean workflow so nothing gets lost.
-            </p>
-            <small className="text-slate-500">
-              Fast, simple, and built for focus.
-            </small>
-
-            <div className="flex flex-wrap gap-2 mt-2">
-              <Button color={"orange"} onClick={() => navigate("/register")}>
-                Get started for free
-              </Button>
-              <Button color={"auto"} onClick={() => navigate("/login")}>
-                I already have an account
-              </Button>
-            </div>
-          </div>
-
-          {/* Mockup column */}
-          <div className="w-full text-center">
-            <div className="hero-mock-frame">
-              <img
-                src={myImage.heroMock}
-                alt="Task Hub dashboard preview"
-                className="max-w-full h-auto"
-                loading="lazy"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats strip */}
-      <section className="stats-strip flex flex-wrap justify-center items-center py-1 px-3 text-center gap-5">
-        <div className="strip-item">
-          <span className="text-orange text-3xl">+50%</span>
-          <span>more tasks completed on time</span>
-        </div>
-        <div className="strip-divider hidden md:block" />
-        <div className="strip-item">
-          <span className="text-orange text-3xl">-35%</span>
-          <span>less confusion across teams</span>
-        </div>
-        <div className="strip-divider hidden md:block" />
-        <div className="strip-item">
-          <span className="text-orange text-3xl">24/7</span>
-          <span>cloud-based availability</span>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="features-section mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid gap-4 md:grid-cols-3">
-          {[1, 2, 3].map((n) => {
-            const data = [
-              {
-                title: "Public & Personal Tasks",
-                color: "orange",
-                kpi: "Stay Focused",
-                text: "Collaborate on assigned team work and manage personal tasks at your own pace—all in one place.",
-              },
-              {
-                title: "Member Statistics",
-                color: "teal",
-                kpi: "Visual Progress",
-                text: "See pending, completed, and missed tasks per member to spot bottlenecks quickly.",
-              },
-              {
-                title: "Roles & Permissions",
-                color: "yellow",
-                kpi: "Admin Control",
-                text: "Admins manage everything; members update only their assigned tasks—nothing more, nothing less.",
-              },
-            ][n - 1];
-
-            return (
-              <div className="w-full" key={n}>
-                <div className="feature-card p-4 rounded-2xl shadow-sm flex flex-col justify-between h-full">
-                  {/* Header */}
-                  <div className="w-full flex justify-start items-end gap-2 mb-3">
-                    <div className="feature-number">
-                      <div
-                        className={`number-box text-white font-bold bg-${data.color}`}
-                      >
-                        {n}
-                      </div>
-                    </div>
-                    <h4
-                      className={`feature-title uppercase text-${data.color} font-bold mb-0`}
-                    >
-                      {data.title}
-                    </h4>
-                  </div>
-
-                  {/* Text */}
-                  <div>
-                    <p className="mb-0">
-                      <strong>{data.kpi}:</strong> {data.text}
-                    </p>
-                    <div
-                      className={`feature-underline mt-3 mx-auto p-2 w-1/4 bg-${data.color} rounded-full`}
-                    />
-                  </div>
-                </div>
+            <div className="tl-preview-greeting">
+              <div>
+                <h2>A little focus. A lot of progress.</h2>
+                <p>Let’s make room for your best work.</p>
               </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Showcase */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 containerAdjust">
-        <div className="grid gap-6 md:grid-cols-2 items-center">
-          {/* Image left */}
-          <div className="w-full mb-4 md:mb-0">
-            <img
-              src={myImage.notifyMock}
-              alt="Clean dashboard preview"
-              className="max-w-full h-auto rounded shadow-sm"
-              style={{ maxHeight: "420px", objectFit: "cover" }}
-              loading="lazy"
-            />
-          </div>
-
-          {/* Text right */}
-          <div className="w-full">
-            <h2 className="mb-4 title text-xl font-medium">
-              Clarity That Drives Action
-            </h2>
-            <p className="mb-0">
-              Clear dates and simple statements. Deadlines, meetings, and
-              milestones appear in an easy-to-read timeline so everyone knows
-              exactly what’s next.
-              <br />
-              <br />
-              No fluff—just the important stuff. Tasks and updates focus on what
-              matters, cutting the noise so your team moves faster.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-[var(--orange)] text-white text-center py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h3 className="mb-2">Ready to get started?</h3>
-          <p className="mb-4">Create your workspace in 30 seconds.</p>
-          <div className="flex justify-center gap-3 flex-wrap">
-            <Button color={"autoInverse"} onClick={() => navigate("/register")}>
-              Create account
-            </Button>
-            <Button color={"auto"} onClick={() => navigate("/login")}>
-              Log in
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact & Support */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Contact */}
-          <div className="col-md-6">
-            <h2>Contact</h2>
-            <p>Questions, feedback, or support? Write to us.</p>
-
-            <form
-              onSubmit={handleContactSubmit}
-              className="grid gap-3 mt-1"
-              noValidate
-            >
-              <div className="w-full">
-                <div className="flex flex-col gap-1">
-                  <input
-                    type="text"
-                    name="name"
-                    id="contactName"
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40"
-                    placeholder="Your name"
-                    required
-                    minLength={2}
-                  />
-                  <label
-                    htmlFor="contactName"
-                    className="text-xs text-slate-500"
-                  >
-                    Your name
-                  </label>
-                  <div className="text-rose-600 text-xs mt-1">
-                    Please enter your name.
-                  </div>
-                </div>
-              </div>
-
-              <div className="w-full">
-                <div className="flex flex-col gap-1">
-                  <input
-                    type="email"
-                    name="email"
-                    id="contactEmail"
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40"
-                    placeholder="name@example.com"
-                    required
-                  />
-                  <label
-                    htmlFor="contactEmail"
-                    className="text-xs text-slate-500"
-                  >
-                    Your email
-                  </label>
-                  <div className="text-rose-600 text-xs mt-1">
-                    Please enter a valid email.
-                  </div>
-                </div>
-              </div>
-
-              <div className="w-full">
-                <div className="flex flex-col gap-1">
-                  <textarea
-                    name="message"
-                    id="contactMsg"
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40"
-                    placeholder="How can we help?"
-                    rows="4"
-                    style={{ height: "140px" }}
-                  />
-                  <label
-                    htmlFor="contactMsg"
-                    className="text-xs text-slate-500"
-                  >
-                    How can we help?
-                  </label>
-                </div>
-              </div>
-
-              <div className="w-full flex gap-2">
-                <Button color={"orange"} type="submit">
-                  Send
-                </Button>
-                <Button color={"auto"}>
-                  {" "}
-                  <a href="mailto:hello@taskitin.app">Email us directly</a>
-                </Button>
-              </div>
-            </form>
-          </div>
-
-          {/* Support */}
-          <div className="w-full">
-            <h2>Support the Project</h2>
-            <p>
-              If Taskitin helps your team, you can support future development.
-            </p>
-            <div className="flex gap-3 flex-wrap mb-3">
-              <Button color={"yellow"}>
-                <a
-                  href="https://www.buymeacoffee.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Buy Me a Coffee
-                </a>
-              </Button>
-              <Button color={"green"}>
-                <a
-                  href="https://paypal.me/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  PayPal
-                </a>
-              </Button>
-            </div>
-            <div className="border rounded p-3 itemBackground flex gap-2 items-center">
-              <span className="font-semibold">Spread the word:</span>
-              <span className="text-slate-500">
-                Share Taskitin with your team—it helps a lot.
+              <span className="tl-sun">
+                <Icon name="sun" />
               </span>
             </div>
+            <div className="tl-mini-stats">
+              <div>
+                <span className="tl-stat-icon orange">
+                  <Icon name="clock" />
+                </span>
+                <span>
+                  <small>Pending</small>
+                  <strong>{view === "team" ? "08" : "02"}</strong>
+                </span>
+              </div>
+              <div>
+                <span className="tl-stat-icon blue">
+                  <Icon name="chart" />
+                </span>
+                <span>
+                  <small>In progress</small>
+                  <strong>{view === "team" ? "04" : "01"}</strong>
+                </span>
+              </div>
+              <div>
+                <span className="tl-stat-icon green">
+                  <Icon name="check" />
+                </span>
+                <span>
+                  <small>Completed</small>
+                  <strong>{view === "team" ? "12" : "01"}</strong>
+                </span>
+              </div>
+            </div>
+            <div
+              className="tl-preview-tabs"
+              role="group"
+              aria-label="Preview task type"
+            >
+              <button
+                type="button"
+                className={view === "team" ? "is-active" : ""}
+                aria-pressed={view === "team"}
+                onClick={() => setView("team")}
+              >
+                <Icon name="users" />
+                Team tasks
+              </button>
+              <button
+                type="button"
+                className={view === "personal" ? "is-active" : ""}
+                aria-pressed={view === "personal"}
+                onClick={() => setView("personal")}
+              >
+                <Icon name="lock" />
+                Personal tasks
+              </button>
+            </div>
+            <div
+              className="tl-task-list"
+              aria-live="polite"
+              aria-label={`${view === "team" ? "Team" : "Personal"} sample tasks`}
+            >
+              <div className="tl-task-table-head">
+                <span>Task name</span>
+                <span>Priority</span>
+                <span>Status</span>
+              </div>
+              {sampleTasks[view].map((task) => (
+                <div className="tl-task-row" key={task.name}>
+                  <span
+                    className={`tl-task-checkbox ${task.status === "Completed" ? "is-done" : ""}`}
+                    aria-hidden="true"
+                  >
+                    {task.status === "Completed" && <Icon name="check" />}
+                  </span>
+                  <div className="tl-task-name">
+                    <strong>{task.name}</strong>
+                    <small>{task.project}</small>
+                  </div>
+                  <span
+                    className={`tl-priority ${task.priority.toLowerCase()}`}
+                  >
+                    <i />
+                    {task.priority}
+                  </span>
+                  <span
+                    className={`tl-task-status ${task.status.toLowerCase().replace(" ", "-")}`}
+                  >
+                    {task.status}
+                  </span>
+                  <span className={`tl-avatar ${task.color}`}>
+                    {task.initials}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="tl-preview-bottom">
+              <span>
+                <span className="tl-online-dot" /> A place for every task.
+              </span>
+              <span>Sample workspace</span>
+            </p>
           </div>
         </div>
-      </section>
+      </div>
+      <div className="tl-floating-note">
+        <span className="tl-note-check">
+          <Icon name="check" />
+        </span>
+        <span>
+          <strong>Big plans. Small steps.</strong>
+          <small>That’s how great work gets done.</small>
+        </span>
+        <span className="tl-note-spark" aria-hidden="true">
+          ✦
+        </span>
+      </div>
+      <p className="tl-preview-caption">
+        A glimpse of a calmer workday. Try the tabs above.
+      </p>
+    </div>
+  );
+}
 
-      {/* Footer */}
-      <footer className="bg-[var(--componentsBG)] border-t py-3 mt-4">
-        <div className="mx-auto max-w-7xl px-4 flex justify-between flex-wrap items-center">
-          <span className="text-slate-500">
-            © {new Date().getFullYear()} Taskitin
-          </span>
-          <div className="flex gap-3 items-center">
-            <span className="border-r-1 px-3 flex items-center gap-1">
-              Develop by{" "}
-              <Button color={"neutro"}>
-                <a className="text-[var(--textColor)] font-semibold hover:text-[var(--orange)]">
-                  Francis Martinez
-                </a>
-              </Button>
-              <Button color={"neutroIcon"} icon={SVGIcons.social.github}>
-                <a href="https://github.com/franxis12"></a>
-              </Button>
-              <Button
-                color={"neutroIcon"}
-                icon={SVGIcons.social.linkedin}
-                onClick={() =>
-                  (window.location.href =
-                    "https://www.linkedin.com/in/francis-martinez-07616723a/")
-                }
-              ></Button>
-              <Button color={"neutroIcon"} icon={SVGIcons.social.xSocial}>
-                <a href="https://x.com/FrancisMar98955"></a>
-              </Button>
+function Landing() {
+  const { user, logout } = useContext(UserContext);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [contactStatus, setContactStatus] = useState("");
+  const [accountError, setAccountError] = useState("");
+  const userName =
+    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() ||
+    user?.email ||
+    "Your account";
+  const destination = user ? "/dashboard" : "/register";
+  const actionLabel = user ? "Go to your dashboard" : "Get started for free";
+
+  function handleContactSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const subject = encodeURIComponent("Taskitin — Contact & feedback");
+    const body = encodeURIComponent(
+      `Name: ${data.get("name")}\nEmail: ${data.get("email")}\n\n${data.get("message")}`,
+    );
+    window.location.href = `mailto:hello@taskitin.app?subject=${subject}&body=${body}`;
+    setContactStatus(
+      "Your email app will open with your message. Send it there when you’re ready.",
+    );
+  }
+
+  async function handleLogout() {
+    try {
+      await logout();
+      setAccountError("");
+    } catch {
+      setAccountError("We couldn’t sign you out. Please try again.");
+    }
+  }
+
+  return (
+    <div className="taskitin-landing" id="top">
+      <a href="#main-content" className="tl-skip-link">
+        Skip to content
+      </a>
+      <header className="tl-header">
+        <div className="tl-container tl-nav">
+          <a className="tl-brand" href="#top" aria-label="Taskitin home">
+            <img src={logo} alt="" />
+            <span>
+              taskitin<span className="tl-brand-period">.</span>
             </span>
-            <Button color={"neutro"} onClick={() => navigate("/terms")}>
-              <a
-                href="#"
-                className="no-underline text-slate-600 hover:text-slate-800"
+          </a>
+          <nav
+            className={`tl-nav-links ${menuOpen ? "is-open" : ""}`}
+            id="landing-navigation"
+            aria-label="Main navigation"
+          >
+            <a href="#features" onClick={() => setMenuOpen(false)}>
+              Features
+            </a>
+            <a href="#how-it-works" onClick={() => setMenuOpen(false)}>
+              How it works
+            </a>
+            <a href="#faq" onClick={() => setMenuOpen(false)}>
+              FAQs
+            </a>
+          </nav>
+          <div className="tl-nav-actions">
+            {user ? (
+              <>
+                <span className="tl-user-name" title={userName}>
+                  {userName}
+                  <small>{user.role}</small>
+                </span>
+                <button
+                  className="tl-login"
+                  type="button"
+                  onClick={handleLogout}
+                >
+                  Log out
+                </button>
+                <Link className="tl-button tl-button-small" to="/dashboard">
+                  Dashboard <Icon name="arrow" />
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link className="tl-login" to="/login">
+                  Log in
+                </Link>
+                <Link className="tl-button tl-button-small" to="/register">
+                  Get started <Icon name="arrow" />
+                </Link>
+              </>
+            )}
+            <button
+              className="tl-menu-button"
+              type="button"
+              aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+              aria-expanded={menuOpen}
+              aria-controls="landing-navigation"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              <Icon name={menuOpen ? "close" : "menu"} />
+            </button>
+          </div>
+        </div>
+        {accountError && (
+          <p className="tl-account-error" role="alert">
+            {accountError}
+          </p>
+        )}
+      </header>
+      <main id="main-content">
+        <section className="tl-hero">
+          <div className="tl-container tl-hero-grid">
+            <div className="tl-hero-copy">
+              <p className="tl-eyebrow">
+                <span className="tl-online-dot" /> LESS CHAOS. MORE CLARITY.
+              </p>
+              <h1>
+                Great work.
+                <br />
+                Clear minds.
+                <br />
+                <span>One place.</span>
+                <svg
+                  className="tl-hero-underline"
+                  viewBox="0 0 340 17"
+                  aria-hidden="true"
+                >
+                  <path d="M3 12Q165-4 337 9M27 16Q170 4 300 13" />
+                </svg>
+              </h1>
+              <p className="tl-hero-description">
+                Bring your team, tasks, and next big ideas together. A simpler
+                way to stay organized and move work forward.
+              </p>
+              <div className="tl-hero-actions">
+                <Link className="tl-button" to={destination}>
+                  {actionLabel}
+                  <Icon name="arrow" />
+                </Link>
+                <a className="tl-explore-link" href="#features">
+                  Take a closer look <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+              <div className="tl-hero-reassurance">
+                <span>
+                  <Icon name="check" /> Free to get started
+                </span>
+                <span>
+                  <Icon name="check" /> Built for focus
+                </span>
+              </div>
+            </div>
+            <WorkspacePreview />
+          </div>
+          <div className="tl-container tl-value-strip">
+            <p>
+              Less managing work.
+              <br />
+              <strong>More making it happen.</strong>
+            </p>
+            <span>
+              <Icon name="users" /> Team & personal tasks
+            </span>
+            <span>
+              <Icon name="chart" /> Progress at a glance
+            </span>
+            <span>
+              <Icon name="lock" /> Clear roles & permissions
+            </span>
+          </div>
+        </section>
+
+        <section className="tl-container tl-features tl-section" id="features">
+          <div className="tl-section-heading">
+            <div>
+              <p className="tl-eyebrow">ROOM TO FOCUS</p>
+              <h2>
+                Everything you need.
+                <br />
+                <span>Nothing in your way.</span>
+              </h2>
+            </div>
+            <p>
+              A shared view of what matters, with enough
+              <br className="tl-desktop-break" /> space for everyone to do their
+              best work.
+            </p>
+          </div>
+          <div className="tl-feature-grid">
+            <article className="tl-feature-card">
+              <div
+                className="tl-feature-visual tl-visual-tasks"
+                aria-hidden="true"
               >
-                Terms
-              </a>
-            </Button>
-            <Button color={"neutro"} onClick={() => navigate("/privacy")}>
-              <a
-                href="#"
-                className="no-underline text-slate-600 hover:text-slate-800"
+                <div className="tl-little-task">
+                  <span className="tl-little-check">
+                    <Icon name="check" />
+                  </span>{" "}
+                  The team’s next big idea{" "}
+                  <span className="tl-avatar purple">AL</span>
+                </div>
+                <div className="tl-little-task">
+                  <span className="tl-little-check" /> Your own to-do list{" "}
+                  <Icon name="lock" />
+                </div>
+                <span className="tl-visual-label">
+                  <i /> Separate spaces. Shared momentum.
+                </span>
+              </div>
+              <div className="tl-feature-copy">
+                <span className="tl-feature-index">01 / ORGANIZE</span>
+                <h3>
+                  Your tasks. Your team’s.
+                  <br />
+                  Together, with boundaries.
+                </h3>
+                <p>
+                  Collaborate on company tasks and keep personal to-dos private.
+                  Break bigger work into manageable subtasks.
+                </p>
+              </div>
+            </article>
+            <article className="tl-feature-card">
+              <div
+                className="tl-feature-visual tl-visual-progress"
+                aria-hidden="true"
               >
-                Privacy
+                <div className="tl-progress-summary">
+                  <span>Every step counts</span>
+                  <span className="tl-progress-label">
+                    Steady progress <Icon name="chart" />
+                  </span>
+                </div>
+                <div className="tl-chart-bars">
+                  {[32, 49, 41, 68, 57, 82, 96].map((height, index) => (
+                    <div key={index}>
+                      <i style={{ height: `${height}%` }} />
+                      <span>{["M", "T", "W", "T", "F", "S", "S"][index]}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="tl-feature-copy">
+                <span className="tl-feature-index">
+                  02 / SEE THE BIG PICTURE
+                </span>
+                <h3>
+                  Less “where are we?”
+                  <br />
+                  More “look how far.”
+                </h3>
+                <p>
+                  See pending, in-progress, completed, and missed tasks.
+                  Understand each member’s workload at a glance.
+                </p>
+              </div>
+            </article>
+            <article className="tl-feature-card">
+              <div
+                className="tl-feature-visual tl-visual-roles"
+                aria-hidden="true"
+              >
+                <div className="tl-member-row">
+                  <span className="tl-avatar peach">JD</span>
+                  <div>
+                    Jamie Davis<small>Keeping the team in sync</small>
+                  </div>
+                  <span className="tl-role">Admin</span>
+                </div>
+                <div className="tl-member-row">
+                  <span className="tl-avatar purple">AL</span>
+                  <div>
+                    Alex Lee<small>Making great things happen</small>
+                  </div>
+                  <span className="tl-role member">Member</span>
+                </div>
+                <span className="tl-role-note">
+                  <Icon name="lock" /> The right access for the right people.
+                </span>
+              </div>
+              <div className="tl-feature-copy">
+                <span className="tl-feature-index">03 / WORK TOGETHER</span>
+                <h3>
+                  A place for everyone.
+                  <br />A role that makes sense.
+                </h3>
+                <p>
+                  Admins organize the workspace and approve members. Team
+                  members focus on their assigned work and personal tasks.
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section className="tl-process-section" id="how-it-works">
+          <div className="tl-container tl-section">
+            <div className="tl-centered-heading">
+              <p className="tl-eyebrow">FROM TO-DO TO TA-DA</p>
+              <h2>
+                A little setup.
+                <br />A whole lot of possibility.
+              </h2>
+              <p>Go from scattered tasks to a shared plan.</p>
+            </div>
+            <div className="tl-process-grid">
+              {[
+                {
+                  title: "Make yourself at home",
+                  text: "Create an account and set up your company, or join an existing team with its company ID.",
+                  icon: "grid",
+                },
+                {
+                  title: "Give every task a place",
+                  text: "Add tasks, set priorities and due dates, and turn bigger projects into smaller, clear steps.",
+                  icon: "calendar",
+                },
+                {
+                  title: "Move forward, together",
+                  text: "Update your progress, keep an eye on deadlines, and see what your team has accomplished.",
+                  icon: "check",
+                },
+              ].map((step, index) => (
+                <article key={step.title}>
+                  <div className="tl-process-top">
+                    <span className="tl-process-icon">
+                      <Icon name={step.icon} />
+                    </span>
+                    <span className="tl-process-number">0{index + 1}</span>
+                  </div>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="tl-container tl-faq tl-section" id="faq">
+          <div>
+            <p className="tl-eyebrow">GOOD QUESTIONS</p>
+            <h2>
+              A little clarity,
+              <br />
+              before you start.
+            </h2>
+            <p>
+              Still curious about something?
+              <br />
+              <a href="#contact">
+                Let’s talk <Icon name="arrow" />
               </a>
-            </Button>
+            </p>
+          </div>
+          <div className="tl-faq-list">
+            {[
+              {
+                question: "Can I use Taskitin for my own tasks?",
+                answer:
+                  "Yes. Your workspace includes personal tasks that are visible only to you. Keep your own to-dos organized alongside your company’s work.",
+              },
+              {
+                question: "How does my team join the workspace?",
+                answer:
+                  "An admin creates the company workspace. Members register with the same company ID and wait for the admin to approve their access.",
+              },
+              {
+                question: "What’s the difference between admins and members?",
+                answer:
+                  "Admins manage company tasks and member approvals. Members work on tasks assigned to them and can create and manage their own personal tasks.",
+              },
+              {
+                question: "Can I break a task into smaller steps?",
+                answer:
+                  "Yes. A task can include up to 10 subtasks. Complete each subtask before marking the overall task as completed.",
+              },
+            ].map((item) => (
+              <details key={item.question}>
+                <summary>
+                  {item.question}
+                  <Icon name="plus" />
+                </summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section className="tl-container">
+          <div className="tl-final-cta">
+            <div className="tl-cta-decoration" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+            <div>
+              <p className="tl-eyebrow">MAKE SPACE FOR WHAT MATTERS</p>
+              <h2>
+                Your next great idea
+                <br />
+                deserves a clear plan.
+              </h2>
+              <p>Less scattered. More connected. Start with Taskitin.</p>
+            </div>
+            <div className="tl-final-action">
+              <Link className="tl-button tl-button-coral" to={destination}>
+                {actionLabel}
+                <Icon name="arrow" />
+              </Link>
+              <span>Your team’s next chapter starts here.</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="tl-container tl-contact tl-section" id="contact">
+          <div>
+            <p className="tl-eyebrow">LET’S KEEP THE CONVERSATION GOING</p>
+            <h2>
+              Built with care.
+              <br />
+              Better with your feedback.
+            </h2>
+            <p>Have a question or an idea? We’d love to hear it.</p>
+            <a className="tl-contact-email" href="mailto:hello@taskitin.app">
+              <Icon name="mail" />
+              hello@taskitin.app <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              className="tl-source-link"
+              href="https://github.com/franxis12/TaskHubV2"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Explore the project on GitHub <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+          <form className="tl-contact-form" onSubmit={handleContactSubmit}>
+            <div className="tl-form-row">
+              <label htmlFor="contactName">
+                Your name
+                <input
+                  id="contactName"
+                  name="name"
+                  autoComplete="name"
+                  placeholder="Alex Morgan"
+                  required
+                  minLength={2}
+                />
+              </label>
+              <label htmlFor="contactEmail">
+                Email address
+                <input
+                  id="contactEmail"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="alex@company.com"
+                  required
+                />
+              </label>
+            </div>
+            <label htmlFor="contactMsg">
+              What’s on your mind?
+              <textarea
+                id="contactMsg"
+                name="message"
+                placeholder="An idea, a question, or a little feedback…"
+                rows={4}
+                required
+              />
+            </label>
+            <div className="tl-form-submit">
+              <span>Opens in your email app.</span>
+              <button className="tl-button tl-button-small" type="submit">
+                Let’s talk <Icon name="arrow" />
+              </button>
+            </div>
+            <p className="tl-contact-status" role="status">
+              {contactStatus}
+            </p>
+          </form>
+        </section>
+      </main>
+      <footer className="tl-footer">
+        <div className="tl-container">
+          <div className="tl-footer-top">
+            <a className="tl-brand" href="#top" aria-label="Taskitin home">
+              <img src={logo} alt="" />
+              <span>
+                taskitin<span className="tl-brand-period">.</span>
+              </span>
+            </a>
+            <p>A calmer way to get there, together.</p>
+            <nav aria-label="Footer navigation">
+              <Link to="/privacy">Privacy</Link>
+              <Link to="/terms">Terms</Link>
+              <a
+                href="https://github.com/franxis12/TaskHubV2"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub <span aria-hidden="true">↗</span>
+              </a>
+            </nav>
+          </div>
+          <div className="tl-footer-bottom">
+            <span>
+              © {new Date().getFullYear()} Taskitin. Made for making progress.
+            </span>
+            <span>
+              Designed & built by{" "}
+              <a
+                href="https://github.com/franxis12"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Francis Martinez <span aria-hidden="true">↗</span>
+              </a>
+            </span>
           </div>
         </div>
       </footer>
